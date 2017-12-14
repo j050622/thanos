@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load my_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,25 +13,10 @@
 <body>
 <div class="container">
     <h2>列表</h2>
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            {% for td in head_list %}
-                <td>{{ td }}</td>
-            {% endfor %}
-        </tr>
-        </thead>
-        <tbody>
-        {% for row in data_list %}
-            <tr>
-                {% for td in row %}
-                    <td>{{ td }}</td>
-                {% endfor %}
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {% show_table head_list data_list %}
+
 </div>
+
 
 <script src="{% static 'thanos/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
 </body>

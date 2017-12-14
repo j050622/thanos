@@ -19,15 +19,15 @@ class CrmConfig:
         urlpatterns = [
             url(r'^$', self.changelist_view, name='%s_%s_changelist' % info),
             url(r'^add/$', self.add_view, name='%s_%s_add' % info),
-            url(r'^(\d+)/delete$', self.delete_view, name='%s_%s_delte' % info),
+            url(r'^(\d+)/delete$', self.delete_view, name='%s_%s_delete' % info),
             url(r'^(\d+)/change$', self.change_view, name='%s_%s_change' % info),
         ]
         return urlpatterns
 
     @property
     def urls(self):
-        return self.get_urls(), None, None
-        # return self.get_urls() # 测试一下只返回列表会不会报错
+        # return self.get_urls(), None, None
+        return self.get_urls() # 测试一下只返回列表会不会报错
 
     # 增删改查对应的视图函数
     def changelist_view(self, request, *args, **kwargs):
@@ -91,6 +91,7 @@ class CrmSite:
             app_label = model._meta.app_label
             model_name = model._meta.model_name
             urlpatterns += [url(r'^%s/%s/' % (app_label, model_name), include(config_obj.urls))]
+            # urlpatterns += [url(r'^%s/%s/' % (app_label, model_name), (config_obj.urls), None, None)]
 
             ######待整理######
             if app_label not in app_labels_list:

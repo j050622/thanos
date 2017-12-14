@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="3e73052b-b5a7-4ebf-9cc9-744b07cf369f" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/thanos/service/crm.py" afterPath="$PROJECT_DIR$/thanos/service/crm.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/thanos/templates/thanos/changelist.html" afterPath="$PROJECT_DIR$/thanos/templates/thanos/changelist.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/thanos/templatetags/my_tags.py" afterPath="$PROJECT_DIR$/thanos/templatetags/my_tags.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -40,8 +42,8 @@
       <file leaf-file-name="crm.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/thanos/service/crm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="158">
-              <caret line="52" column="0" lean-forward="false" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
+            <state relative-caret-position="286">
+              <caret line="22" column="32" lean-forward="false" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
               </folding>
@@ -49,11 +51,33 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="my_tags.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/thanos/templatetags/my_tags.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="243">
+              <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#35#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="temp_table.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/temp_table.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="243">
+              <caret line="9" column="30" lean-forward="true" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="changelist.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/changelist.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="16" column="12" lean-forward="true" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="12" />
+            <state relative-caret-position="405">
+              <caret line="15" column="40" lean-forward="true" selection-start-line="15" selection-start-column="40" selection-end-line="15" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -64,8 +88,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -81,8 +105,9 @@
         <option value="$PROJECT_DIR$/CRM/urls.py" />
         <option value="$PROJECT_DIR$/app01/models.py" />
         <option value="$PROJECT_DIR$/thanos/templates/changelist.html" />
-        <option value="$PROJECT_DIR$/thanos/templates/thanos/changelist.html" />
         <option value="$PROJECT_DIR$/app01/thanos.py" />
+        <option value="$PROJECT_DIR$/thanos/templates/thanos/temp_table.html" />
+        <option value="$PROJECT_DIR$/thanos/templates/thanos/changelist.html" />
         <option value="$PROJECT_DIR$/thanos/templatetags/my_tags.py" />
         <option value="$PROJECT_DIR$/thanos/service/crm.py" />
       </list>
@@ -143,6 +168,25 @@
               <item name="thanos" type="462c0819:PsiDirectoryNode" />
               <item name="service" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="CRM" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CRM" type="462c0819:PsiDirectoryNode" />
+              <item name="thanos" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CRM" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CRM" type="462c0819:PsiDirectoryNode" />
+              <item name="thanos" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="thanos" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CRM" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CRM" type="462c0819:PsiDirectoryNode" />
+              <item name="thanos" type="462c0819:PsiDirectoryNode" />
+              <item name="templatetags" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -154,7 +198,7 @@
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="editor.preferences.import" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../CRM2" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../third_permission" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
   </component>
   <component name="RecentsManager">
@@ -370,8 +414,24 @@
         <state relative-caret-position="297">
           <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding>
-            <element signature="e#0#45#0" expanded="true" />
+            <element signature="e#0#45#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/changelist.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="15" column="40" lean-forward="true" selection-start-line="15" selection-start-column="40" selection-end-line="15" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/temp_table.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="9" column="30" lean-forward="true" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -385,18 +445,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/changelist.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="16" column="12" lean-forward="true" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/thanos/service/crm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="52" column="0" lean-forward="false" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
+        <state relative-caret-position="286">
+          <caret line="22" column="32" lean-forward="false" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
           <folding>
             <element signature="e#0#41#0" expanded="true" />
           </folding>
