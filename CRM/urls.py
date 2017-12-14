@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from thanos.service import crm
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^crm/', crm.site.urls),
 ]
