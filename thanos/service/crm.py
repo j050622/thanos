@@ -32,33 +32,36 @@ class CrmConfig:
     # 增删改查对应的视图函数
     def changelist_view(self, request, *args, **kwargs):
         # 表头
-        head_list = []
-        if not self.list_display:
-            head_list = ['记录']
-        for field_name in self.list_display:
-            if isinstance(field_name, str):
-                verbose_name = self.model_class._meta.get_field(field_name).verbose_name
-            else:
-                verbose_name = field_name(self, is_header=True)
-            head_list.append(verbose_name)
+
+        def outer_head():
+            if not self.list_display:
+                yield '记录'
+            for field_name in self.list_display:
+                if isinstance(field_name, str):
+                    verbose_name = self.model_class._meta.get_field(field_name).verbose_name
+                else:
+                    verbose_name = field_name(self, is_header=True)
+                yield verbose_name
 
         # 表格主体
         obj_list = self.model_class.objects.all()
 
-        data_list = []
-        for obj in obj_list:
-            tmp = []
-            if not self.list_display:
-                tmp.append(obj)
-            for field_name in self.list_display:
-                if isinstance(field_name, str):
-                    val = getattr(obj, field_name)
-                else:
-                    val = field_name(self, obj)
-                tmp.append(val)
-            data_list.append(tmp)
+        def outer_data():
+            for obj in obj_list:
+                if not self.list_display:
+                    yield [obj]
 
-        return render(request, 'thanos/changelist.html', {"head_list": head_list, "data_list": data_list})
+                def inner(obj):
+                    for field_name in self.list_display:
+                        if isinstance(field_name, str):
+                            val = getattr(obj, field_name)
+                        else:
+                            val = field_name(self, obj)
+                        yield val
+
+                yield inner(obj)
+
+        return render(request, 'thanos/changelist.html', {"head_list": outer_head(), "data_list": outer_data()})
 
     def add_view(self, request, *args, **kwargs):
         return HttpResponse('添加')
