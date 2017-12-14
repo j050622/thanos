@@ -27,11 +27,38 @@ class CrmConfig:
     @property
     def urls(self):
         return self.get_urls(), None, None
-        # return self.get_urls()
+        # return self.get_urls() # 测试一下只返回列表会不会报错
 
     # 增删改查对应的视图函数
     def changelist_view(self, request, *args, **kwargs):
-        return HttpResponse('列表')
+        # 表头
+        head_list = []
+        if not self.list_display:
+            head_list = ['记录']
+        for field_name in self.list_display:
+            if isinstance(field_name, str):
+                verbose_name = self.model_class._meta.get_field(field_name).verbose_name
+            else:
+                verbose_name = field_name(self, is_header=True)
+            head_list.append(verbose_name)
+
+        # 表格主体
+        obj_list = self.model_class.objects.all()
+
+        data_list = []
+        for obj in obj_list:
+            tmp = []
+            if not self.list_display:
+                tmp.append(obj)
+            for field_name in self.list_display:
+                if isinstance(field_name, str):
+                    val = getattr(obj, field_name)
+                else:
+                    val = field_name(self, obj)
+                tmp.append(val)
+            data_list.append(tmp)
+
+        return render(request, 'thanos/changelist.html', {"head_list": head_list, "data_list": data_list})
 
     def add_view(self, request, *args, **kwargs):
         return HttpResponse('添加')
@@ -57,8 +84,8 @@ class CrmSite:
     def get_urls(self):
         urlpatterns = []
         app_labels_list = []
-        for model, config_obj in self._registry:
-            app_label = model._meta.app_lable
+        for model, config_obj in self._registry.items():
+            app_label = model._meta.app_label
             model_name = model._meta.model_name
             urlpatterns += [url(r'^%s/%s/' % (app_label, model_name), include(config_obj.urls))]
 
@@ -66,6 +93,7 @@ class CrmSite:
             if app_label not in app_labels_list:
                 app_labels_list.append(app_label)
                 ######
+
         return urlpatterns
 
     @property
