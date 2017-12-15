@@ -15,6 +15,8 @@ class Role(models.Model):
 class UserInfo(models.Model):
     """用户信息表"""
     username = models.CharField(max_length=16, verbose_name='用户名')
+    password = models.CharField(max_length=16, verbose_name='密码')
+    email = models.EmailField(max_length=20, verbose_name='邮箱')
 
     class Meta:
         verbose_name_plural = '用户信息表'
