@@ -1,4 +1,5 @@
 from django.conf.urls import url, include
+from django.utils.safestring import mark_safe
 from django.shortcuts import render, redirect, reverse, HttpResponse
 
 
@@ -13,6 +14,56 @@ class CrmConfig:
         self.model_class = model_class
         self.site_obj = site_obj
 
+    def get_changelist_url(self):
+        info = self.model_class._meta.app_label, self.model_class._meta.model_name
+        url_verbose_name = '%s_%s_changelist' % info
+        changelist_url = reverse(url_verbose_name)
+        return changelist_url
+
+    def get_add_url(self):
+        info = self.model_class._meta.app_label, self.model_class._meta.model_name
+        url_verbose_name = '%s_%s_add' % info
+        add_url = reverse(url_verbose_name)
+        return add_url
+
+    def get_change_url(self, nid):
+        info = self.model_class._meta.app_label, self.model_class._meta.model_name
+        url_verbose_name = '%s_%s_change' % info
+        change_url = reverse(url_verbose_name, nid)
+        return change_url
+
+    def get_delete_url(self, nid):
+        info = self.model_class._meta.app_label, self.model_class._meta.model_name
+        url_verbose_name = '%s_%s_delete' % info
+        delete_url = reverse(url_verbose_name, nid)
+        return delete_url
+
+    # 多选框、编辑、删除按钮
+    def checkbox(self, obj=None, is_header=False):
+        if is_header:
+            return mark_safe('<input type="checkbox" name="obj_list" value="">')
+        return mark_safe('<input type="checkbox" name="obj" value="%s">' % obj.id)
+
+    def change(self, obj=None, is_header=False):
+        if is_header:
+            return '修改'
+        return mark_safe('<a href="%s">修改</a>' % self.get_change_url(obj.id))
+
+    def delete(self, obj=None, is_header=False):
+        if is_header:
+            return '删除'
+        return mark_safe('<a href="%s">删除</a>' % self.get_delete_url(obj.id))
+
+    def get_list_display(self):
+        data = []
+        if self.list_display:
+            data.extend(self.list_display)
+
+            data.insert(0, self.checkbox)
+            data.append(self.change)
+            data.append(self.delete)
+        return data
+
     def get_urls(self):
         info = self.model_class._meta.app_label, self.model_class._meta.model_name
 
@@ -22,21 +73,26 @@ class CrmConfig:
             url(r'^(\d+)/delete$', self.delete_view, name='%s_%s_delete' % info),
             url(r'^(\d+)/change$', self.change_view, name='%s_%s_change' % info),
         ]
+        urlpatterns.extend(self.extra_urls())
+
         return urlpatterns
+
+    def extra_urls(self):
+        return []
 
     @property
     def urls(self):
         # return self.get_urls(), None, None
-        return self.get_urls() # 测试一下只返回列表会不会报错
+        return self.get_urls()  # 测试一下只返回列表会不会报错
 
     # 增删改查对应的视图函数
     def changelist_view(self, request, *args, **kwargs):
         # 表头
 
         def outer_head():
-            if not self.list_display:
-                yield '记录'
-            for field_name in self.list_display:
+            # if not self.list_display:
+            #     yield '记录'
+            for field_name in self.get_list_display():
                 if isinstance(field_name, str):
                     verbose_name = self.model_class._meta.get_field(field_name).verbose_name
                 else:
@@ -48,11 +104,11 @@ class CrmConfig:
 
         def outer_data():
             for obj in obj_list:
-                if not self.list_display:
-                    yield [obj]
+                # if not self.get_list_display():
+                #     yield [obj]
 
                 def inner(obj):
-                    for field_name in self.list_display:
+                    for field_name in self.get_list_display():
                         if isinstance(field_name, str):
                             val = getattr(obj, field_name)
                         else:
