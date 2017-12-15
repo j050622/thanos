@@ -1,7 +1,10 @@
+import json
+
 from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.utils.safestring import mark_safe
 from django.conf.urls import url, include
 from django.forms import ModelForm
+from django.http import JsonResponse
 
 
 class CrmConfig:
@@ -158,7 +161,21 @@ class CrmConfig:
             return redirect(self.get_changelist_url())
 
     def delete_view(self, request, nid, *args, **kwargs):
-        return HttpResponse('删除记录')
+        if request.method == 'GET':
+            return render(request, 'thanos/delete_view.html')
+        else:
+            opt = json.loads(request.body.decode()).get('opt')
+            res_dict = {"status": True, "error_msg": None, "rtn_url": None}
+            try:
+                if opt == '确定':
+                    self.model_class.objects.filter(pk=nid).delete()
+                res_dict['rtn_url'] = self.get_changelist_url()
+
+            except Exception as e:
+                res_dict['status'] = False
+                res_dict['error_msg'] = str(e)
+
+            return JsonResponse(res_dict)
 
     def change_view(self, request, nid, *args, **kwargs):
         model_form = self.get_model_form_class()
