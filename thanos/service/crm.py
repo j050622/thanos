@@ -10,22 +10,16 @@ from django.http import JsonResponse
 class CrmConfig:
     """对传入的Model表名，分配‘增删改查’等的URL"""
 
-    # 基本配置
-    list_display = []
-    show_add_btn = False
+    ###### 基本配置 ######
+    list_display = []  # 要在列表页面显示的列
+    show_add_btn = False  # 默认不显示添加按钮
+    model_form_class = None  # 在派生类里指定ModelForm
 
     def get_show_add_btn(self):
         # 根据权限，设置是否显示“添加”按钮
         return self.show_add_btn
 
-    ###### 初始化 ######
-    def __init__(self, model_class, site_obj):
-        self.model_class = model_class
-        self.site_obj = site_obj
-        self.app_label = self.model_class._meta.app_label
-        self.model_name = self.model_class._meta.model_name
-
-    ###### 反向解析URL ######
+    # 反向解析URL #
 
     def get_changelist_url(self):
         info = self.app_label, self.model_name
@@ -51,7 +45,7 @@ class CrmConfig:
         delete_url = reverse(url_verbose_name, args=(nid,))
         return delete_url
 
-    ### 列表页面的多选框、编辑、删除，动态填充<a>标签的href属性 ###
+    # 列表页面的多选框、编辑、删除，动态填充<a>标签的href属性 #
     def checkbox(self, obj=None, is_header=False):
         if is_header:
             return mark_safe('<input type="checkbox" name="obj_list" value="###">')
@@ -67,7 +61,7 @@ class CrmConfig:
             return '删除'
         return mark_safe('<a href="%s">删除</a>' % self.get_delete_url(obj.id))
 
-    ### 在默认的list_display中添加checkbox、change、delete方法 ###
+    # 在默认的list_display中添加checkbox、change、delete方法 #
     def get_list_display(self):
         data = []
         if self.list_display:
@@ -77,6 +71,13 @@ class CrmConfig:
             data.append(self.ele_change)
             data.append(self.ele_delete)
         return data
+
+    ###### 初始化 ######
+    def __init__(self, model_class, site_obj):
+        self.model_class = model_class
+        self.site_obj = site_obj
+        self.app_label = self.model_class._meta.app_label
+        self.model_name = self.model_class._meta.model_name
 
     ###### 增删改查URL分发 ######
     def get_urls(self):
@@ -98,12 +99,12 @@ class CrmConfig:
 
     @property
     def urls(self):
-        # return self.get_urls(), None, None
-        return self.get_urls()  # 测试一下只返回列表会不会报错
+        return self.get_urls()
 
-    ###### 增删改查对应的视图函数 ######
     def get_model_form_class(self):
         """动态生成ModelForm"""
+        if self.model_form_class:
+            return self.model_form_class
 
         class PrototypeModelForm(ModelForm):
             class Meta:
@@ -112,6 +113,7 @@ class CrmConfig:
 
         return PrototypeModelForm
 
+    ###### 增删改查URL对应的视图函数 ######
     def changelist_view(self, request, *args, **kwargs):
         # 表头
         def outer_head(self):
@@ -150,14 +152,16 @@ class CrmConfig:
     def add_view(self, request, *args, **kwargs):
         model_form = self.get_model_form_class()
         if request.method == 'GET':
-            add_form = model_form()
-            return render(request, 'thanos/add_view.html', {"model_name": self.model_name, "add_form": add_form})
+            add_edit_form = model_form()
+            return render(request, 'thanos/add_view.html',
+                          {"model_name": self.model_name, "add_edit_form": add_edit_form})
         else:
-            add_form = model_form(data=request.POST)
-            if not add_form.is_valid():
-                return render(request, 'thanos/add_view.html', {"model_name": self.model_name, "add_form": add_form})
+            add_edit_form = model_form(data=request.POST)
+            if not add_edit_form.is_valid():
+                return render(request, 'thanos/add_view.html',
+                              {"model_name": self.model_name, "add_edit_form": add_edit_form})
             else:
-                add_form.save()
+                add_edit_form.save()
             return redirect(self.get_changelist_url())
 
     def delete_view(self, request, nid, *args, **kwargs):
@@ -184,11 +188,12 @@ class CrmConfig:
             return redirect(self.get_changelist_url())
 
         if request.method == 'GET':
-            edit_form = model_form(instance=current_obj)
-            return render(request, 'thanos/edit_view.html', {"model_name": self.model_name, "edit_form": edit_form})
+            add_edit_form = model_form(instance=current_obj)
+            return render(request, 'thanos/edit_view.html',
+                          {"model_name": self.model_name, "add_edit_form": add_edit_form})
         else:
-            edit_form = model_form(instance=current_obj, data=request.POST)
-            edit_form.save()
+            add_edit_form = model_form(instance=current_obj, data=request.POST)
+            add_edit_form.save()
             return redirect(self.get_changelist_url())
 
 
@@ -209,8 +214,7 @@ class CrmSite:
         for model, config_obj in self._registry.items():
             app_label = model._meta.app_label
             model_name = model._meta.model_name
-            urlpatterns += [url(r'^%s/%s/' % (app_label, model_name), include(config_obj.urls))]
-            # urlpatterns += [url(r'^%s/%s/' % (app_label, model_name), (config_obj.urls), None, None)]
+            urlpatterns += [url(r'^%s/%s/' % (app_label, model_name), include(config_obj.urls, None, None))]
 
             ######待整理######
             if app_label not in app_labels_list:

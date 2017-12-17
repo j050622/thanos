@@ -1,0 +1,18 @@
+<form class="form-horizontal" method="post" novalidate>
+    {% csrf_token %}
+    {% for field in add_edit_form %}
+        <div class="form-group">
+            <label for="" class="col-sm-2 control-label">{{ field.label }}</label>
+            <div class="col-sm-6">
+                {{ field }}
+            </div>
+            <span class="help-block">{{ field.errors.0 }}</span>
+        </div>
+    {% endfor %}
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+    </div>
+</form>

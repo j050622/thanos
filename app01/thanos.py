@@ -1,14 +1,25 @@
 from django.conf.urls import url, include
 from django.utils.safestring import mark_safe
+from django.forms import ModelForm
 from django.shortcuts import render, redirect, reverse, HttpResponse
 
 from thanos.service import crm
 from app01 import models
 
 
+class UserInfoForm(ModelForm):
+    class Meta:
+        model = models.UserInfo
+        fields = '__all__'
+
+        error_messages = {
+            "username": {"required": '用户名不能为空'}
+        }
+
+
 ###自定义类
 class RoleConfig(crm.CrmConfig):
-    list_display = ['id', 'name']
+    list_display = ['name']
 
     def get_show_add_btn(self):
         if ('session里获取权限，有权限，执行下面的代码'):
@@ -29,6 +40,7 @@ class RoleConfig(crm.CrmConfig):
 class UserInfoConfig(crm.CrmConfig):
     list_display = ['username']
     show_add_btn = True
+    model_form_class = UserInfoForm
 
 
 ############## 注册 ###############
