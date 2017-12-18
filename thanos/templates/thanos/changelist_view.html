@@ -20,6 +20,16 @@
 
     {% show_table head_list data_list %}
 
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {% for ele_a in ele_list %}
+                <li>{{ ele_a|safe }}</li>
+            {% endfor %}
+        </ul>
+    </nav>
+
+
 </div>
 
 
