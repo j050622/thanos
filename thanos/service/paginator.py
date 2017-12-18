@@ -47,7 +47,6 @@ class Paginator:
             elif self.page_num > max_page_num - half_ele_cnt:
                 end_page = max_page_num
                 start_page = max_page_num - half_ele_cnt * 2
-                print(start_page)
             else:
                 start_page = self.page_num - half_ele_cnt
                 end_page = self.page_num + half_ele_cnt
