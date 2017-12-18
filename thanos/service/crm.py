@@ -148,16 +148,18 @@ class CrmConfig:
         ele_list.append(first_page)
 
         # 上一页
-        # xxxx
+        if current_page_num != 1:
+            previous_page = '<li><a href="%s?page=%s">上一页</a></li>' % (base_url, current_page_num - 1)
+            ele_list.append(previous_page)
 
         # 普通页面标签
         half_ele_cnt = int((show_ele_cnt - 1) / 2)
         if current_page_num <= half_ele_cnt:
             start_page = 1
-            end_page = half_ele_cnt * 2
+            end_page = show_ele_cnt
         elif current_page_num > max_page_num - half_ele_cnt:
             end_page = max_page_num
-            start_page = max_page_num - half_ele_cnt * 2 + 1
+            start_page = max_page_num - half_ele_cnt * 2
         else:
             start_page = current_page_num - half_ele_cnt
             end_page = current_page_num + half_ele_cnt
@@ -170,7 +172,9 @@ class CrmConfig:
             ele_list.append(ele_li)
 
         # 下一页
-        # xxxx
+        if current_page_num != max_page_num:
+            next_page = '<li><a href="%s?page=%s">下一页</a></li>' % (base_url, current_page_num + 1)
+            ele_list.append(next_page)
 
         # 尾页
         if current_page_num == max_page_num:
@@ -178,6 +182,9 @@ class CrmConfig:
         else:
             last_page = '<li><a href="%s?page=%s">尾页</a></li>' % (base_url, max_page_num)
         ele_list.append(last_page)
+
+        page_str = '\n'.join(ele_list)  # 把所有<li>标签拼接成字符串
+        # print(page_str)
 
         # 获取当前页面的obj_list，制作生成器
         start = (current_page_num - 1) * self.list_per_page
@@ -204,7 +211,7 @@ class CrmConfig:
                       {"model_name": self.model_name,
                        "show_add_btn": self.get_show_add_btn(), "add_url": self.get_add_url(),
                        "head_list": header(self), "data_list": data(self),
-                       "ele_list": ele_list})
+                       "page_str": page_str})
 
     def add_view(self, request, *args, **kwargs):
         model_form = self.get_model_form_class()
