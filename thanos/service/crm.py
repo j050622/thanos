@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.utils.safestring import mark_safe
 from django.conf.urls import url, include
 from django.forms import ModelForm
-from django.http import JsonResponse
+from django.http import JsonResponse, QueryDict
 
 from .paginator import Paginator
 
@@ -55,15 +55,15 @@ class CrmConfig:
             return mark_safe('<input type="checkbox" name="obj_list" value="###">')
         return mark_safe('<input type="checkbox" name="obj" value="%s">' % obj.id)
 
-    def ele_change(self, obj=None, is_header=False):
+    def ele_change(self, params, obj=None, is_header=False):
         if is_header:
             return '修改'
-        return mark_safe('<a href="%s">修改</a>' % self.get_change_url(obj.id))
+        return mark_safe('<a href="%s?%s">修改</a>' % (self.get_change_url(obj.id), params))
 
-    def ele_delete(self, obj=None, is_header=False):
+    def ele_delete(self, params, obj=None, is_header=False):
         if is_header:
             return '删除'
-        return mark_safe('<a href="%s">删除</a>' % self.get_delete_url(obj.id))
+        return mark_safe('<a href="%s?%s">删除</a>' % (self.get_delete_url(obj.id), params))
 
     # 在默认的list_display中添加checkbox、change、delete方法 #
     def get_list_display(self):
@@ -119,6 +119,11 @@ class CrmConfig:
 
     ###### 增删改查URL对应的视图函数 ######
     def changelist_view(self, request, *args, **kwargs):
+        params_dict = QueryDict(mutable=True)
+        params_dict['_list_filter'] = request.GET.urlencode()
+        params = params_dict.urlencode()
+        add_url = '%s?%s' % (self.get_add_url(), params)
+
         ### 表头 ###
         def header(self):
             if not self.list_display:  # 如果没有自定义list_display
@@ -127,17 +132,27 @@ class CrmConfig:
                 if isinstance(field_name, str):
                     verbose_name = self.model_class._meta.get_field(field_name).verbose_name
                 else:
-                    verbose_name = field_name(is_header=True)
+                    verbose_name = field_name(params, is_header=True)
                 yield verbose_name
 
         ### 分页操作 ###
-        obj_list = self.model_class.objects.all()
+        condition_dict = {}
+        params_ele = QueryDict(mutable=True)
+
+        for k, v in request.GET.items():
+            if k == 'page':
+                continue
+            else:
+                condition_dict[k] = v
+                params_ele[k] = v
+
+        obj_list = self.model_class.objects.filter(**condition_dict)
         try:
             current_page_num = int(request.GET.get('page', 1))
         except TypeError:
             current_page_num = 1
 
-        paginator = Paginator(obj_list, current_page_num, request.path, self.list_per_page)
+        paginator = Paginator(params_ele, obj_list, current_page_num, request.path, self.list_per_page)
         show_obj_list = paginator.show_obj_list()
         pager_html = paginator.pager_html()
 
@@ -152,14 +167,14 @@ class CrmConfig:
                         if isinstance(field_name, str):
                             val = getattr(obj, field_name)
                         else:
-                            val = field_name(obj)
+                            val = field_name(params, obj)
                         yield val
 
                 yield inner(self, obj)
 
         return render(request, 'thanos/changelist_view.html',
                       {"model_name": self.model_name,
-                       "show_add_btn": self.get_show_add_btn(), "add_url": self.get_add_url(),
+                       "show_add_btn": self.get_show_add_btn(), "add_url": add_url,
                        "head_list": header(self), "data_list": data(self), "pager_html": pager_html})
 
     def add_view(self, request, *args, **kwargs):
@@ -175,7 +190,7 @@ class CrmConfig:
                               {"model_name": self.model_name, "add_edit_form": add_edit_form})
             else:
                 add_edit_form.save()
-            return redirect(self.get_changelist_url())
+            return redirect('%s?%s' % (self.get_changelist_url(), request.GET.get('_list_filter')))
 
     def delete_view(self, request, nid, *args, **kwargs):
         if request.method == 'GET':
@@ -186,7 +201,7 @@ class CrmConfig:
             try:
                 if opt == '确定':
                     self.model_class.objects.filter(pk=nid).delete()
-                res_dict['rtn_url'] = self.get_changelist_url()
+                res_dict['rtn_url'] = '%s?%s' % (self.get_changelist_url(), request.GET.get('_list_filter'))
 
             except Exception as e:
                 res_dict['status'] = False
@@ -207,7 +222,7 @@ class CrmConfig:
         else:
             add_edit_form = model_form(instance=current_obj, data=request.POST)
             add_edit_form.save()
-            return redirect(self.get_changelist_url())
+            return redirect('%s?%s' % (self.get_changelist_url(), request.GET.get('_list_filter')))
 
 
 class CrmSite:
@@ -230,9 +245,9 @@ class CrmSite:
             urlpatterns += [url(r'^%s/%s/' % (app_label, model_name), include(config_obj.urls, None, None))]
 
             ######待整理######
-            if app_label not in app_labels_list:
-                app_labels_list.append(app_label)
-                ######
+            # if app_label not in app_labels_list:
+            #     app_labels_list.append(app_label)
+            ######
 
         return urlpatterns
 
