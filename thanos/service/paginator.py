@@ -26,11 +26,9 @@ class Paginator:
 
         ele_list = []
         # 首页
-        if self.page_num == 1:
-            first_page = '<li><span>首页</span></li>'
-        else:
+        if self.page_num != 1:
             first_page = '<li><a href="%s?page=1&%s">首页</a></li>' % (self.base_url, params)
-        ele_list.append(first_page)
+            ele_list.append(first_page)
 
         # 上一页
         if self.page_num != 1:
@@ -67,10 +65,8 @@ class Paginator:
             ele_list.append(next_page)
 
         # 尾页
-        if self.page_num == max_page_num:
-            last_page = '<li><span>尾页</span></li>'
-        else:
+        if self.page_num != max_page_num:
             last_page = '<li><a href="%s?page=%s&%s">尾页</a></li>' % (self.base_url, max_page_num, params)
-        ele_list.append(last_page)
+            ele_list.append(last_page)
 
         return '\n'.join(ele_list)
