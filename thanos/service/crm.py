@@ -7,7 +7,7 @@ from django.conf.urls import url, include
 from django.forms import ModelForm
 from django.http import JsonResponse
 
-from thanos.service.pager import Pagination
+from .paginator import Paginator
 
 
 class CrmConfig:
@@ -132,68 +132,18 @@ class CrmConfig:
 
         ### 分页操作 ###
         obj_list = self.model_class.objects.all()
-        max_page_num = int(math.ceil(len(obj_list) / self.list_per_page))
-        current_page_num = int(request.GET.get('page', 1))
-        show_ele_cnt = 11
-        base_url = request.path
+        try:
+            current_page_num = int(request.GET.get('page', 1))
+        except TypeError:
+            current_page_num = 1
 
-        ## 生成页码的<a>标签
-        ele_list = []
+        paginator = Paginator(obj_list, current_page_num, request.path, self.list_per_page)
+        show_obj_list = paginator.show_obj_list()
+        pager_html = paginator.pager_html()
 
-        # 首页
-        if current_page_num == 1:
-            first_page = '<li><span>首页</span></li>'
-        else:
-            first_page = '<li><a href="%s?page=1">首页</a></li>' % base_url
-        ele_list.append(first_page)
-
-        # 上一页
-        if current_page_num != 1:
-            previous_page = '<li><a href="%s?page=%s">上一页</a></li>' % (base_url, current_page_num - 1)
-            ele_list.append(previous_page)
-
-        # 普通页面标签
-        half_ele_cnt = int((show_ele_cnt - 1) / 2)
-        if current_page_num <= half_ele_cnt:
-            start_page = 1
-            end_page = show_ele_cnt
-        elif current_page_num > max_page_num - half_ele_cnt:
-            end_page = max_page_num
-            start_page = max_page_num - half_ele_cnt * 2
-        else:
-            start_page = current_page_num - half_ele_cnt
-            end_page = current_page_num + half_ele_cnt
-
-        for i in range(start_page, end_page + 1):
-            if i == current_page_num:
-                ele_li = '<li class="active"><span>%s</span></li>' % i
-            else:
-                ele_li = '<li><a href="%s?page=%s">%s</a></li>' % (base_url, i, i)
-            ele_list.append(ele_li)
-
-        # 下一页
-        if current_page_num != max_page_num:
-            next_page = '<li><a href="%s?page=%s">下一页</a></li>' % (base_url, current_page_num + 1)
-            ele_list.append(next_page)
-
-        # 尾页
-        if current_page_num == max_page_num:
-            last_page = '<li><span>尾页</span></li>'
-        else:
-            last_page = '<li><a href="%s?page=%s">尾页</a></li>' % (base_url, max_page_num)
-        ele_list.append(last_page)
-
-        page_str = '\n'.join(ele_list)  # 把所有<li>标签拼接成字符串
-        # print(page_str)
-
-        # 获取当前页面的obj_list，制作生成器
-        start = (current_page_num - 1) * self.list_per_page
-        end = current_page_num * self.list_per_page
-
-        current_obj_list = obj_list[start:end]
-
+        ### 表格主体 ###
         def data(self):
-            for obj in current_obj_list:
+            for obj in show_obj_list:
                 if not self.list_display:  # 如果没有自定义list_display
                     yield [obj]
 
@@ -210,8 +160,7 @@ class CrmConfig:
         return render(request, 'thanos/changelist_view.html',
                       {"model_name": self.model_name,
                        "show_add_btn": self.get_show_add_btn(), "add_url": self.get_add_url(),
-                       "head_list": header(self), "data_list": data(self),
-                       "page_str": page_str})
+                       "head_list": header(self), "data_list": data(self), "pager_html": pager_html})
 
     def add_view(self, request, *args, **kwargs):
         model_form = self.get_model_form_class()
