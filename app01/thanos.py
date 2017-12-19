@@ -20,6 +20,8 @@ class UserInfoForm(ModelForm):
 ###自定义类
 class RoleConfig(crm.CrmConfig):
     list_display = ['name']
+    show_search_form = True
+    search_fields = ['name__contains']
 
     def get_show_add_btn(self):
         if ('session里获取权限，有权限，执行下面的代码'):
@@ -38,9 +40,13 @@ class RoleConfig(crm.CrmConfig):
 
 
 class UserInfoConfig(crm.CrmConfig):
-    list_display = ['username']
+    list_display = ['username', 'email']
     show_add_btn = True
     model_form_class = UserInfoForm
+
+    show_search_form = True
+    # search_fields = ['username__contains', 'email__contains', 'id__contains']
+    search_fields = ['username__contains', 'email__contains', 'id__contains', 'id__gt']
 
 
 ############## 注册 ###############

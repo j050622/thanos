@@ -16,7 +16,15 @@
     {% if show_add_btn %}
         <a href="{{ add_url }}" class="btn btn-primary">添加记录</a>
     {% endif %}
-    <p></p>
+
+    <form method="get" class="form-horizontal pull-right">
+        <div class="form-group col-md-10">
+            <input type="text" class="form-control" name="{{ search_input_name }}" placeholder="请输入搜索条件">
+        </div>
+        <div class="col-md-1">
+            <button class="btn btn-info"><span class="glyphicon glyphicon-search"></span></button>
+        </div>
+    </form>
 
     {% show_table head_list data_list %}
 
