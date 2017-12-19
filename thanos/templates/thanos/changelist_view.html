@@ -12,26 +12,37 @@
 </head>
 <body>
 <div class="container">
-    <h2>{{ model_name }}列表</h2>
-    {% if show_add_btn %}
-        <a href="{{ add_url }}" class="btn btn-primary">添加记录</a>
+
+    {#    # "model_name": self.model_name,#}
+    {#    # "show_add_btn": self.get_show_add_btn(), #}
+    {#    # "add_url": self.ele_add(),#}
+    {#    # "show_search_form": self.get_show_search_form(), #}
+    {#    # "search_input_name": self.search_input_name,#}
+    {#    # "head_list": cl.head_list(),#}
+    {#    # "data_list": cl.data_list(),#}
+    {#    # "pager_html": pager_html#}
+
+
+    <h2>{{ cl.model_name }}列表</h2>
+    {% if cl.show_add_btn %}
+        <a href="{{ cl.add_url }}" class="btn btn-primary">添加记录</a>
     {% endif %}
 
     <form method="get" class="form-horizontal pull-right">
         <div class="form-group col-md-10">
-            <input type="text" class="form-control" name="{{ search_input_name }}" placeholder="请输入搜索条件">
+            <input type="text" class="form-control" name="{{ cl.search_input_name }}" placeholder="请输入搜索条件">
         </div>
         <div class="col-md-1">
             <button class="btn btn-info"><span class="glyphicon glyphicon-search"></span></button>
         </div>
     </form>
 
-    {% show_table head_list data_list %}
+    {% show_table cl.head_list cl.data_list %}
 
 
     <nav aria-label="Page navigation">
         <ul class="pagination">
-            {{ pager_html|safe }}
+            {{ cl.pager_html|safe }}
         </ul>
     </nav>
 

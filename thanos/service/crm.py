@@ -13,12 +13,30 @@ from .paginator import Paginator
 class ChangeList:
     """构造changelist类"""
 
-    def __init__(self, config_obj, show_obj_list):
-        self.config_obj = config_obj
-        self.show_obj_list = show_obj_list
-
+    def __init__(self, config_obj, obj_list, pager_params):
+        # 配置信息
         self.list_display = config_obj.get_list_display()
+        self.show_add_btn = config_obj.get_show_add_btn()
+        self.show_search_form = config_obj.get_show_search_form()
+        self.search_input_name = config_obj.search_input_name
+        self.list_per_page = config_obj.list_per_page
+
+        # 基本属性
+        self.config_obj = config_obj
+        self.request = config_obj.request
         self.model_class = config_obj.model_class
+        self.model_name = config_obj.model_class._meta.model_name
+        self.add_url = config_obj.ele_add()
+
+        ### 分页操作 ###
+        try:
+            current_page_num = int(self.request.GET.get('page', 1))
+        except TypeError:
+            current_page_num = 1
+
+        paginator = Paginator(pager_params, obj_list, current_page_num, self.request.path, self.list_per_page)
+        self.show_obj_list = paginator.show_obj_list()
+        self.pager_html = paginator.pager_html()
 
     def head_list(self):
         """处理表头信息"""
@@ -63,9 +81,9 @@ class CrmConfig:
     ###### 初始化 ######
     def __init__(self, model_class, site_obj):
         self.model_class = model_class
+        self.model_name = model_class._meta.model_name
         self.site_obj = site_obj
         self.app_label = self.model_class._meta.app_label
-        self.model_name = self.model_class._meta.model_name
         self.request = None
         self.query_dict_key = '_next'
 
@@ -228,24 +246,10 @@ class CrmConfig:
 
         obj_list = self.model_class.objects.filter(condition)  # 根据条件查询数据库
 
-        ### 分页操作 ###
-        try:
-            current_page_num = int(request.GET.get('page', 1))
-        except TypeError:
-            current_page_num = 1
-
-        paginator = Paginator(pager_params, obj_list, current_page_num, request.path, self.list_per_page)
-        show_obj_list = paginator.show_obj_list()
-        pager_html = paginator.pager_html()
-
         ### 实例化ChangeList对象 ###
-        c1 = ChangeList(self, show_obj_list)  # 传入当前对象
+        cl = ChangeList(self, obj_list, pager_params)  # 传入当前对象
 
-        return render(request, 'thanos/changelist_view.html',
-                      {"model_name": self.model_name,
-                       "show_add_btn": self.get_show_add_btn(), "add_url": self.ele_add(),
-                       "show_search_form": self.get_show_search_form(), "search_input_name": self.search_input_name,
-                       "head_list": c1.head_list(), "data_list": c1.data_list(), "pager_html": pager_html})
+        return render(request, 'thanos/changelist_view.html', {"cl": cl})
 
     def add_view(self, request, *args, **kwargs):
         model_form = self.get_model_form_class()
