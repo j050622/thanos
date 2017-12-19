@@ -10,8 +10,29 @@ from django.http import JsonResponse, QueryDict
 from .paginator import Paginator
 
 
+class ChangeList:
+    def __init__(self, config):
+        self.config = config
+        self.model_class = config.model_class
+        self.list_display = config.get_list_display()
+
+    def head_list(self):
+        pass
+
+    def data_list(self):
+        pass
+
+
 class CrmConfig:
     """对传入的Model表名，分配‘增删改查’等的URL"""
+
+    ###### 初始化 ######
+    def __init__(self, model_class, site_obj):
+        self.model_class = model_class
+        self.site_obj = site_obj
+        self.app_label = self.model_class._meta.app_label
+        self.model_name = self.model_class._meta.model_name
+        self.request = None
 
     ###### 基本配置 ######
     list_display = []  # 要在列表页面显示的列
@@ -55,15 +76,16 @@ class CrmConfig:
             return mark_safe('<input type="checkbox" name="obj_list" value="###">')
         return mark_safe('<input type="checkbox" name="obj" value="%s">' % obj.id)
 
-    def ele_change(self, params, obj=None, is_header=False):
+    def ele_change(self, obj=None, is_header=False):
         if is_header:
             return '修改'
-        return mark_safe('<a href="%s?%s">修改</a>' % (self.get_change_url(obj.id), params))
 
-    def ele_delete(self, params, obj=None, is_header=False):
+        return mark_safe('<a href="%s?%s">修改</a>' % (self.get_change_url(obj.id), self.request.GET.urlencode()))
+
+    def ele_delete(self, obj=None, is_header=False):
         if is_header:
             return '删除'
-        return mark_safe('<a href="%s?%s">删除</a>' % (self.get_delete_url(obj.id), params))
+        return mark_safe('<a href="%s?%s">删除</a>' % (self.get_delete_url(obj.id), self.request.GET.urlencode()))
 
     # 在默认的list_display中添加checkbox、change、delete方法 #
     def get_list_display(self):
@@ -76,22 +98,22 @@ class CrmConfig:
             data.append(self.ele_delete)
         return data
 
-    ###### 初始化 ######
-    def __init__(self, model_class, site_obj):
-        self.model_class = model_class
-        self.site_obj = site_obj
-        self.app_label = self.model_class._meta.app_label
-        self.model_name = self.model_class._meta.model_name
-
     ###### 增删改查URL分发 ######
     def get_urls(self):
+
+        def wrap(view):
+            def inner(request, *args, **kwargs):
+                self.request = request
+
+            return inner
+
         info = self.app_label, self.model_name
 
         urlpatterns = [
-            url(r'^$', self.changelist_view, name='%s_%s_changelist' % info),
-            url(r'^add/$', self.add_view, name='%s_%s_add' % info),
-            url(r'^(\d+)/delete$', self.delete_view, name='%s_%s_delete' % info),
-            url(r'^(\d+)/change$', self.change_view, name='%s_%s_change' % info),
+            url(r'^$', wrap(self.changelist_view), name='%s_%s_changelist' % info),
+            url(r'^add/$', wrap(self.add_view), name='%s_%s_add' % info),
+            url(r'^(\d+)/delete$', wrap(self.delete_view), name='%s_%s_delete' % info),
+            url(r'^(\d+)/change$', wrap(self.change_view), name='%s_%s_change' % info),
         ]
         urlpatterns.extend(self.extra_urls())
 
@@ -119,10 +141,10 @@ class CrmConfig:
 
     ###### 增删改查URL对应的视图函数 ######
     def changelist_view(self, request, *args, **kwargs):
-        params_dict = QueryDict(mutable=True)
-        params_dict['_list_filter'] = request.GET.urlencode()
-        params = params_dict.urlencode()
-        add_url = '%s?%s' % (self.get_add_url(), params)
+        # params_dict = QueryDict(mutable=True)
+        # params_dict['_list_filter'] = request.GET.urlencode()
+        # params = params_dict.urlencode()
+        # add_url = '%s?%s' % (self.get_add_url(), params)
 
         ### 表头 ###
         def header(self):
@@ -132,7 +154,7 @@ class CrmConfig:
                 if isinstance(field_name, str):
                     verbose_name = self.model_class._meta.get_field(field_name).verbose_name
                 else:
-                    verbose_name = field_name(params, is_header=True)
+                    verbose_name = field_name(is_header=True)
                 yield verbose_name
 
         ### 分页操作 ###

@@ -1,14 +1,17 @@
 import math
+import copy
 
 
 class Paginator:
     def __init__(self, params_dict, obj_list, page_num, base_url, show_obj_cnt, show_ele_count=11):
-        self.params_dict = params_dict
+        self.params_dict = copy.deepcopy(params_dict)
         self.obj_list = obj_list
         self.page_num = page_num
         self.base_url = base_url
         self.show_obj_cnt = show_obj_cnt
         self.show_ele_cnt = show_ele_count
+
+        self.params_dict._mutable = True
 
     def show_obj_list(self):
         """当前页面要展示的记录列表"""
