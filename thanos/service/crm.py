@@ -13,22 +13,48 @@ from .paginator import Paginator
 class ChangeList:
     """构造changelist类"""
 
-    def __init__(self, config_obj):
+    def __init__(self, config_obj, show_obj_list):
         self.config_obj = config_obj
-        self.model_class = config_obj.model_class
+        self.show_obj_list = show_obj_list
+
         self.list_display = config_obj.get_list_display()
-        self.show_add_btn = config_obj.get_show_add_btn()
-        self.request = config_obj.request
+        self.model_class = config_obj.model_class
 
     def head_list(self):
         """处理表头信息"""
 
-        pass
+        def header(self):
+            if not self.list_display:  # 如果没有自定义list_display
+                yield self.model_class._meta.model_name.upper()
+
+            for field_name in self.list_display:
+                if isinstance(field_name, str):
+                    verbose_name = self.model_class._meta.get_field(field_name).verbose_name
+                else:
+                    verbose_name = field_name(is_header=True)
+                yield verbose_name
+
+        return header(self)
 
     def data_list(self):
         """处理数据部分"""
 
-        pass
+        def data(self):
+            for obj in self.show_obj_list:
+                if not self.list_display:  # 如果没有自定义list_display
+                    yield [obj]
+
+                def inner(self, obj):
+                    for field_name in self.list_display:
+                        if isinstance(field_name, str):
+                            val = getattr(obj, field_name)
+                        else:
+                            val = field_name(obj)
+                        yield val
+
+                yield inner(self, obj)
+
+        return data(self)
 
 
 class CrmConfig:
@@ -87,6 +113,14 @@ class CrmConfig:
             return mark_safe('<input type="checkbox" name="obj_list" value="###">')
         return mark_safe('<input type="checkbox" name="obj" value="%s">' % obj.id)
 
+    def ele_add(self):
+        if self.request.GET:
+            params_dict = QueryDict(mutable=True)
+            params_dict[self.query_dict_key] = self.request.GET.urlencode()
+            return '%s?%s' % (self.get_add_url(), params_dict.urlencode())
+        else:
+            return '%s' % self.get_add_url()
+
     def ele_change(self, obj=None, is_header=False):
         if is_header:
             return '修改'
@@ -118,6 +152,7 @@ class CrmConfig:
             data.insert(0, self.checkbox)
             data.append(self.ele_change)
             data.append(self.ele_delete)
+
         return data
 
     ###### 增删改查URL分发 ######
@@ -165,22 +200,7 @@ class CrmConfig:
     ###### 增删改查URL对应的视图函数 ######
 
     def changelist_view(self, request, *args, **kwargs):
-        # c1 = ChangeList(self)  # 传入当前对象
-
-        add_url = '%s?%s' % (self.get_add_url(), request.GET.urlencode())
-
-        ### 表头 ###
-        def header(self):
-            if not self.list_display:  # 如果没有自定义list_display
-                yield '记录'
-            for field_name in self.get_list_display():
-                if isinstance(field_name, str):
-                    verbose_name = self.model_class._meta.get_field(field_name).verbose_name
-                else:
-                    verbose_name = field_name(is_header=True)
-                yield verbose_name
-
-        ### 分页操作 ###
+        ### 生成最终匹配条件，获取QuerySet ###
         kew_word = request.GET.get(self.search_input_name)
 
         condition = Q()
@@ -208,6 +228,7 @@ class CrmConfig:
 
         obj_list = self.model_class.objects.filter(condition)  # 根据条件查询数据库
 
+        ### 分页操作 ###
         try:
             current_page_num = int(request.GET.get('page', 1))
         except TypeError:
@@ -217,27 +238,14 @@ class CrmConfig:
         show_obj_list = paginator.show_obj_list()
         pager_html = paginator.pager_html()
 
-        ### 表格主体 ###
-        def data(self):
-            for obj in show_obj_list:
-                if not self.list_display:  # 如果没有自定义list_display
-                    yield [obj]
-
-                def inner(self, obj):
-                    for field_name in self.get_list_display():
-                        if isinstance(field_name, str):
-                            val = getattr(obj, field_name)
-                        else:
-                            val = field_name(obj)
-                        yield val
-
-                yield inner(self, obj)
+        ### 实例化ChangeList对象 ###
+        c1 = ChangeList(self, show_obj_list)  # 传入当前对象
 
         return render(request, 'thanos/changelist_view.html',
                       {"model_name": self.model_name,
-                       "show_add_btn": self.get_show_add_btn(), "add_url": add_url,
+                       "show_add_btn": self.get_show_add_btn(), "add_url": self.ele_add(),
                        "show_search_form": self.get_show_search_form(), "search_input_name": self.search_input_name,
-                       "head_list": header(self), "data_list": data(self), "pager_html": pager_html})
+                       "head_list": c1.head_list(), "data_list": c1.data_list(), "pager_html": pager_html})
 
     def add_view(self, request, *args, **kwargs):
         model_form = self.get_model_form_class()
