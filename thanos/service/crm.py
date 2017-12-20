@@ -1,7 +1,6 @@
 import json
-from types import FunctionType, MethodType
 
-from django.shortcuts import render, redirect, reverse, HttpResponse
+from django.shortcuts import render, redirect, reverse
 from django.utils.safestring import mark_safe
 from django.conf.urls import url, include
 from django.forms import ModelForm
@@ -12,7 +11,9 @@ from .paginator import Paginator
 
 
 class ChangeList:
-    """构造changelist类"""
+    """
+    构造changelist类
+    """
 
     def __init__(self, config_obj, obj_list, pager_params):
         # 配置信息
@@ -21,6 +22,8 @@ class ChangeList:
         self.show_search_form = config_obj.get_show_search_form()
         self.search_input_name = config_obj.search_input_name
         self.list_per_page = config_obj.list_per_page
+        self.actions = config_obj.get_actions()
+
         self.comb_filter = config_obj.get_comb_filter()
 
         # 基本属性
@@ -28,7 +31,7 @@ class ChangeList:
         self.request = config_obj.request
         self.model_class = config_obj.model_class
         self.model_name = config_obj.model_class._meta.model_name
-        self.add_url = config_obj.ele_add()
+        self.add_href = config_obj.ele_add_href()
         self.search_input_val = config_obj.request.GET.get(config_obj.search_input_name, '')
 
         ### 分页操作 ###
@@ -41,10 +44,20 @@ class ChangeList:
         self.show_obj_list = paginator.show_obj_list()
         self.pager_html = paginator.pager_html()
 
+    def modify_actions(self):
+        """ 加工actions里的函数，用于在前端显示 """
+        result = []
+        for func in self.actions:
+            tmp = {"func_name": func.__name__, "text": func.short_desc}
+            result.append(tmp)
+
+        return result
+
     def head_list(self):
-        """处理表头信息"""
+        """ 处理表头信息 """
 
         def header(self):
+            ''' 生成器 '''
             if not self.list_display:  # 如果没有自定义list_display
                 yield self.model_class._meta.model_name.upper()
 
@@ -58,14 +71,16 @@ class ChangeList:
         return header(self)
 
     def data_list(self):
-        """处理数据部分"""
+        """ 处理表格主体部分 """
 
         def data(self):
+            ''' 生成器 '''
             for obj in self.show_obj_list:
                 if not self.list_display:  # 如果没有自定义list_display
                     yield [obj]
 
                 def inner(self, obj):
+                    ''' 嵌套生成器 '''
                     for field_name in self.list_display:
                         if isinstance(field_name, str):
                             val = getattr(obj, field_name)
@@ -78,6 +93,7 @@ class ChangeList:
         return data(self)
 
     def get_comb_filter(self):
+        """组合筛选"""
         res_list = []
         from django.db.models import ForeignKey, ManyToManyField
         for field in self.comb_filter:
@@ -91,7 +107,9 @@ class ChangeList:
 
 
 class CrmConfig:
-    """对传入的Model表名，分配‘增删改查’等的URL"""
+    """
+    对传入的Model表名，分配‘增删改查’等的URL
+    """
 
     ###### 初始化 ######
     def __init__(self, model_class, site_obj):
@@ -108,23 +126,32 @@ class CrmConfig:
     show_search_form = False
     search_fields = []
     search_input_name = '_q'
-    model_form_class = None  # 在派生类里指定ModelForm
+    model_form_class = None  # 在派生类里指定自定义的ModelForm
     list_per_page = 10
+    actions = []
     comb_filter = []
 
     def get_show_add_btn(self):
-        # 根据权限，设置是否显示“添加”按钮
+        """ 根据权限，设置是否显示“添加”按钮 """
         return self.show_add_btn
 
     def get_show_search_form(self):
-        """设置是否显示搜索框组"""
+        """ 设置是否显示搜索框组 """
         return self.show_search_form
 
     def get_search_fields(self):
-        """要搜索的字段"""
+        """ 要搜索的字段 """
         return self.search_fields
 
+    def get_actions(self):
+        """ 获取actions里的函数名 """
+        result = []
+        if self.actions:
+            result.extend(self.actions)
+        return self.actions
+
     def get_comb_filter(self):
+        """ 获取要进行组合筛选的字段 """
         result = []
         if self.comb_filter:
             result.extend(self.comb_filter)
@@ -147,13 +174,13 @@ class CrmConfig:
         url_verbose_name = '%s_%s_delete' % (self.app_label, self.model_name)
         return reverse(url_verbose_name, args=(nid,))
 
-    # 列表页面的多选框、编辑、删除，动态填充<a>标签的href属性 #
+    # 列表页面的多选框、添加、编辑、删除标签，动态填充<a>标签的href属性 #
     def checkbox(self, obj=None, is_header=False):
         if is_header:
-            return mark_safe('<input type="checkbox">')
-        return mark_safe('<input type="checkbox" name="obj" value="%s">' % obj.id)
+            return mark_safe('<input type="checkbox" id="checkbox">')
+        return mark_safe('<input type="checkbox" name="obj_id" value="%s">' % obj.id)
 
-    def ele_add(self):
+    def ele_add_href(self):
         if self.request.GET:
             params_dict = QueryDict(mutable=True)
             params_dict[self.query_dict_key] = self.request.GET.urlencode()
@@ -185,6 +212,7 @@ class CrmConfig:
 
     # 在默认的list_display中添加checkbox、change、delete方法 #
     def get_list_display(self):
+        """ changelist页面要显示的列 """
         result = []
         if self.list_display:
             result.extend(self.list_display)
@@ -217,36 +245,27 @@ class CrmConfig:
 
         return urlpatterns
 
-    ### 在get_urls()的基础上自定义其他URL，在派生类中重写 ###
     def extra_urls(self):
+        """ 在get_urls()的基础上自定义其他URL，在派生类中重写 """
         return []
 
     @property
     def urls(self):
         return self.get_urls()
 
-    def get_model_form_class(self):
-        """动态生成ModelForm"""
-        if self.model_form_class:
-            return self.model_form_class
+    ###### 增删改查URL对应的视图函数及其附属函数 ######
 
-        class PrototypeModelForm(ModelForm):
-            class Meta:
-                model = self.model_class
-                fields = '__all__'
+    def get_search_condition(self):
+        """
+        从URL和搜索框中获取数据库的筛选条件；
+        生成用于保留搜索条件的参数
+        """
+        kew_word = self.request.GET.get(self.search_input_name)
 
-        return PrototypeModelForm
+        condition1 = Q()  # 搜索框条件
+        condition2 = Q()  # 地址栏的条件
+        condition = Q()  # 最终条件
 
-    ###### 增删改查URL对应的视图函数 ######
-
-    def changelist_view(self, request, *args, **kwargs):
-        ### 生成最终匹配条件，获取QuerySet ###
-
-        kew_word = request.GET.get(self.search_input_name)
-
-        condition = Q()
-        condition1 = Q()
-        condition2 = Q()
         pager_params = QueryDict(mutable=True)
 
         condition1.connector = 'OR'
@@ -258,7 +277,7 @@ class CrmConfig:
                 else:
                     condition1.children.append((field, kew_word))
 
-        for field, value in request.GET.items():
+        for field, value in self.request.GET.items():
             if field != 'page':
                 pager_params[field] = value
                 if field != self.search_input_name:
@@ -267,14 +286,46 @@ class CrmConfig:
         condition.add(condition1, 'AND')
         condition.add(condition2, 'AND')
 
-        obj_list = self.model_class.objects.filter(condition)  # 根据条件查询数据库
+        return pager_params, condition
 
-        ### 实例化ChangeList对象 ###
-        cl = ChangeList(self, obj_list, pager_params)  # 传入当前对象
+    def changelist_view(self, request, *args, **kwargs):
+        """
+        展示记录
+        """
+        if request.method == 'GET':
+            pager_params, condition = self.get_search_condition()
+            obj_list = self.model_class.objects.filter(condition)  # 根据条件查询数据库
 
-        return render(request, 'thanos/changelist_view.html', {"cl": cl})
+            ### 实例化ChangeList对象 ###
+            cl = ChangeList(self, obj_list, pager_params)  # 传入当前对象
+
+            return render(request, 'thanos/changelist_view.html', {"cl": cl})
+        else:
+            action_func = getattr(self, request.POST.get('action'))
+            ret = action_func(request)
+            if ret:
+                return ret
+
+            return redirect(request.get_full_path())
+
+    def get_model_form_class(self):
+        """
+        动态生成ModelForm，用于添加、编辑页面生成Form表单
+        """
+        if self.model_form_class:
+            return self.model_form_class
+
+        class PrototypeModelForm(ModelForm):
+            class Meta:
+                model = self.model_class
+                fields = '__all__'
+
+        return PrototypeModelForm
 
     def add_view(self, request, *args, **kwargs):
+        """
+        添加记录
+        """
         model_form = self.get_model_form_class()
         if request.method == 'GET':
             add_edit_form = model_form()
@@ -293,19 +344,24 @@ class CrmConfig:
                 return redirect('%s' % self.get_changelist_url())
 
     def delete_view(self, request, nid, *args, **kwargs):
-        if request.method == 'GET':
+        """
+        删除记录
+        """
+        if not request.is_ajax():
             return render(request, 'thanos/delete_view.html')
         else:
-            opt = json.loads(request.body.decode()).get('opt')
+            opt = request.GET.get('opt')
+
             res_dict = {"status": True, "error_msg": None, "rtn_url": None}
             try:
                 if opt == '确定':
                     self.model_class.objects.filter(pk=nid).delete()
-                if request.GET:
-                    res_dict['rtn_url'] = '%s?%s' % (self.get_changelist_url(), request.GET.get(self.query_dict_key))
+
+                next_to = request.GET.get(self.query_dict_key)
+                if next_to:
+                    res_dict['rtn_url'] = '%s?%s' % (self.get_changelist_url(), next_to)
                 else:
                     res_dict['rtn_url'] = '%s' % self.get_changelist_url()
-
 
             except Exception as e:
                 res_dict['status'] = False
@@ -314,6 +370,9 @@ class CrmConfig:
             return JsonResponse(res_dict)
 
     def change_view(self, request, nid, *args, **kwargs):
+        """
+        修改记录
+        """
         model_form = self.get_model_form_class()
         current_obj = self.model_class.objects.filter(pk=nid).first()
         if not current_obj:

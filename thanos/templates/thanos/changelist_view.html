@@ -32,8 +32,9 @@
         <div class="form-group col-md-3">
             <select name="action" id="" class="form-control">
                 <option>---------------</option>
-                <option value="init">批量初始化</option>
-                <option value="del">批量删除</option>
+                {% for dict_item in cl.modify_actions %}
+                    <option value="{{ dict_item.func_name }}">{{ dict_item.text }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="col-md-1">
@@ -44,7 +45,7 @@
         <!-- 添加记录按钮 -->
         {% if cl.show_add_btn %}
             <div class="row" style="padding: 0 30px;margin-bottom: 10px">
-                <a href="{{ cl.add_url }}" class="btn btn-success">添加记录</a>
+                <a href="{{ cl.add_href }}" class="btn btn-success">添加记录</a>
             </div>
             <p></p>
         {% endif %}
@@ -62,6 +63,8 @@
 </div>
 
 
+<script src="{% static  'thanos/jquery-3.2.1.min.js' %}"></script>
 <script src="{% static 'thanos/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'thanos/js/changelist_view.js' %}"></script>
 </body>
 </html>

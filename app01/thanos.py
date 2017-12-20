@@ -1,7 +1,10 @@
+import json
+
 from django.conf.urls import url, include
 from django.utils.safestring import mark_safe
 from django.forms import ModelForm
 from django.shortcuts import render, redirect, reverse, HttpResponse
+from django.http import JsonResponse
 
 from thanos.service import crm
 from app01 import models
@@ -43,6 +46,23 @@ class UserInfoConfig(crm.CrmConfig):
     list_display = ['username', 'email']
     show_add_btn = True
     model_form_class = UserInfoForm
+
+    def multi_init(self, request):
+        """批量初始化"""
+        pk_list = request.POST.getlist('obj_id')
+        print('执行初始化函数')
+
+    multi_init.short_desc = '批量初始化'
+
+    def multi_del(self, request):
+        """批量删除"""
+        pk_list = request.POST.getlist('obj_id')
+        self.model_class.objects.filter(pk__in=pk_list).delete()
+
+    multi_del.short_desc = '批量删除'
+
+    ### 自定义action函数 ###
+    actions = [multi_init, multi_del]
 
     show_search_form = True
     search_fields = ['username__contains', 'email__contains']
