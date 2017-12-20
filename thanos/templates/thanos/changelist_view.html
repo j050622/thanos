@@ -26,21 +26,24 @@
         </div>
     </form>
 
-    <!-- actions -->
     <form method="post" class="form-horizontal">
         {% csrf_token %}
-        <div class="form-group col-md-3">
-            <select name="action" id="" class="form-control">
-                <option>---------------</option>
-                {% for dict_item in cl.modify_actions %}
-                    <option value="{{ dict_item.func_name }}">{{ dict_item.text }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-1">
-            <button class="btn btn-primary">GO</button>
-        </div>
-        <div class="clearfix"></div>
+
+        {% if cl.show_actions %}
+            <!-- actions -->
+            <div class="form-group col-md-3">
+                <select name="action" id="" class="form-control">
+                    <option>---------------</option>
+                    {% for dict_item in cl.modify_actions %}
+                        <option value="{{ dict_item.func_name }}">{{ dict_item.text }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button class="btn btn-primary">GO</button>
+            </div>
+            <div class="clearfix"></div>
+        {% endif %}
 
         <!-- 添加记录按钮 -->
         {% if cl.show_add_btn %}

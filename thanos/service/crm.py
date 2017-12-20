@@ -23,6 +23,7 @@ class ChangeList:
         self.search_input_name = config_obj.search_input_name
         self.list_per_page = config_obj.list_per_page
         self.actions = config_obj.get_actions()
+        self.show_actions = config_obj.get_show_actions()
 
         self.comb_filter = config_obj.get_comb_filter()
 
@@ -129,6 +130,7 @@ class CrmConfig:
     model_form_class = None  # 在派生类里指定自定义的ModelForm
     list_per_page = 10
     actions = []
+    show_actions = False
     comb_filter = []
 
     def get_show_add_btn(self):
@@ -149,6 +151,10 @@ class CrmConfig:
         if self.actions:
             result.extend(self.actions)
         return self.actions
+
+    def get_show_actions(self):
+        """设置是否显示actions栏（批量操作）"""
+        return self.show_actions
 
     def get_comb_filter(self):
         """ 获取要进行组合筛选的字段 """

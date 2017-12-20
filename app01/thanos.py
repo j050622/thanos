@@ -46,6 +46,7 @@ class UserInfoConfig(crm.CrmConfig):
     list_display = ['username', 'email']
     show_add_btn = True
     model_form_class = UserInfoForm
+    show_actions = True
 
     def multi_init(self, request):
         """批量初始化"""
