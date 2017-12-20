@@ -1,3 +1,3 @@
 from django.shortcuts import render
 
-# Create your views here.
+from app02.models import UserInfo, Role

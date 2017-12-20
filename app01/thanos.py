@@ -45,8 +45,8 @@ class UserInfoConfig(crm.CrmConfig):
     model_form_class = UserInfoForm
 
     show_search_form = True
-    # search_fields = ['username__contains', 'email__contains', 'id__contains']
-    search_fields = ['username__contains', 'email__contains', 'id__contains', 'id__gt']
+    search_fields = ['username__contains', 'email__contains']
+    # search_fields = ['username__contains', 'email__contains', 'id__contains', 'id__gt']
 
 
 ############## 注册 ###############

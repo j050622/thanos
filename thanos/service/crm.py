@@ -1,4 +1,5 @@
 import json
+from types import FunctionType, MethodType
 
 from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.utils.safestring import mark_safe
@@ -20,6 +21,7 @@ class ChangeList:
         self.show_search_form = config_obj.get_show_search_form()
         self.search_input_name = config_obj.search_input_name
         self.list_per_page = config_obj.list_per_page
+        self.comb_filter = config_obj.get_comb_filter()
 
         # 基本属性
         self.config_obj = config_obj
@@ -27,6 +29,7 @@ class ChangeList:
         self.model_class = config_obj.model_class
         self.model_name = config_obj.model_class._meta.model_name
         self.add_url = config_obj.ele_add()
+        self.search_input_val = config_obj.request.GET.get(config_obj.search_input_name, '')
 
         ### 分页操作 ###
         try:
@@ -49,7 +52,7 @@ class ChangeList:
                 if isinstance(field_name, str):
                     verbose_name = self.model_class._meta.get_field(field_name).verbose_name
                 else:
-                    verbose_name = field_name(is_header=True)
+                    verbose_name = field_name(self.config_obj, is_header=True)
                 yield verbose_name
 
         return header(self)
@@ -67,12 +70,24 @@ class ChangeList:
                         if isinstance(field_name, str):
                             val = getattr(obj, field_name)
                         else:
-                            val = field_name(obj)
+                            val = field_name(self.config_obj, obj)
                         yield val
 
                 yield inner(self, obj)
 
         return data(self)
+
+    def get_comb_filter(self):
+        res_list = []
+        from django.db.models import ForeignKey, ManyToManyField
+        for field in self.comb_filter:
+            field_obj = self.model_class._meta.get_field(field)
+            if isinstance(field_obj, ForeignKey):
+                pass
+            elif isinstance(field_obj, ManyToManyField):
+                pass
+            else:
+                pass
 
 
 class CrmConfig:
@@ -95,6 +110,7 @@ class CrmConfig:
     search_input_name = '_q'
     model_form_class = None  # 在派生类里指定ModelForm
     list_per_page = 10
+    comb_filter = []
 
     def get_show_add_btn(self):
         # 根据权限，设置是否显示“添加”按钮
@@ -107,6 +123,12 @@ class CrmConfig:
     def get_search_fields(self):
         """要搜索的字段"""
         return self.search_fields
+
+    def get_comb_filter(self):
+        result = []
+        if self.comb_filter:
+            result.extend(self.comb_filter)
+        return result
 
     # 反向解析URL #
     def get_changelist_url(self):
@@ -128,7 +150,7 @@ class CrmConfig:
     # 列表页面的多选框、编辑、删除，动态填充<a>标签的href属性 #
     def checkbox(self, obj=None, is_header=False):
         if is_header:
-            return mark_safe('<input type="checkbox" name="obj_list" value="###">')
+            return mark_safe('<input type="checkbox">')
         return mark_safe('<input type="checkbox" name="obj" value="%s">' % obj.id)
 
     def ele_add(self):
@@ -163,15 +185,15 @@ class CrmConfig:
 
     # 在默认的list_display中添加checkbox、change、delete方法 #
     def get_list_display(self):
-        data = []
+        result = []
         if self.list_display:
-            data.extend(self.list_display)
+            result.extend(self.list_display)
 
-            data.insert(0, self.checkbox)
-            data.append(self.ele_change)
-            data.append(self.ele_delete)
+            result.insert(0, CrmConfig.checkbox)
+            result.append(CrmConfig.ele_change)
+            result.append(CrmConfig.ele_delete)
 
-        return data
+        return result
 
     ###### 增删改查URL分发 ######
     def get_urls(self):
@@ -219,6 +241,7 @@ class CrmConfig:
 
     def changelist_view(self, request, *args, **kwargs):
         ### 生成最终匹配条件，获取QuerySet ###
+
         kew_word = request.GET.get(self.search_input_name)
 
         condition = Q()

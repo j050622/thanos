@@ -13,32 +13,44 @@
 <body>
 <div class="container">
 
-    {#    # "model_name": self.model_name,#}
-    {#    # "show_add_btn": self.get_show_add_btn(), #}
-    {#    # "add_url": self.ele_add(),#}
-    {#    # "show_search_form": self.get_show_search_form(), #}
-    {#    # "search_input_name": self.search_input_name,#}
-    {#    # "head_list": cl.head_list(),#}
-    {#    # "data_list": cl.data_list(),#}
-    {#    # "pager_html": pager_html#}
-
-
     <h2>{{ cl.model_name }}列表</h2>
-    {% if cl.show_add_btn %}
-        <a href="{{ cl.add_url }}" class="btn btn-primary">添加记录</a>
-    {% endif %}
 
+    <!-- 搜索框 -->
     <form method="get" class="form-horizontal pull-right">
         <div class="form-group col-md-10">
-            <input type="text" class="form-control" name="{{ cl.search_input_name }}" placeholder="请输入搜索条件">
+            <input type="text" class="form-control" name="{{ cl.search_input_name }}" value="{{ cl.search_input_val }}"
+                   placeholder="请输入搜索条件">
         </div>
         <div class="col-md-1">
             <button class="btn btn-info"><span class="glyphicon glyphicon-search"></span></button>
         </div>
     </form>
 
-    {% show_table cl.head_list cl.data_list %}
+    <!-- actions -->
+    <form method="post" class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group col-md-3">
+            <select name="action" id="" class="form-control">
+                <option>---------------</option>
+                <option value="init">批量初始化</option>
+                <option value="del">批量删除</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <button class="btn btn-primary">GO</button>
+        </div>
+        <div class="clearfix"></div>
 
+        <!-- 添加记录按钮 -->
+        {% if cl.show_add_btn %}
+            <div class="row" style="padding: 0 30px;margin-bottom: 10px">
+                <a href="{{ cl.add_url }}" class="btn btn-success">添加记录</a>
+            </div>
+            <p></p>
+        {% endif %}
+
+        {% show_table cl.head_list cl.data_list %}
+    </form>
 
     <nav aria-label="Page navigation">
         <ul class="pagination">
