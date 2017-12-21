@@ -11,24 +11,36 @@ crm.site.register(models.Department)
 
 
 class UserInfoConfig(crm.CrmConfig):
+    show_add_btn = True
+    show_actions = True
 
     def display_gender(self, obj=None, is_header=False):
+        """显示性别"""
         if is_header:
             return '性别'
         return obj.get_gender_display()
 
-    def display_depart(self, obj=None, is_header=False):
+    def display_department(self, obj=None, is_header=False):
+        """显示部门名称"""
         if is_header:
             return '部门'
-        return 'abc'
+        return obj.department.caption
 
     def display_roles(self, obj=None, is_header=False):
+        """显示角色名"""
         if is_header:
             return '角色'
-        return 'abc'
+        text = []
+        for role_obj in obj.roles.all():
+            text.append(role_obj.name)
 
-    list_display = ['id', 'name', 'email', display_gender, display_depart, display_roles]
-    comb_filter = ['gender', 'depart', 'roles']
+        return ','.join(text)
+
+    list_display = ['id', 'username', 'email', display_gender, display_department, display_roles]
+
+    comb_filter_rows = [crm.FilterRowOption('gender'),
+                        crm.FilterRowOption('department'),
+                        crm.FilterRowOption('roles', True)]
 
 
 crm.site.register(models.UserInfo, UserInfoConfig)

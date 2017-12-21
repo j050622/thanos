@@ -10,6 +10,36 @@ from django.db.models import Q
 from .paginator import Paginator
 
 
+class FilterRowOption:
+    def __init__(self, field_name, multiple=False, condition=None):
+        self.field_name = field_name
+        self.multiple = multiple
+        self.condition = condition
+
+    def get_queryset(self, _field):
+        """获取FK和M2M字段所关联的表的所有记录"""
+        if self.condition:
+            return _field.rel.to.objects.filter(self.condition)
+
+        return _field.rel.to.objects.all()
+
+    def get_choices(self, _field):
+        """获取字段的所有choices选项"""
+        return _field.choices
+
+
+class FilterRow:
+    """把组合搜索的每一行（字段下的数据）封装成对象"""
+
+    def __init__(self, data):
+        self.data = data
+
+    def __iter__(self):
+        yield '全部'
+        for opt in self.data:
+            yield opt
+
+
 class ChangeList:
     """
     构造changelist类
@@ -24,8 +54,7 @@ class ChangeList:
         self.list_per_page = config_obj.list_per_page
         self.actions = config_obj.get_actions()
         self.show_actions = config_obj.get_show_actions()
-
-        self.comb_filter = config_obj.get_comb_filter()
+        self.comb_filter_rows = config_obj.get_comb_filter_rows()
 
         # 基本属性
         self.config_obj = config_obj
@@ -93,18 +122,21 @@ class ChangeList:
 
         return data(self)
 
-    def get_comb_filter(self):
-        """组合筛选"""
-        res_list = []
+    def gen_comb_filter(self):
+        """组合筛选函数，是一个生成器"""
         from django.db.models import ForeignKey, ManyToManyField
-        for field in self.comb_filter:
-            field_obj = self.model_class._meta.get_field(field)
-            if isinstance(field_obj, ForeignKey):
-                pass
-            elif isinstance(field_obj, ManyToManyField):
-                pass
+
+        for filter_row in self.comb_filter_rows:
+            _field = self.model_class._meta.get_field(filter_row.field_name)
+            if isinstance(_field, ForeignKey):
+                row = FilterRow(filter_row.get_queryset(_field))  # django2.0里，.rel.to要用.model
+            elif isinstance(_field, ManyToManyField):
+                row = FilterRow(filter_row.get_queryset(_field))
             else:
-                pass
+                # choices类型
+                row = FilterRow(filter_row.get_choices(_field))
+
+            yield row
 
 
 class CrmConfig:
@@ -131,7 +163,7 @@ class CrmConfig:
     list_per_page = 10
     actions = []
     show_actions = False
-    comb_filter = []
+    comb_filter_rows = []
 
     def get_show_add_btn(self):
         """ 根据权限，设置是否显示“添加”按钮 """
@@ -156,11 +188,11 @@ class CrmConfig:
         """设置是否显示actions栏（批量操作）"""
         return self.show_actions
 
-    def get_comb_filter(self):
+    def get_comb_filter_rows(self):
         """ 获取要进行组合筛选的字段 """
         result = []
-        if self.comb_filter:
-            result.extend(self.comb_filter)
+        if self.comb_filter_rows:
+            result.extend(self.comb_filter_rows)
         return result
 
     # 反向解析URL #
@@ -307,6 +339,7 @@ class CrmConfig:
 
             return render(request, 'thanos/changelist_view.html', {"cl": cl})
         else:
+            # actions
             action_func = getattr(self, request.POST.get('action'))
             ret = action_func(request)
             if ret:

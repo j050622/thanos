@@ -1,4 +1,4 @@
-.form-horizontal input:not(.btn) {
+.form-horizontal input:not(.btn), select {
     display: block;
     width: 100%;
     height: 34px;

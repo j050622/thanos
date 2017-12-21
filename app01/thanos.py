@@ -20,7 +20,7 @@ class UserInfoForm(ModelForm):
         }
 
 
-###自定义类
+### 自定义类 ###
 class RoleConfig(crm.CrmConfig):
     list_display = ['name']
     show_search_form = True

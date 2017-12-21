@@ -25,6 +25,10 @@ class Paginator:
         """生成页码按钮的html代码"""
 
         max_page_num = int(math.ceil(len(self.obj_list) / self.show_obj_cnt))
+        if max_page_num == 1:
+            # 如果只有一页，不显示分页
+            return ''
+
         params = self.params_dict.urlencode()
         if params:
             params = '&' + params

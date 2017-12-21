@@ -15,6 +15,20 @@
 
     <h2>{{ cl.model_name }}列表</h2>
 
+    <!-- 组合搜索 -->
+    <div style="border: 1px solid rebeccapurple">
+        {% for row in cl.gen_comb_filter %}
+
+            <div>
+                {% for opt in row %}
+                    <a class="btn" href="###">{{ opt }}</a>
+                {% endfor %}
+            </div>
+
+        {% endfor %}
+
+    </div>
+
     <!-- 搜索框 -->
     <form method="get" class="form-horizontal pull-right">
         <div class="form-group col-md-10">
@@ -26,11 +40,12 @@
         </div>
     </form>
 
+    <!-- 批量操作、添加记录、表格主体 -->
     <form method="post" class="form-horizontal">
         {% csrf_token %}
 
+        <!-- actions -->
         {% if cl.show_actions %}
-            <!-- actions -->
             <div class="form-group col-md-3">
                 <select name="action" id="" class="form-control">
                     <option>---------------</option>
@@ -56,12 +71,13 @@
         {% show_table cl.head_list cl.data_list %}
     </form>
 
-    <nav aria-label="Page navigation">
+
+    <!-- 分页 -->
+    <nav aria-label="Page navigation" class="text-center">
         <ul class="pagination">
             {{ cl.pager_html|safe }}
         </ul>
     </nav>
-
 
 </div>
 
