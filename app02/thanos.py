@@ -12,7 +12,9 @@ crm.site.register(models.Department)
 
 class UserInfoConfig(crm.CrmConfig):
     show_add_btn = True
-    show_actions = True
+
+    show_search_form = True
+    search_fields = ['username__contains', 'email__contains', 'gender']
 
     def display_gender(self, obj=None, is_header=False):
         """显示性别"""
@@ -38,7 +40,7 @@ class UserInfoConfig(crm.CrmConfig):
 
     list_display = ['id', 'username', 'email', display_gender, display_department, display_roles]
 
-    comb_filter_rows = [crm.FilterRowOption('gender'),
+    comb_filter_rows = [crm.FilterRowOption('gender', is_choice=True),
                         crm.FilterRowOption('department'),
                         crm.FilterRowOption('roles', True)]
 

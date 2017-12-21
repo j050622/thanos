@@ -1,20 +1,22 @@
 import json
+import copy
 
 from django.shortcuts import render, redirect, reverse
 from django.utils.safestring import mark_safe
 from django.conf.urls import url, include
 from django.forms import ModelForm
 from django.http import JsonResponse, QueryDict
-from django.db.models import Q
+from django.db.models import Q, ForeignKey, ManyToManyField, IntegerField
 
 from .paginator import Paginator
 
 
 class FilterRowOption:
-    def __init__(self, field_name, multiple=False, condition=None):
+    def __init__(self, field_name, is_multiple=False, condition=None, is_choice=False):
         self.field_name = field_name
-        self.multiple = multiple
+        self.is_multiple = is_multiple
         self.condition = condition
+        self.is_choice = is_choice
 
     def get_queryset(self, _field):
         """获取FK和M2M字段所关联的表的所有记录"""
@@ -31,13 +33,61 @@ class FilterRowOption:
 class FilterRow:
     """把组合搜索的每一行（字段下的数据）封装成对象"""
 
-    def __init__(self, data):
+    def __init__(self, row_option, data, request):
         self.data = data
+        self.row_option = row_option
+        self.request = request
+        self.params = copy.deepcopy(request.GET)
+        self.params._mutable = True
 
     def __iter__(self):
-        yield '全部'
-        for opt in self.data:
-            yield opt
+        field_name = self.row_option.field_name
+        current_pk = self.request.GET.get(field_name)
+
+        ## 生成“全部”按钮
+        # 选中的“全部”按钮添加.active，并且点击无效
+        if not current_pk:
+            yield mark_safe('<button class="btn btn-primary">全部</button>')
+            origin_pk_list = []
+        else:
+            origin_pk_list = self.params.pop(field_name)
+            url = '%s?%s' % (self.request.path, self.params.urlencode())
+            yield mark_safe('<a class="btn" href="{}">全部</a>'.format(url))
+
+        ## 生成普通按钮
+        for val in self.data:
+            if self.row_option.is_choice:
+                pk, text = val
+            else:
+                pk, text = str(val.pk), str(val)
+
+            # 搜索条件拼接
+            if not self.row_option.is_multiple:
+                # 单选
+                if current_pk == pk:
+                    ele_html = mark_safe('<button class="btn btn-primary">{}</button>'.format(text))
+                else:
+                    self.params[field_name] = pk
+                    url = '%s?%s' % (self.request.path, self.params.urlencode())
+                    ele_html = mark_safe('<a class="btn" href="{}">{}</a>'.format(url, text))
+            else:
+                # 多选
+                url_pk_list = copy.deepcopy(origin_pk_list)
+                # [1,2]
+
+                if pk in url_pk_list:
+                    url_pk_list.remove(pk)  # 点击取消
+                    self.params.setlist(field_name, url_pk_list)
+                    url = '%s?%s' % (self.request.path, self.params.urlencode())
+                    ele_html = mark_safe('<a class="btn btn-primary" href="{}">{}</a>'.format(url, text))
+                else:
+                    url_pk_list.append(pk)
+
+                    self.params.setlist(field_name, url_pk_list)
+                    url = '%s?%s' % (self.request.path, self.params.urlencode())
+                    ele_html = mark_safe('<a class="btn" href="{}">{}</a>'.format(url, text))
+
+            yield ele_html
 
 
 class ChangeList:
@@ -96,6 +146,7 @@ class ChangeList:
                     verbose_name = self.model_class._meta.get_field(field_name).verbose_name
                 else:
                     verbose_name = field_name(self.config_obj, is_header=True)
+
                 yield verbose_name
 
         return header(self)
@@ -124,17 +175,16 @@ class ChangeList:
 
     def gen_comb_filter(self):
         """组合筛选函数，是一个生成器"""
-        from django.db.models import ForeignKey, ManyToManyField
 
-        for filter_row in self.comb_filter_rows:
-            _field = self.model_class._meta.get_field(filter_row.field_name)
+        for row_option in self.comb_filter_rows:
+            _field = self.model_class._meta.get_field(row_option.field_name)
             if isinstance(_field, ForeignKey):
-                row = FilterRow(filter_row.get_queryset(_field))  # django2.0里，.rel.to要用.model
+                row = FilterRow(row_option, row_option.get_queryset(_field), self.request)  # django2.0里，.rel.to要用.model
             elif isinstance(_field, ManyToManyField):
-                row = FilterRow(filter_row.get_queryset(_field))
+                row = FilterRow(row_option, row_option.get_queryset(_field), self.request)
             else:
                 # choices类型
-                row = FilterRow(filter_row.get_choices(_field))
+                row = FilterRow(row_option, row_option.get_choices(_field), self.request)
 
             yield row
 
@@ -306,24 +356,30 @@ class CrmConfig:
 
         pager_params = QueryDict(mutable=True)
 
+        # 搜索框
         condition1.connector = 'OR'
         if kew_word:
             for field in self.get_search_fields():
-                if 'id' in field:
+                is_not_str = isinstance(self.model_class._meta.get_field(field.split('__')[0]),
+                                        (ForeignKey, ManyToManyField, IntegerField))
+                if is_not_str:
+                    # 如果搜索条件的字段不是CharField等字符串类型，则不允许跟字符串进行大小比较
                     if kew_word.isnumeric():
                         condition1.children.append((field, kew_word))
                 else:
                     condition1.children.append((field, kew_word))
 
-        for field, value in self.request.GET.items():
+        # URL中的搜索条件
+        for field in self.request.GET.keys():
+            value_list = self.request.GET.getlist(field)
             if field != 'page':
-                pager_params[field] = value
+                pager_params.setlist(field, value_list)
                 if field != self.search_input_name:
-                    condition2.children.append((field, value))
+                    # 搜索框的关键字要过滤掉
+                    condition2.children.append(('%s__in' % field, value_list))
 
         condition.add(condition1, 'AND')
         condition.add(condition2, 'AND')
-
         return pager_params, condition
 
     def changelist_view(self, request, *args, **kwargs):
@@ -332,7 +388,7 @@ class CrmConfig:
         """
         if request.method == 'GET':
             pager_params, condition = self.get_search_condition()
-            obj_list = self.model_class.objects.filter(condition)  # 根据条件查询数据库
+            obj_list = self.model_class.objects.filter(condition).distinct()  # 根据条件查询数据库
 
             ### 实例化ChangeList对象 ###
             cl = ChangeList(self, obj_list, pager_params)  # 传入当前对象
