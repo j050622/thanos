@@ -1,6 +1,3 @@
-"""
-
-"""
 import json
 import copy
 
@@ -161,9 +158,12 @@ class ChangeList:
 
         def data(self):
             ''' 生成器 '''
+
             for obj in self.show_obj_list:
+
                 if not self.list_display:
-                    yield [obj]
+                    edit_url = reverse('%s_%s_change' % (self.app_label, self.model_name), args=(obj.id,))
+                    yield [mark_safe('<a href="{}">{}</a>'.format(edit_url, str(obj)))]
 
                 def inner(self, obj):
                     ''' 嵌套生成器 '''

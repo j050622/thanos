@@ -20,19 +20,22 @@ def show_form(modelform):
 
     new_form = []
     for bound_field in modelform:
-        info = {"popUp": False, "bound_field": bound_field}
-
-        field_obj = bound_field.field
-        # print(type(field_obj))
+        info_dict = {"popUp": False, "popUp_url": None, "bound_field": bound_field}
 
         ## 只有符合条件的字段才能有添加按钮，使用popUp
         # 符合条件的字段在ModelForm中表现为ModelChoiceField或其子类，在Model中表现为FK和M2M类
+        field_obj = bound_field.field
         if isinstance(field_obj, ModelChoiceField):
             rel_class_name = field_obj.queryset.model
             if rel_class_name in site._registry:
-                print(rel_class_name)
+                app_label = rel_class_name._meta.app_label
+                model_name = rel_class_name._meta.model_name
+                base_url = reverse('%s_%s_add' % (app_label, model_name))
+                popUp_url = '%s?_popbackid=%s' % (base_url, bound_field.auto_id)
 
-                popUp_url = ''
-                info["popUp"] = True
-                info["popUp_url"] = popUp_url
-    return {}
+                info_dict["popUp"] = True
+                info_dict["popUp_url"] = popUp_url
+
+        new_form.append(info_dict)
+
+    return {"add_edit_form": new_form}

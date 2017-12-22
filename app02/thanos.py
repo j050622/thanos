@@ -7,7 +7,14 @@ from thanos.service import crm
 from app02 import models
 
 crm.site.register(models.Role)
-crm.site.register(models.Department)
+
+
+class DConfig(crm.CrmConfig):
+    list_display = []
+    show_add_btn = True
+
+
+crm.site.register(models.Department, DConfig)
 
 
 class UserInfoConfig(crm.CrmConfig):
@@ -34,7 +41,18 @@ class UserInfoConfig(crm.CrmConfig):
 
         return ','.join(text)
 
-    list_display = ['id', 'username', 'email', display_gender, display_department, display_roles]
+    list_display = ['username', 'email', display_gender, display_department, display_roles]
+    list_editable = ['username']
+
+    def get_list_display(self):
+        result = []
+        if self.list_display:
+            result.extend(self.list_display)
+
+            result.insert(0, crm.CrmConfig.checkbox)
+            result.append(crm.CrmConfig.ele_delete)
+        return result
+
     show_add_btn = True
     show_search_form = True
     search_fields = ['username__contains', 'email__contains', 'gender']

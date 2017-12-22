@@ -16,3 +16,16 @@
     -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
+
+div.add {
+    display: inline-block;
+    padding-top: 7px;
+}
+
+span.glyphicon-plus {
+    color: #1b6d85;
+}
+
+span.glyphicon-plus:hover {
+    color: #28a4c9;
+}

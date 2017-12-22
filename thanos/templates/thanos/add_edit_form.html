@@ -1,16 +1,21 @@
 <form class="form-horizontal" method="post" novalidate>
     {% csrf_token %}
-    {% for field in add_edit_form %}
+    {% for field_dict in add_edit_form %}
         <div class="form-group">
-            <label for="" class="col-sm-2 control-label">{{ field.label }}</label>
+            <label for="" class="col-sm-2 control-label">{{ field_dict.bound_field.label }}</label>
             <div class="col-sm-6">
-                {{ field }}
+                {{ field_dict.bound_field }}
             </div>
 
-            <!-- 判断是否可以显示+号标志 -->
-            <div style="display: inline-block;padding-top: 6px"><span class="glyphicon glyphicon-plus"></span></div>
+            <!-- 添加符号 -->
+            {% if field_dict.popUp %}
+                <div class="add">
+                    <span onclick="popUp('{{ field_dict.popUp_url }}')" class="glyphicon glyphicon-plus"></span>
+                </div>
+            {% endif %}
 
-            <span class="help-block">{{ field.errors.0 }}</span>
+            <!-- 错误信息 -->
+            <span class="help-block">{{ field_dict.bound_field.errors.0 }}</span>
         </div>
     {% endfor %}
 
