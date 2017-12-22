@@ -3,14 +3,14 @@ from django.utils.safestring import mark_safe
 from django.forms import ModelForm
 from django.shortcuts import render, redirect, reverse, HttpResponse
 
-from thanos.service import crm
+from thanos.service import admin
 from app02 import models
 
-crm.site.register(models.Role)
-crm.site.register(models.Department)
+admin.site.register(models.Role)
+admin.site.register(models.Department)
 
 
-class UserInfoConfig(crm.CrmConfig):
+class UserInfoConfig(admin.CrmConfig):
     show_add_btn = True
 
     show_search_form = True
@@ -40,9 +40,9 @@ class UserInfoConfig(crm.CrmConfig):
 
     list_display = ['id', 'username', 'email', display_gender, display_department, display_roles]
 
-    comb_filter_rows = [crm.FilterRowOption('gender', is_choice=True),
-                        crm.FilterRowOption('department'),
-                        crm.FilterRowOption('roles', True)]
+    comb_filter_rows = [admin.FilterRowOption('gender', is_choice=True),
+                        admin.FilterRowOption('department'),
+                        admin.FilterRowOption('roles', True)]
 
 
-crm.site.register(models.UserInfo, UserInfoConfig)
+admin.site.register(models.UserInfo, UserInfoConfig)

@@ -6,7 +6,7 @@ from django.forms import ModelForm
 from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.http import JsonResponse
 
-from thanos.service import crm
+from thanos.service import admin
 from app01 import models
 
 
@@ -21,7 +21,7 @@ class UserInfoForm(ModelForm):
 
 
 ### 自定义类 ###
-class RoleConfig(crm.CrmConfig):
+class RoleConfig(admin.CrmConfig):
     list_display = ['name']
     show_search_form = True
     search_fields = ['name__contains']
@@ -42,7 +42,7 @@ class RoleConfig(crm.CrmConfig):
         return urlpatterns
 
 
-class UserInfoConfig(crm.CrmConfig):
+class UserInfoConfig(admin.CrmConfig):
     list_display = ['username', 'email']
     show_add_btn = True
     model_form_class = UserInfoForm
@@ -71,5 +71,5 @@ class UserInfoConfig(crm.CrmConfig):
 
 
 ############## 注册 ###############
-crm.site.register(models.Role, RoleConfig)
-crm.site.register(models.UserInfo, UserInfoConfig)
+admin.site.register(models.Role, RoleConfig)
+admin.site.register(models.UserInfo, UserInfoConfig)

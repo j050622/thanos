@@ -6,7 +6,11 @@
             <div class="col-sm-6">
                 {{ field }}
             </div>
-            <span class="help-block">{{ field.errors.0 }}ZZ</span>
+
+            <!-- 判断是否可以显示+号标志 -->
+            <div style="display: inline-block;padding-top: 6px"><span class="glyphicon glyphicon-plus"></span></div>
+
+            <span class="help-block">{{ field.errors.0 }}</span>
         </div>
     {% endfor %}
 

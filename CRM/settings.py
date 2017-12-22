@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'thanos.apps.ThanosConfig',
     'app01.apps.App01Config',
     'app02.apps.App02Config',
+    'app03.apps.App03Config',
 ]
 
 MIDDLEWARE = [

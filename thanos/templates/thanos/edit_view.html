@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load my_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,10 +15,14 @@
 
 <div class="container">
     <h2>{{ model_name }}编辑</h2>
-    {% include 'thanos/add_edit_base.html' %}
+    {#{% include 'thanos/add_edit_form.html' %}#}
+    {% show_form add_edit_form %}
 
 </div>
 
 
+<script src="{% static 'thanos/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'thanos/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'thanos/js/add_edit.js' %}"></script>
 </body>
 </html>
