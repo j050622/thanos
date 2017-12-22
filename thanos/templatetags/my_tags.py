@@ -2,7 +2,7 @@ from django.template import Library
 from django.utils.safestring import mark_safe
 from django.shortcuts import reverse
 
-from thanos.service.admin import site
+from thanos.service.crm import site
 
 register = Library()
 

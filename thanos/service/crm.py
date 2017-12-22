@@ -1,3 +1,6 @@
+"""
+
+"""
 import json
 import copy
 
@@ -98,6 +101,7 @@ class ChangeList:
     def __init__(self, config_obj, obj_list, pager_params):
         # 配置信息
         self.list_display = config_obj.get_list_display()
+        self.list_editable = config_obj.get_list_editable()
         self.show_add_btn = config_obj.get_show_add_btn()
         self.show_search_form = config_obj.get_show_search_form()
         self.search_input_name = config_obj.search_input_name
@@ -110,7 +114,8 @@ class ChangeList:
         self.config_obj = config_obj
         self.request = config_obj.request
         self.model_class = config_obj.model_class
-        self.model_name = config_obj.model_class._meta.model_name
+        self.model_name = config_obj.model_name
+        self.app_label = config_obj.app_label
         self.add_href = config_obj.ele_add_href()
         self.search_input_val = config_obj.request.GET.get(config_obj.search_input_name, '')
 
@@ -157,7 +162,7 @@ class ChangeList:
         def data(self):
             ''' 生成器 '''
             for obj in self.show_obj_list:
-                if not self.list_display:  # 如果没有自定义list_display
+                if not self.list_display:
                     yield [obj]
 
                 def inner(self, obj):
@@ -165,6 +170,9 @@ class ChangeList:
                     for field_name in self.list_display:
                         if isinstance(field_name, str):
                             val = getattr(obj, field_name)
+                            if field_name in self.list_editable:
+                                edit_url = reverse('%s_%s_change' % (self.app_label, self.model_name), args=(obj.id,))
+                                val = mark_safe('<a href="{}">{}</a>'.format(edit_url, val))
                         else:
                             val = field_name(self.config_obj, obj)
                         yield val
@@ -191,29 +199,38 @@ class ChangeList:
 
 class CrmConfig:
     """
-    对传入的Model表名，分配‘增删改查’等的URL
+    对传入的Model表名，分配‘增删改查’等的URL及其对应的视图函数
+    可以对相应页面的显示进行配置
     """
 
     ###### 初始化 ######
     def __init__(self, model_class, site_obj):
         self.model_class = model_class
-        self.model_name = model_class._meta.model_name
         self.site_obj = site_obj
-        self.app_label = self.model_class._meta.app_label
+
+        self.model_name = model_class._meta.model_name
+        self.app_label = model_class._meta.app_label
         self.request = None
         self.query_dict_key = '_next'
+        self.search_input_name = '_q'
 
     ###### 基本配置 ######
     list_display = []  # 要在列表页面显示的列
+    list_editable = []  # 供点击进入编辑页面的字段
     show_add_btn = False  # 默认不显示添加按钮
     show_search_form = False
-    search_fields = []
-    search_input_name = '_q'
+    search_fields = []  # 供搜索的字段
     model_form_class = None  # 在派生类里指定自定义的ModelForm
     list_per_page = 10
-    actions = []
+    actions = []  # 批量操作的函数
     show_actions = False
-    comb_filter_rows = []
+    comb_filter_rows = []  # 供组合搜索的字段
+
+    def get_list_editable(self):
+        result = []
+        if self.list_editable:
+            result.extend(self.list_editable)
+        return result
 
     def get_show_add_btn(self):
         """ 根据权限，设置是否显示“添加”按钮 """
@@ -232,7 +249,7 @@ class CrmConfig:
         result = []
         if self.actions:
             result.extend(self.actions)
-        return self.actions
+        return result
 
     def get_show_actions(self):
         """设置是否显示actions栏（批量操作）"""
@@ -342,7 +359,6 @@ class CrmConfig:
         return self.get_urls()
 
     ###### 增删改查URL对应的视图函数及其附属函数 ######
-
     def get_search_condition(self):
         """
         从URL和搜索框中获取数据库的筛选条件；
@@ -487,7 +503,7 @@ class CrmConfig:
 
 
 class CrmSite:
-    '''用于分发CRM下的基础URL，并遍历所有注册的类，获取每个类对应的表下的增删改查等URl'''
+    '''用于分发下的基础URL，并遍历所有注册的类，获取每个类对应的表下的增删改查等URl'''
 
     def __init__(self):
         self._registry = {}

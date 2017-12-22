@@ -3,18 +3,14 @@ from django.utils.safestring import mark_safe
 from django.forms import ModelForm
 from django.shortcuts import render, redirect, reverse, HttpResponse
 
-from thanos.service import admin
+from thanos.service import crm
 from app02 import models
 
-admin.site.register(models.Role)
-admin.site.register(models.Department)
+crm.site.register(models.Role)
+crm.site.register(models.Department)
 
 
-class UserInfoConfig(admin.CrmConfig):
-    show_add_btn = True
-
-    show_search_form = True
-    search_fields = ['username__contains', 'email__contains', 'gender']
+class UserInfoConfig(crm.CrmConfig):
 
     def display_gender(self, obj=None, is_header=False):
         """显示性别"""
@@ -39,10 +35,12 @@ class UserInfoConfig(admin.CrmConfig):
         return ','.join(text)
 
     list_display = ['id', 'username', 'email', display_gender, display_department, display_roles]
+    show_add_btn = True
+    show_search_form = True
+    search_fields = ['username__contains', 'email__contains', 'gender']
+    comb_filter_rows = [crm.FilterRowOption('gender', is_choice=True),
+                        crm.FilterRowOption('department'),
+                        crm.FilterRowOption('roles', True)]
 
-    comb_filter_rows = [admin.FilterRowOption('gender', is_choice=True),
-                        admin.FilterRowOption('department'),
-                        admin.FilterRowOption('roles', True)]
 
-
-admin.site.register(models.UserInfo, UserInfoConfig)
+crm.site.register(models.UserInfo, UserInfoConfig)

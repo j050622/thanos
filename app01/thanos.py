@@ -6,7 +6,7 @@ from django.forms import ModelForm
 from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.http import JsonResponse
 
-from thanos.service import admin
+from thanos.service import crm
 from app01 import models
 
 
@@ -21,7 +21,7 @@ class UserInfoForm(ModelForm):
 
 
 ### 自定义类 ###
-class RoleConfig(admin.CrmConfig):
+class RoleConfig(crm.CrmConfig):
     list_display = ['name']
     show_search_form = True
     search_fields = ['name__contains']
@@ -42,11 +42,24 @@ class RoleConfig(admin.CrmConfig):
         return urlpatterns
 
 
-class UserInfoConfig(admin.CrmConfig):
+class UserInfoConfig(crm.CrmConfig):
     list_display = ['username', 'email']
+    list_editable = ['username']
+
+    def get_list_display(self):
+        # 重写
+        result = []
+        if self.list_display:
+            result.extend(self.list_display)
+            result.insert(0, crm.CrmConfig.checkbox)
+            result.append(crm.CrmConfig.ele_delete)
+        return result
+
     show_add_btn = True
     model_form_class = UserInfoForm
     show_actions = True
+    show_search_form = True
+    search_fields = ['username__contains', 'email__contains']
 
     def multi_init(self, request):
         """批量初始化"""
@@ -65,11 +78,7 @@ class UserInfoConfig(admin.CrmConfig):
     ### 自定义action函数 ###
     actions = [multi_init, multi_del]
 
-    show_search_form = True
-    search_fields = ['username__contains', 'email__contains']
-    # search_fields = ['username__contains', 'email__contains', 'id__contains', 'id__gt']
-
 
 ############## 注册 ###############
-admin.site.register(models.Role, RoleConfig)
-admin.site.register(models.UserInfo, UserInfoConfig)
+crm.site.register(models.Role, RoleConfig)
+crm.site.register(models.UserInfo, UserInfoConfig)
