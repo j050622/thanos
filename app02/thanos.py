@@ -43,6 +43,7 @@ class UserInfoConfig(crm.CrmConfig):
 
     list_display = ['username', 'email', display_gender, display_department, display_roles]
     list_editable = ['username']
+    list_per_page = 3
 
     def get_list_display(self):
         result = []

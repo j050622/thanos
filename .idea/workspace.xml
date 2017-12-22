@@ -6,13 +6,10 @@
       <change beforePath="$PROJECT_DIR$/app02/thanos.py" afterPath="$PROJECT_DIR$/app02/thanos.py" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
       <change beforePath="$PROJECT_DIR$/thanos/service/crm.py" afterPath="$PROJECT_DIR$/thanos/service/crm.py" />
-      <change beforePath="$PROJECT_DIR$/thanos/static/thanos/css/add_edit_view.css" afterPath="$PROJECT_DIR$/thanos/static/thanos/css/add_edit_view.css" />
       <change beforePath="$PROJECT_DIR$/thanos/static/thanos/js/add_edit.js" afterPath="$PROJECT_DIR$/thanos/static/thanos/js/add_edit.js" />
-      <change beforePath="$PROJECT_DIR$/thanos/templates/thanos/add_edit_form.html" afterPath="$PROJECT_DIR$/thanos/templates/thanos/add_edit_form.html" />
       <change beforePath="$PROJECT_DIR$/thanos/templates/thanos/add_view.html" afterPath="$PROJECT_DIR$/thanos/templates/thanos/add_view.html" />
       <change beforePath="$PROJECT_DIR$/thanos/templates/thanos/edit_view.html" afterPath="$PROJECT_DIR$/thanos/templates/thanos/edit_view.html" />
       <change beforePath="$PROJECT_DIR$/thanos/templatetags/my_tags.py" afterPath="$PROJECT_DIR$/thanos/templatetags/my_tags.py" />
-      <change beforePath="$PROJECT_DIR$/xxx.py" afterPath="" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -25,6 +22,7 @@
     <SUITE FILE_PATH="coverage/CRM$xxx.coverage" NAME="xxx Coverage Results" MODIFIED="1513687854387" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/CRM$django_version__1_.coverage" NAME="django_version (1) Coverage Results" MODIFIED="1513930503284" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/CRM$django_version.coverage" NAME="django_version Coverage Results" MODIFIED="1513930519473" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/CRM$fsdfa.coverage" NAME="fsdfa Coverage Results" MODIFIED="1513947225449" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="DatabaseView">
     <option name="SHOW_INTERMEDIATE" value="true" />
@@ -62,8 +60,8 @@
       <file leaf-file-name="my_tags.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/thanos/templatetags/my_tags.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="630">
-              <caret line="41" column="0" lean-forward="true" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+            <state relative-caret-position="171">
+              <caret line="33" column="41" lean-forward="false" selection-start-line="33" selection-start-column="41" selection-end-line="33" selection-end-column="41" />
               <folding />
             </state>
           </provider>
@@ -72,37 +70,39 @@
       <file leaf-file-name="crm.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/thanos/service/crm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="567">
-              <caret line="452" column="27" lean-forward="false" selection-start-line="452" selection-start-column="27" selection-end-line="452" selection-end-column="27" />
+            <state relative-caret-position="450">
+              <caret line="332" column="0" lean-forward="true" selection-start-line="332" selection-start-column="0" selection-end-line="332" selection-end-column="0" />
               <folding>
-                <element signature="e#388#921#0" expanded="false" />
-                <element signature="e#945#3203#0" expanded="false" />
-                <element signature="e#3327#4623#0" expanded="false" />
-                <element signature="e#4663#4872#0" expanded="false" />
-                <element signature="e#4907#5454#0" expanded="false" />
-                <element signature="e#4961#5425#0" expanded="false" />
-                <element signature="e#5543#6529#0" expanded="false" />
-                <element signature="e#6597#7215#0" expanded="false" />
-                <element signature="e#11200#11489#0" expanded="false" />
-                <element signature="e#11552#12226#0" expanded="false" />
-                <element signature="e#12262#12319#0" expanded="false" />
-                <element signature="e#12470#13851#0" expanded="false" />
-                <element signature="e#13918#14566#0" expanded="false" />
-                <element signature="e#14612#14923#0" expanded="false" />
-                <element signature="e#15906#16727#0" expanded="false" />
-                <element signature="e#16795#17622#0" expanded="false" />
-                <element signature="e#17644#18533#0" expanded="false" />
+                <element signature="e#0#11#0" expanded="true" />
+                <element signature="e#402#935#0" expanded="false" />
+                <element signature="e#4733#4942#0" expanded="false" />
+                <element signature="e#4977#5524#0" expanded="false" />
+                <element signature="e#5031#5495#0" expanded="false" />
+                <element signature="e#7032#7650#0" expanded="false" />
+                <element signature="e#11987#12661#0" expanded="false" />
+                <element signature="e#12697#12754#0" expanded="false" />
+                <element signature="e#12905#14286#0" expanded="false" />
+                <element signature="e#14353#15001#0" expanded="false" />
+                <element signature="e#15047#15358#0" expanded="false" />
+                <element signature="e#15418#16646#0" expanded="false" />
+                <element signature="e#16714#17535#0" expanded="false" />
+                <element signature="e#18453#19342#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="add_edit_form.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/add_edit_form.html">
+      <file leaf-file-name="thanos.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app02/thanos.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="17" column="21" lean-forward="true" selection-start-line="17" selection-start-column="21" selection-end-line="17" selection-end-column="21" />
-              <folding />
+            <state relative-caret-position="258">
+              <caret line="48" column="19" lean-forward="false" selection-start-line="48" selection-start-column="19" selection-end-line="48" selection-end-column="19" />
+              <folding>
+                <element signature="e#0#41#0" expanded="true" />
+                <element signature="e#512#608#0" expanded="false" />
+                <element signature="e#679#775#0" expanded="false" />
+                <element signature="e#841#1027#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -110,8 +110,18 @@
       <file leaf-file-name="add_edit.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/thanos/static/thanos/js/add_edit.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+            <state relative-caret-position="243">
+              <caret line="9" column="29" lean-forward="false" selection-start-line="9" selection-start-column="29" selection-end-line="9" selection-end-column="29" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="popUp_response.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/popUp_response.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="216">
+              <caret line="8" column="7" lean-forward="false" selection-start-line="8" selection-start-column="7" selection-end-line="8" selection-end-column="7" />
               <folding />
             </state>
           </provider>
@@ -123,25 +133,16 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
-        <option value="Python Script" />
-        <option value="HTML File" />
         <option value="JavaScript File" />
+        <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>search</find>
-      <find>if '</find>
-      <find>if 'id</find>
-      <find>get_field</find>
-      <find>Forei</find>
-      <find>primary</find>
-      <find>warning</find>
-      <find>get_se</find>
       <find>set</find>
       <find>multiple</find>
-      <find>query</find>
       <find>q</find>
       <find>del_pk_list</find>
       <find>origin_pk_list</find>
@@ -160,7 +161,16 @@
       <find>admin.</find>
       <find>info</find>
       <find>field</find>
+      <find>inser</find>
+      <find>is_hea</find>
+      <find>get_list</find>
+      <find>data_list</find>
+      <find>prin</find>
       <find>print</find>
+      <find>list_per</find>
+      <find>Querydi</find>
+      <find>query</find>
+      <find>querydi</find>
     </findStrings>
     <replaceStrings>
       <replace>field</replace>
@@ -228,15 +238,17 @@
         <option value="$PROJECT_DIR$/app03/models.py" />
         <option value="$PROJECT_DIR$/thanos/service/admin.py" />
         <option value="$PROJECT_DIR$/CRM/urls.py" />
-        <option value="$PROJECT_DIR$/thanos/service/crm.py" />
         <option value="$PROJECT_DIR$/app01/thanos.py" />
-        <option value="$PROJECT_DIR$/thanos/templates/thanos/edit_view.html" />
-        <option value="$PROJECT_DIR$/thanos/templates/thanos/add_view.html" />
         <option value="$PROJECT_DIR$/thanos/static/thanos/css/add_edit_view.css" />
         <option value="$PROJECT_DIR$/thanos/templates/thanos/add_edit_form.html" />
-        <option value="$PROJECT_DIR$/app02/thanos.py" />
-        <option value="$PROJECT_DIR$/thanos/static/thanos/js/add_edit.js" />
         <option value="$PROJECT_DIR$/thanos/templatetags/my_tags.py" />
+        <option value="$PROJECT_DIR$/thanos/templates/thanos/add_view.html" />
+        <option value="$PROJECT_DIR$/thanos/templates/thanos/edit_view.html" />
+        <option value="$PROJECT_DIR$/thanos/templates/thanos/popUp_response.html" />
+        <option value="$PROJECT_DIR$/thanos/static/thanos/js/add_edit.js" />
+        <option value="$PROJECT_DIR$/fsdfa.py" />
+        <option value="$PROJECT_DIR$/app02/thanos.py" />
+        <option value="$PROJECT_DIR$/thanos/service/crm.py" />
       </list>
     </option>
   </component>
@@ -277,7 +289,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -288,18 +299,13 @@
             <path>
               <item name="CRM" type="b2602c69:ProjectViewProjectNode" />
               <item name="CRM" type="462c0819:PsiDirectoryNode" />
-              <item name="thanos" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CRM" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CRM" type="462c0819:PsiDirectoryNode" />
-              <item name="thanos" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
+              <item name="app02" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="Scratches">
         <subPane>
           <expand>
@@ -388,6 +394,25 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
+    <configuration name="fsdfa" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="CRM" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/fsdfa.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="xxx" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -430,17 +455,19 @@
       <option name="useCustomRunCommand" value="false" />
       <option name="customRunCommand" value="" />
     </configuration>
-    <list size="4">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Django server.CRM" />
       <item index="1" class="java.lang.String" itemvalue="Python.django_version" />
       <item index="2" class="java.lang.String" itemvalue="Python.xxx" />
       <item index="3" class="java.lang.String" itemvalue="Python.django_version (1)" />
+      <item index="4" class="java.lang.String" itemvalue="Python.fsdfa" />
     </list>
     <recent_temporary>
-      <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Python.django_version" />
-        <item index="1" class="java.lang.String" itemvalue="Python.django_version (1)" />
-        <item index="2" class="java.lang.String" itemvalue="Python.xxx" />
+      <list size="4">
+        <item index="0" class="java.lang.String" itemvalue="Python.fsdfa" />
+        <item index="1" class="java.lang.String" itemvalue="Python.django_version" />
+        <item index="2" class="java.lang.String" itemvalue="Python.django_version (1)" />
+        <item index="3" class="java.lang.String" itemvalue="Python.xxx" />
       </list>
     </recent_temporary>
   </component>
@@ -470,7 +497,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900944" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900944" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23283261" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2360515" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21459228" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3299356" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -521,27 +548,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/thanos/static/thanos/jquery-3.2.1.min.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="1" column="1345" lean-forward="true" selection-start-line="1" selection-start-column="1345" selection-end-line="1" selection-end-column="1345" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/thanos/static/thanos/jquery.cookie.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="12" column="19" lean-forward="true" selection-start-line="12" selection-start-column="19" selection-end-line="12" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://D:/Program Files (x86)/Python36/Lib/site-packages/django/urls/resolvers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="171" column="61" lean-forward="true" selection-start-line="171" selection-start-column="61" selection-end-line="171" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://D:/Program Files (x86)/Python36/Lib/site-packages/django/core/checks/registry.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="273">
@@ -640,27 +646,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://table:/76fee2ad/329fbd51-ea33-4db1-b0f4-bed6dfd3b359/main.app02_role">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/76fee2ad/329fbd51-ea33-4db1-b0f4-bed6dfd3b359/main.app02_department">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/76fee2ad/329fbd51-ea33-4db1-b0f4-bed6dfd3b359/main.app02_userinfo">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/thanos/service/paginator.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="435">
@@ -730,23 +715,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-135">
           <caret line="10" column="76" lean-forward="true" selection-start-line="10" selection-start-column="76" selection-end-line="10" selection-end-column="76" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/thanos/service/admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="326" column="47" lean-forward="false" selection-start-line="326" selection-start-column="47" selection-end-line="326" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/thanos/service/admin.py" />
     <entry file="file://$PROJECT_DIR$/app02/admin.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="81">
           <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -754,7 +730,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="81">
           <caret line="4" column="0" lean-forward="true" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -782,23 +757,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="81">
           <caret line="3" column="3" lean-forward="true" selection-start-line="3" selection-start-column="3" selection-end-line="3" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/edit_view.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="371">
-          <caret line="27" column="7" lean-forward="true" selection-start-line="27" selection-start-column="7" selection-end-line="27" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/add_view.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="371">
-          <caret line="27" column="7" lean-forward="true" selection-start-line="27" selection-start-column="7" selection-end-line="27" selection-end-column="7" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -806,74 +764,126 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="371">
           <caret line="21" column="21" lean-forward="false" selection-start-line="21" selection-start-column="21" selection-end-line="21" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/django_version.py" />
+    <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/add_edit_form.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="17" column="21" lean-forward="false" selection-start-line="17" selection-start-column="21" selection-end-line="17" selection-end-column="21" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/django_version.py">
+    <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/add_view.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="81">
-          <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+        <state relative-caret-position="299">
+          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/edit_view.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fsdfa.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/thanos/templatetags/my_tags.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="33" column="41" lean-forward="false" selection-start-line="33" selection-start-column="41" selection-end-line="33" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/76fee2ad/329fbd51-ea33-4db1-b0f4-bed6dfd3b359/main.app02_userinfo_roles">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/76fee2ad/329fbd51-ea33-4db1-b0f4-bed6dfd3b359/main.app02_userinfo">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/76fee2ad/329fbd51-ea33-4db1-b0f4-bed6dfd3b359/main.app02_role">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/76fee2ad/329fbd51-ea33-4db1-b0f4-bed6dfd3b359/main.app02_department">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/popUp_response.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="8" column="7" lean-forward="false" selection-start-line="8" selection-start-column="7" selection-end-line="8" selection-end-column="7" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/thanos/static/thanos/js/add_edit.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/add_edit_form.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="17" column="21" lean-forward="true" selection-start-line="17" selection-start-column="21" selection-end-line="17" selection-end-column="21" />
+        <state relative-caret-position="243">
+          <caret line="9" column="29" lean-forward="false" selection-start-line="9" selection-start-column="29" selection-end-line="9" selection-end-column="29" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app02/thanos.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="19" column="28" lean-forward="false" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
+        <state relative-caret-position="258">
+          <caret line="48" column="19" lean-forward="false" selection-start-line="48" selection-start-column="19" selection-end-line="48" selection-end-column="19" />
           <folding>
             <element signature="e#0#41#0" expanded="true" />
+            <element signature="e#512#608#0" expanded="false" />
+            <element signature="e#679#775#0" expanded="false" />
+            <element signature="e#841#1027#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/thanos/templatetags/my_tags.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="41" column="0" lean-forward="true" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/thanos/service/crm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="567">
-          <caret line="452" column="27" lean-forward="false" selection-start-line="452" selection-start-column="27" selection-end-line="452" selection-end-column="27" />
+        <state relative-caret-position="450">
+          <caret line="332" column="0" lean-forward="true" selection-start-line="332" selection-start-column="0" selection-end-line="332" selection-end-column="0" />
           <folding>
-            <element signature="e#388#921#0" expanded="false" />
-            <element signature="e#945#3203#0" expanded="false" />
-            <element signature="e#3327#4623#0" expanded="false" />
-            <element signature="e#4663#4872#0" expanded="false" />
-            <element signature="e#4907#5454#0" expanded="false" />
-            <element signature="e#4961#5425#0" expanded="false" />
-            <element signature="e#5543#6529#0" expanded="false" />
-            <element signature="e#6597#7215#0" expanded="false" />
-            <element signature="e#11200#11489#0" expanded="false" />
-            <element signature="e#11552#12226#0" expanded="false" />
-            <element signature="e#12262#12319#0" expanded="false" />
-            <element signature="e#12470#13851#0" expanded="false" />
-            <element signature="e#13918#14566#0" expanded="false" />
-            <element signature="e#14612#14923#0" expanded="false" />
-            <element signature="e#15906#16727#0" expanded="false" />
-            <element signature="e#16795#17622#0" expanded="false" />
-            <element signature="e#17644#18533#0" expanded="false" />
+            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#402#935#0" expanded="false" />
+            <element signature="e#4733#4942#0" expanded="false" />
+            <element signature="e#4977#5524#0" expanded="false" />
+            <element signature="e#5031#5495#0" expanded="false" />
+            <element signature="e#7032#7650#0" expanded="false" />
+            <element signature="e#11987#12661#0" expanded="false" />
+            <element signature="e#12697#12754#0" expanded="false" />
+            <element signature="e#12905#14286#0" expanded="false" />
+            <element signature="e#14353#15001#0" expanded="false" />
+            <element signature="e#15047#15358#0" expanded="false" />
+            <element signature="e#15418#16646#0" expanded="false" />
+            <element signature="e#16714#17535#0" expanded="false" />
+            <element signature="e#18453#19342#0" expanded="false" />
           </folding>
         </state>
       </provider>

@@ -1,7 +1,7 @@
 import json
 import copy
 
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.utils.safestring import mark_safe
 from django.conf.urls import url, include
 from django.forms import ModelForm
@@ -106,6 +106,7 @@ class ChangeList:
         self.actions = config_obj.get_actions()
         self.show_actions = config_obj.get_show_actions()
         self.comb_filter_rows = config_obj.get_comb_filter_rows()
+        self.query_dict_key = config_obj.query_dict_key
 
         # 基本属性
         self.config_obj = config_obj
@@ -170,11 +171,19 @@ class ChangeList:
                     for field_name in self.list_display:
                         if isinstance(field_name, str):
                             val = getattr(obj, field_name)
-                            if field_name in self.list_editable:
-                                edit_url = reverse('%s_%s_change' % (self.app_label, self.model_name), args=(obj.id,))
-                                val = mark_safe('<a href="{}">{}</a>'.format(edit_url, val))
                         else:
                             val = field_name(self.config_obj, obj)
+
+                        if field_name in self.list_editable:
+                            edit_url = reverse('%s_%s_change' % (self.app_label, self.model_name), args=(obj.id,))
+                            if self.request.GET:
+                                params_dict = QueryDict(mutable=True)
+                                params_dict[self.query_dict_key] = self.request.GET.urlencode()
+
+                                val = mark_safe('<a href="{}?{}">{}</a>'.format(edit_url, params_dict.urlencode(), val))
+                            else:
+                                val = mark_safe('<a href="{}">{}</a>'.format(edit_url, val))
+
                         yield val
 
                 yield inner(self, obj)
@@ -443,16 +452,22 @@ class CrmConfig:
             return render(request, 'thanos/add_view.html',
                           {"model_name": self.model_name, "add_edit_form": add_edit_form})
         else:
+            _popback_id = request.GET.get('_popback_id')
             add_edit_form = model_form(data=request.POST)
             if not add_edit_form.is_valid():
                 return render(request, 'thanos/add_view.html',
                               {"model_name": self.model_name, "add_edit_form": add_edit_form})
             else:
-                add_edit_form.save()
-            if request.GET:
-                return redirect('%s?%s' % (self.get_changelist_url(), request.GET.get(self.query_dict_key)))
-            else:
-                return redirect('%s' % self.get_changelist_url())
+                new_obj = add_edit_form.save()
+                popback_info = {"text": str(new_obj), "value": new_obj.pk, "popback_id": _popback_id}
+
+                if _popback_id:
+                    return render(request, 'thanos/popUp_response.html', {"popback_info": json.dumps(popback_info)})
+                else:
+                    if request.GET:
+                        return redirect('%s?%s' % (self.get_changelist_url(), request.GET.get(self.query_dict_key)))
+                    else:
+                        return redirect('%s' % self.get_changelist_url())
 
     def delete_view(self, request, nid, *args, **kwargs):
         """
@@ -496,6 +511,7 @@ class CrmConfig:
         else:
             add_edit_form = model_form(instance=current_obj, data=request.POST)
             add_edit_form.save()
+
             if request.GET:
                 return redirect('%s?%s' % (self.get_changelist_url(), request.GET.get(self.query_dict_key)))
             else:
