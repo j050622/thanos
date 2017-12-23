@@ -24,7 +24,7 @@ class UserInfo(models.Model):
     password = models.CharField(verbose_name='密码', max_length=64)
     email = models.EmailField(verbose_name='邮箱', max_length=64)
 
-    depart = models.ForeignKey(verbose_name='部门', to="Department", to_field="code")
+    department = models.ForeignKey(verbose_name='部门', to="Department", to_field="code")
 
     def __str__(self):
         return self.name
@@ -164,7 +164,7 @@ class Customer(models.Model):
         help_text=u"选择客户此时的状态"
     )
     consultant = models.ForeignKey(verbose_name="课程顾问", to='UserInfo', related_name='consultant',
-                                   limit_choices_to={'depart_id': 1001})
+                                   limit_choices_to={'department_id': 1001})
     date = models.DateField(verbose_name="咨询日期", auto_now_add=True)
     last_consult_date = models.DateField(verbose_name="最后跟进日期", auto_now_add=True)
 
