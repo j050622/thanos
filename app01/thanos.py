@@ -27,14 +27,17 @@ class RoleConfig(crm.CrmConfig):
     search_fields = ['name__contains']
 
     def get_show_add_btn(self):
-        if ('session里获取权限，有权限，执行下面的代码'):
+        """通过session中设置的权限来控制是否显示添加记录按钮"""
+        if (1):
             self.show_add_btn = True
         return self.show_add_btn
 
     def history_view(self):
+        """模拟自定义扩展URL的视图函数"""
         return HttpResponse('历史记录')
 
     def extra_urls(self):
+        """模拟自定义扩展URL"""
         info = self.model_class._meta.app_label, self.model_class._meta.model_name
         urlpatterns = [
             url(r'^history/$', self.history_view, name='%s_%s_history' % info),
@@ -47,7 +50,6 @@ class UserInfoConfig(crm.CrmConfig):
     list_editable = ['username']
 
     def get_list_display(self):
-        # 重写
         result = []
         if self.list_display:
             result.extend(self.list_display)
@@ -64,7 +66,7 @@ class UserInfoConfig(crm.CrmConfig):
     def multi_init(self, request):
         """批量初始化"""
         pk_list = request.POST.getlist('obj_id')
-        print('执行初始化函数')
+        print('模拟执行初始化函数')
 
     multi_init.short_desc = '批量初始化'
 

@@ -3,7 +3,7 @@ import copy
 
 
 class Paginator:
-    def __init__(self, params_dict, obj_list, page_num, base_url, show_obj_cnt, show_ele_count=11):
+    def __init__(self, params_dict, obj_list, page_num, base_url, show_obj_cnt, show_btn_cnt=11):
         self.params_dict = copy.deepcopy(params_dict)
         self.params_dict._mutable = True
 
@@ -11,7 +11,7 @@ class Paginator:
         self.page_num = page_num
         self.base_url = base_url
         self.show_obj_cnt = show_obj_cnt
-        self.show_ele_cnt = show_ele_count
+        self.show_btn_cnt = show_btn_cnt
 
     def show_obj_list(self):
         """当前页面要展示的记录列表"""
@@ -45,14 +45,14 @@ class Paginator:
             ele_list.append(previous_page)
 
         # 普通页面标签
-        if max_page_num <= self.show_ele_cnt:
+        if max_page_num <= self.show_btn_cnt:
             start_page = 1
             end_page = max_page_num
         else:
-            half_ele_cnt = int((self.show_ele_cnt - 1) / 2)
+            half_ele_cnt = int((self.show_btn_cnt - 1) / 2)
             if self.page_num <= half_ele_cnt:
                 start_page = 1
-                end_page = self.show_ele_cnt
+                end_page = self.show_btn_cnt
             elif self.page_num > max_page_num - half_ele_cnt:
                 end_page = max_page_num
                 start_page = max_page_num - half_ele_cnt * 2

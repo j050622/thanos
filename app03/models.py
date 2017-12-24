@@ -73,9 +73,11 @@ class ClassList(models.Model):
     price = models.IntegerField(verbose_name="学费")
     start_date = models.DateField(verbose_name="开班日期")
     graduate_date = models.DateField(verbose_name="结业日期", null=True, blank=True)
-    memo = models.CharField(verbose_name='说明', max_length=256, blank=True, null=True, )
-    teachers = models.ManyToManyField(verbose_name='任课老师', to='UserInfo', related_name='teach_classes')
-    tutor = models.ForeignKey(verbose_name='班主任', to='UserInfo', related_name='classes')
+    instruction = models.CharField(verbose_name='说明', max_length=256, blank=True, null=True, )
+    teachers = models.ManyToManyField(verbose_name='任课老师', to='UserInfo', related_name='teach_classes',
+                                      limit_choices_to={"department_id__in": [1003, 1004, 1005]})
+    headmaster = models.ForeignKey(verbose_name='班主任', to='UserInfo', related_name='manage_classes',
+                                   limit_choices_to={"department_id": 1002})
 
     def __str__(self):
         return "{0}({1}期)".format(self.course.name, self.semester)
@@ -149,7 +151,6 @@ class Customer(models.Model):
         null=True,
         verbose_name="转介绍自学员",
         help_text="若此客户是转介绍自内部学员,请在此处选择内部学员姓名",
-        related_name="internal_referral"
     )
     course = models.ManyToManyField(verbose_name="咨询课程", to="Course")
 
@@ -163,8 +164,7 @@ class Customer(models.Model):
         default=2,
         help_text=u"选择客户此时的状态"
     )
-    consultant = models.ForeignKey(verbose_name="课程顾问", to='UserInfo', related_name='consultant',
-                                   limit_choices_to={'department_id': 1001})
+    consultant = models.ForeignKey(verbose_name="课程顾问", to='UserInfo', limit_choices_to={'department_id': 1001})
     date = models.DateField(verbose_name="咨询日期", auto_now_add=True)
     last_consult_date = models.DateField(verbose_name="最后跟进日期", auto_now_add=True)
 
@@ -223,7 +223,7 @@ class Student(models.Model):
     salary = models.IntegerField(verbose_name='薪资', blank=True, null=True)
     welfare = models.CharField(verbose_name='福利', max_length=256, blank=True, null=True)
     date = models.DateField(verbose_name='入职时间', help_text='格式yyyy-mm-dd', blank=True, null=True)
-    memo = models.CharField(verbose_name='备注', max_length=256, blank=True, null=True)
+    instruction = models.CharField(verbose_name='备注', max_length=256, blank=True, null=True)
 
     def __str__(self):
         return self.username
@@ -239,10 +239,10 @@ class CourseRecord(models.Model):
     date = models.DateField(verbose_name="上课日期", auto_now_add=True)
 
     course_title = models.CharField(verbose_name='本节课程标题', max_length=64, blank=True, null=True)
-    course_memo = models.TextField(verbose_name='本节课程内容概要', blank=True, null=True)
+    course_instruction = models.TextField(verbose_name='本节课程内容概要', blank=True, null=True)
     has_homework = models.BooleanField(default=True, verbose_name="本节有作业")
     homework_title = models.CharField(verbose_name='本节作业标题', max_length=64, blank=True, null=True)
-    homework_memo = models.TextField(verbose_name='作业描述', max_length=500, blank=True, null=True)
+    homework_instruction = models.TextField(verbose_name='作业描述', max_length=500, blank=True, null=True)
     exam = models.TextField(verbose_name='踩分点', max_length=300, blank=True, null=True)
 
     def __str__(self):
@@ -277,7 +277,7 @@ class StudyRecord(models.Model):
     note = models.CharField(verbose_name="备注", max_length=255, blank=True, null=True)
 
     homework = models.FileField(verbose_name='作业文件', blank=True, null=True, default=None)
-    stu_memo = models.TextField(verbose_name='学员备注', blank=True, null=True)
+    stu_instruction = models.TextField(verbose_name='学员备注', blank=True, null=True)
     date = models.DateTimeField(verbose_name='提交作业日期', auto_now_add=True)
 
     def __str__(self):

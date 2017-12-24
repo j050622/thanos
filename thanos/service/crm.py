@@ -12,16 +12,17 @@ from .paginator import Paginator
 
 
 class FilterRowOption:
-    def __init__(self, field_name, is_multiple=False, condition=None, is_choice=False):
+    def __init__(self, field_name, is_multiple=False, condition={}, is_choice=False, func_get_val=None):
         self.field_name = field_name
         self.is_multiple = is_multiple
         self.condition = condition
         self.is_choice = is_choice
+        self.func_get_val = func_get_val
 
     def get_queryset(self, _field):
         """获取FK和M2M字段所关联的表的所有记录"""
         if self.condition:
-            return _field.rel.to.objects.filter(self.condition)
+            return _field.rel.to.objects.filter(**self.condition)
 
         return _field.rel.to.objects.all()
 
@@ -33,8 +34,8 @@ class FilterRowOption:
 class FilterRow:
     """把组合搜索的每一行（字段下的数据）封装成对象"""
 
-    def __init__(self, row_option, data, request):
-        self.data = data
+    def __init__(self, row_option, queryset_or_choices, request):
+        self.queryset_or_choices = queryset_or_choices
         self.row_option = row_option
         self.request = request
         self.params = copy.deepcopy(request.GET)
@@ -42,48 +43,51 @@ class FilterRow:
 
     def __iter__(self):
         field_name = self.row_option.field_name
-        current_pk = self.request.GET.get(field_name)
+        current_val = self.request.GET.get(field_name)
 
         ## 生成“全部”按钮
         # 选中的“全部”按钮添加.active，并且点击无效
-        if not current_pk:
+        if not current_val:
             yield mark_safe('<button class="btn btn-primary">全部</button>')
-            origin_pk_list = []
+            origin_val_list = []
         else:
-            origin_pk_list = self.params.pop(field_name)
+            origin_val_list = self.params.pop(field_name)
             url = '%s?%s' % (self.request.path, self.params.urlencode())
             yield mark_safe('<a class="btn" href="{}">全部</a>'.format(url))
 
         ## 生成普通按钮
-        for val in self.data:
+        for tuple_or_obj in self.queryset_or_choices:
             if self.row_option.is_choice:
-                pk, text = val
+                tuple0 = tuple_or_obj
+                val, text = str(tuple0[0]), tuple0[1]
             else:
-                pk, text = str(val.pk), str(val)
+                obj = tuple_or_obj
+                tmp_func = self.row_option.func_get_val
+                val = tmp_func(obj) if tmp_func else str(obj.pk)
+                text = str(obj)
 
             # 搜索条件拼接
             if not self.row_option.is_multiple:
                 # 单选
-                if current_pk == pk:
+                if current_val == val:
                     ele_html = mark_safe('<button class="btn btn-primary">{}</button>'.format(text))
                 else:
-                    self.params[field_name] = pk
+                    self.params[field_name] = val
                     url = '%s?%s' % (self.request.path, self.params.urlencode())
                     ele_html = mark_safe('<a class="btn" href="{}">{}</a>'.format(url, text))
             else:
                 # 多选
-                url_pk_list = copy.deepcopy(origin_pk_list)
-                # [1,2]
+                url_val_list = copy.deepcopy(origin_val_list)
 
-                if pk in url_pk_list:
-                    url_pk_list.remove(pk)  # 点击取消
-                    self.params.setlist(field_name, url_pk_list)
+                if val in url_val_list:
+                    url_val_list.remove(val)  # 点击取消
+                    self.params.setlist(field_name, url_val_list)
                     url = '%s?%s' % (self.request.path, self.params.urlencode())
                     ele_html = mark_safe('<a class="btn btn-primary" href="{}">{}</a>'.format(url, text))
                 else:
-                    url_pk_list.append(pk)
+                    url_val_list.append(val)
 
-                    self.params.setlist(field_name, url_pk_list)
+                    self.params.setlist(field_name, url_val_list)
                     url = '%s?%s' % (self.request.path, self.params.urlencode())
                     ele_html = mark_safe('<a class="btn" href="{}">{}</a>'.format(url, text))
 
@@ -142,13 +146,13 @@ class ChangeList:
         def header(self):
             ''' 生成器 '''
             if not self.list_display:  # 如果没有自定义list_display
-                yield self.model_class._meta.model_name.upper()
+                yield self.model_name.upper()
 
-            for field_name in self.list_display:
-                if isinstance(field_name, str):
-                    verbose_name = self.model_class._meta.get_field(field_name).verbose_name
+            for field_or_func in self.list_display:
+                if isinstance(field_or_func, str):
+                    verbose_name = self.model_class._meta.get_field(field_or_func).verbose_name
                 else:
-                    verbose_name = field_name(self.config_obj, is_header=True)
+                    verbose_name = field_or_func(self.config_obj, is_header=True)
 
                 yield verbose_name
 
@@ -168,18 +172,17 @@ class ChangeList:
 
                 def inner(self, obj):
                     ''' 嵌套生成器 '''
-                    for field_name in self.list_display:
-                        if isinstance(field_name, str):
-                            val = getattr(obj, field_name)
+                    for field_or_func in self.list_display:
+                        if isinstance(field_or_func, str):
+                            val = getattr(obj, field_or_func)
                         else:
-                            val = field_name(self.config_obj, obj)
+                            val = field_or_func(self.config_obj, obj)
 
-                        if field_name in self.list_editable:
+                        if field_or_func in self.list_editable:
                             edit_url = reverse('%s_%s_change' % (self.app_label, self.model_name), args=(obj.id,))
                             if self.request.GET:
                                 params_dict = QueryDict(mutable=True)
                                 params_dict[self.query_dict_key] = self.request.GET.urlencode()
-
                                 val = mark_safe('<a href="{}?{}">{}</a>'.format(edit_url, params_dict.urlencode(), val))
                             else:
                                 val = mark_safe('<a href="{}">{}</a>'.format(edit_url, val))
@@ -196,7 +199,7 @@ class ChangeList:
         for row_option in self.comb_filter_rows:
             _field = self.model_class._meta.get_field(row_option.field_name)
             if isinstance(_field, ForeignKey):
-                row = FilterRow(row_option, row_option.get_queryset(_field), self.request)  # django2.0里，.rel.to要用.model
+                row = FilterRow(row_option, row_option.get_queryset(_field), self.request)
             elif isinstance(_field, ManyToManyField):
                 row = FilterRow(row_option, row_option.get_queryset(_field), self.request)
             else:
@@ -332,7 +335,7 @@ class CrmConfig:
             result.extend(self.list_display)
 
             result.insert(0, CrmConfig.checkbox)
-            result.append(CrmConfig.ele_change)
+            # result.append(CrmConfig.ele_change)
             result.append(CrmConfig.ele_delete)
 
         return result

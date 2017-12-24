@@ -9,12 +9,12 @@ from app02 import models
 crm.site.register(models.Role)
 
 
-class DConfig(crm.CrmConfig):
+class DepartmentConfig(crm.CrmConfig):
     list_display = []
     show_add_btn = True
 
 
-crm.site.register(models.Department, DConfig)
+crm.site.register(models.Department, DepartmentConfig)
 
 
 class UserInfoConfig(crm.CrmConfig):
@@ -35,10 +35,7 @@ class UserInfoConfig(crm.CrmConfig):
         """显示角色名"""
         if is_header:
             return '角色'
-        text = []
-        for role_obj in obj.roles.all():
-            text.append(role_obj.name)
-
+        text = [i.name for i in obj.roles.all()]
         return ','.join(text)
 
     list_display = ['username', 'email', display_gender, display_department, display_roles]
@@ -59,7 +56,7 @@ class UserInfoConfig(crm.CrmConfig):
     search_fields = ['username__contains', 'email__contains', 'gender']
     comb_filter_rows = [crm.FilterRowOption('gender', is_choice=True),
                         crm.FilterRowOption('department'),
-                        crm.FilterRowOption('roles', True)]
+                        crm.FilterRowOption('roles', is_multiple=True)]
 
 
 crm.site.register(models.UserInfo, UserInfoConfig)
