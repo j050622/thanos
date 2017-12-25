@@ -110,6 +110,7 @@ class ChangeList:
         self.actions = config_obj.get_actions()
         self.show_actions = config_obj.get_show_actions()
         self.comb_filter_rows = config_obj.get_comb_filter_rows()
+        self.show_comb_filter = config_obj.get_show_comb_filter()
         self.query_dict_key = config_obj.query_dict_key
 
         # 基本属性
@@ -237,6 +238,7 @@ class CrmConfig:
     actions = []  # 批量操作的函数
     show_actions = False
     comb_filter_rows = []  # 供组合搜索的字段
+    show_comb_filter = False
 
     def get_list_editable(self):
         result = []
@@ -273,6 +275,10 @@ class CrmConfig:
         if self.comb_filter_rows:
             result.extend(self.comb_filter_rows)
         return result
+
+    def get_show_comb_filter(self):
+        """设置是否显示组合搜索栏"""
+        return self.show_comb_filter
 
     # 反向解析URL #
     def get_changelist_url(self):
@@ -341,22 +347,20 @@ class CrmConfig:
         return result
 
     ###### 增删改查URL分发 ######
+    def wrap(self, view):
+        def inner(request, *args, **kwargs):
+            self.request = request
+            return view(request, *args, **kwargs)
+
+        return inner
+
     def get_urls(self):
-
-        def wrap(view):
-            def inner(request, *args, **kwargs):
-                self.request = request
-                return view(request, *args, **kwargs)
-
-            return inner
-
         info = self.app_label, self.model_name
-
         urlpatterns = [
-            url(r'^$', wrap(self.changelist_view), name='%s_%s_changelist' % info),
-            url(r'^add/$', wrap(self.add_view), name='%s_%s_add' % info),
-            url(r'^(\d+)/delete$', wrap(self.delete_view), name='%s_%s_delete' % info),
-            url(r'^(\d+)/change$', wrap(self.change_view), name='%s_%s_change' % info),
+            url(r'^$', self.wrap(self.changelist_view), name='%s_%s_changelist' % info),
+            url(r'^add/$', self.wrap(self.add_view), name='%s_%s_add' % info),
+            url(r'^(\d+)/delete/$', self.wrap(self.delete_view), name='%s_%s_delete' % info),
+            url(r'^(\d+)/change/$', self.wrap(self.change_view), name='%s_%s_change' % info),
         ]
         urlpatterns.extend(self.extra_urls())
 
@@ -380,13 +384,12 @@ class CrmConfig:
 
         condition1 = Q()  # 搜索框条件
         condition2 = Q()  # 地址栏的条件
-        condition = Q()  # 最终条件
 
         pager_params = QueryDict(mutable=True)
 
         # 搜索框
         condition1.connector = 'OR'
-        if kew_word:
+        if kew_word and self.show_search_form:
             for field in self.get_search_fields():
                 is_not_str = isinstance(self.model_class._meta.get_field(field.split('__')[0]),
                                         (ForeignKey, ManyToManyField, IntegerField))
@@ -403,12 +406,11 @@ class CrmConfig:
             if field != 'page':
                 pager_params.setlist(field, value_list)
                 if field != self.search_input_name:
-                    # 搜索框的关键字要过滤掉
+                    # 之前搜索框的关键字要过滤掉
                     condition2.children.append(('%s__in' % field, value_list))
 
-        condition.add(condition1, 'AND')
-        condition.add(condition2, 'AND')
-        return pager_params, condition
+        final_cond = condition1 & condition2
+        return pager_params, final_cond
 
     def changelist_view(self, request, *args, **kwargs):
         """
@@ -455,20 +457,24 @@ class CrmConfig:
             return render(request, 'thanos/add_view.html',
                           {"model_name": self.model_name, "add_edit_form": add_edit_form})
         else:
-            _popback_id = request.GET.get('_popback_id')
+            _popback_id = request.GET.get('popback_id')
+            _fk_field = request.GET.get('fk_field')
             add_edit_form = model_form(data=request.POST)
+
             if not add_edit_form.is_valid():
                 return render(request, 'thanos/add_view.html',
                               {"model_name": self.model_name, "add_edit_form": add_edit_form})
             else:
                 new_obj = add_edit_form.save()
-                popback_info = {"text": str(new_obj), "value": new_obj.pk, "popback_id": _popback_id}
 
                 if _popback_id:
+                    value = getattr(new_obj, _fk_field)
+                    popback_info = {"text": str(new_obj), "value": value, "popback_id": _popback_id}
                     return render(request, 'thanos/popUp_response.html', {"popback_info": json.dumps(popback_info)})
                 else:
-                    if request.GET:
-                        return redirect('%s?%s' % (self.get_changelist_url(), request.GET.get(self.query_dict_key)))
+                    next_to = request.GET.get(self.query_dict_key)
+                    if next_to:
+                        return redirect('%s?%s' % (self.get_changelist_url(), next_to))
                     else:
                         return redirect('%s' % self.get_changelist_url())
 
@@ -513,12 +519,17 @@ class CrmConfig:
                           {"model_name": self.model_name, "add_edit_form": add_edit_form})
         else:
             add_edit_form = model_form(instance=current_obj, data=request.POST)
-            add_edit_form.save()
-
-            if request.GET:
-                return redirect('%s?%s' % (self.get_changelist_url(), request.GET.get(self.query_dict_key)))
+            if not add_edit_form.is_valid():
+                return render(request, 'thanos/edit_view.html',
+                              {"model_name": self.model_name, "add_edit_form": add_edit_form})
             else:
-                return redirect('%s' % self.get_changelist_url())
+                add_edit_form.save()
+
+                next_to = request.GET.get(self.query_dict_key)
+                if next_to:
+                    return redirect('%s?%s' % (self.get_changelist_url(), next_to))
+                else:
+                    return redirect('%s' % self.get_changelist_url())
 
 
 class CrmSite:

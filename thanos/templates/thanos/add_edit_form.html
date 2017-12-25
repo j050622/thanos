@@ -3,14 +3,15 @@
     {% for field_dict in add_edit_form %}
         <div class="form-group">
             <label for="" class="col-sm-2 control-label">{{ field_dict.bound_field.label }}</label>
-            <div class="col-sm-6">
+            <div class="col-sm-5">
                 {{ field_dict.bound_field }}
             </div>
 
-            <!-- 添加符号 -->
+            <!-- popUp添加 -->
             {% if field_dict.popUp %}
                 <div class="add">
-                    <span onclick="popUp('{{ field_dict.popUp_url }}')" class="glyphicon glyphicon-plus"></span>
+                    <span onclick="popUp('{{ field_dict.popUp_url }}')"
+                          class="glyphicon glyphicon-plus"></span>
                 </div>
             {% endif %}
 

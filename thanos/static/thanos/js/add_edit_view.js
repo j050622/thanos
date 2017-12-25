@@ -6,6 +6,6 @@ function popUp(url) {
 // popUp回调函数
 function popUpcallback(popback_info) {
     var $target = $("#" + popback_info['popback_id']);
-    $("<option>").prop('selected', true).html(popback_info['text']).val(popback_info['value']).appendTo($target);
+    var $option = $("<option>").prop('selected', true).html(popback_info['text']).val(popback_info['value']).appendTo($target);
 
 }

@@ -31,7 +31,8 @@ def show_form(modelform):
                 app_label = rel_class_name._meta.app_label
                 model_name = rel_class_name._meta.model_name
                 base_url = reverse('%s_%s_add' % (app_label, model_name))
-                popUp_url = '%s?_popback_id=%s' % (base_url, bound_field.auto_id)
+                popUp_url = '{}?popback_id={}&fk_field={}'.format(base_url, bound_field.auto_id,
+                                                                   field_obj.to_field_name)
 
                 info_dict["popUp"] = True
                 info_dict["popUp_url"] = popUp_url

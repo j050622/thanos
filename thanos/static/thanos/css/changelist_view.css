@@ -1,0 +1,16 @@
+/*组合搜索*/
+#comb-filter {
+    margin: 25px 0;
+}
+
+.filter-item {
+    margin-bottom: 5px;
+}
+
+/*咨询的课程的标签*/
+a.courses {
+    display: inline-block;
+    padding: 3px 5px;
+    border: 1px solid royalblue;
+    text-decoration: none;
+}

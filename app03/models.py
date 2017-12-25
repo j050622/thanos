@@ -30,21 +30,6 @@ class UserInfo(models.Model):
         return self.name
 
 
-class Course(models.Model):
-    """
-    课程表
-    如：
-        Linux基础
-        Linux架构师
-        Python自动化开发精英班
-        Python自动化开发架构师班
-    """
-    name = models.CharField(verbose_name='课程名称', max_length=32)
-
-    def __str__(self):
-        return self.name
-
-
 class School(models.Model):
     """
     校区表
@@ -58,6 +43,21 @@ class School(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Course(models.Model):
+    """
+    课程表
+    如：
+        Linux基础
+        Linux架构师
+        Python自动化开发精英班
+        Python自动化开发架构师班
+    """
+    name = models.CharField(verbose_name='课程名称', max_length=32)
+
+    def __str__(self):
+        return self.name
 
 
 class ClassList(models.Model):
@@ -87,11 +87,11 @@ class Customer(models.Model):
     """
     客户表
     """
-    qq = models.CharField(verbose_name='qq', max_length=64, unique=True, help_text='QQ号必须唯一')
 
     name = models.CharField(verbose_name='学生姓名', max_length=16)
     gender_choices = ((1, '男'), (2, '女'))
     gender = models.SmallIntegerField(verbose_name='性别', choices=gender_choices)
+    qq = models.CharField(verbose_name='qq', max_length=64, unique=True, help_text='QQ号必须唯一')
 
     education_choices = (
         (1, '重点大学'),
@@ -159,17 +159,18 @@ class Customer(models.Model):
         (2, "未报名")
     ]
     status = models.IntegerField(
-        verbose_name="状态",
+        verbose_name="报名状态",
         choices=status_choices,
         default=2,
         help_text=u"选择客户此时的状态"
     )
-    consultant = models.ForeignKey(verbose_name="课程顾问", to='UserInfo', limit_choices_to={'department_id': 1001})
+    consultant = models.ForeignKey(verbose_name="课程顾问", to='UserInfo', limit_choices_to={'department_id': 1000})
     date = models.DateField(verbose_name="咨询日期", auto_now_add=True)
     last_consult_date = models.DateField(verbose_name="最后跟进日期", auto_now_add=True)
 
     def __str__(self):
-        return "姓名:{0},QQ:{1}".format(self.name, self.qq, )
+        # return "姓名:{0},QQ:{1}".format(self.name, self.qq)
+        return self.name
 
 
 class ConsultRecord(models.Model):
@@ -180,6 +181,9 @@ class ConsultRecord(models.Model):
     consultant = models.ForeignKey(verbose_name="跟踪人", to='UserInfo')
     date = models.DateField(verbose_name="跟进日期", auto_now_add=True)
     note = models.TextField(verbose_name="跟进内容...")
+
+    def __str__(self):
+        return self.date.strftime('%Y-%m-%d')
 
 
 class PaymentRecord(models.Model):

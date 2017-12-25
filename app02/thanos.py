@@ -57,6 +57,7 @@ class UserInfoConfig(crm.CrmConfig):
     comb_filter_rows = [crm.FilterRowOption('gender', is_choice=True),
                         crm.FilterRowOption('department'),
                         crm.FilterRowOption('roles', is_multiple=True)]
+    show_comb_filter = True
 
 
 crm.site.register(models.UserInfo, UserInfoConfig)
