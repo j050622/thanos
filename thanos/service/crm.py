@@ -455,22 +455,52 @@ class CrmConfig:
         if request.method == 'GET':
             add_edit_form = model_form()
             return render(request, 'thanos/add_view.html',
-                          {"model_name": self.model_name, "add_edit_form": add_edit_form})
+                          {"self": self, "add_edit_form": add_edit_form})
         else:
             _popback_id = request.GET.get('popback_id')
-            _fk_field = request.GET.get('fk_field')
             add_edit_form = model_form(data=request.POST)
 
             if not add_edit_form.is_valid():
                 return render(request, 'thanos/add_view.html',
-                              {"model_name": self.model_name, "add_edit_form": add_edit_form})
+                              {"self": self, "add_edit_form": add_edit_form})
             else:
                 new_obj = add_edit_form.save()
 
                 if _popback_id:
-                    value = getattr(new_obj, _fk_field)
-                    popback_info = {"text": str(new_obj), "value": value, "popback_id": _popback_id}
+                    from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
+
+                    popback_info = {"status": None, "text": None, "value": None, "popback_id": _popback_id}
+
+                    back_related_name = request.GET.get('related_name')
+                    back_model_name = request.GET.get('model_name')
+
+                    for rel_field_obj in new_obj._meta.related_objects:
+                        # 遍历所有关联当前记录所在表的字段对象，例如：teachers、headmaster
+                        _related_name = str(rel_field_obj.related_name)
+                        _model_name = rel_field_obj.field.model._meta.model_name
+
+                        if _related_name == back_related_name and _model_name == back_model_name:
+                            # 定位到打开popup的标签对应的字段
+                            _limit_choices_to = rel_field_obj.limit_choices_to
+
+                            if (type(rel_field_obj) == ManyToOneRel):
+                                _field_name = rel_field_obj.field_name
+                            else:
+                                # ManyToManyRel没有field_name方法，反应到models里面是因为没有to_field方法
+                                _field_name = 'pk'
+
+                            is_exists = self.model_class.objects.filter(pk=new_obj.pk, **_limit_choices_to).exists()
+                            if is_exists:
+                                # 如果新记录对象符合原limit_choices_to的条件
+                                popback_info["status"] = True
+                                popback_info["text"] = str(new_obj)
+                                popback_info["value"] = getattr(new_obj, _field_name)
+
+                                return render(request, 'thanos/popUp_response.html',
+                                              {"popback_info": json.dumps(popback_info)})
+
                     return render(request, 'thanos/popUp_response.html', {"popback_info": json.dumps(popback_info)})
+
                 else:
                     next_to = request.GET.get(self.query_dict_key)
                     if next_to:
@@ -516,12 +546,12 @@ class CrmConfig:
         if request.method == 'GET':
             add_edit_form = model_form(instance=current_obj)
             return render(request, 'thanos/edit_view.html',
-                          {"model_name": self.model_name, "add_edit_form": add_edit_form})
+                          {"self": self, "add_edit_form": add_edit_form})
         else:
             add_edit_form = model_form(instance=current_obj, data=request.POST)
             if not add_edit_form.is_valid():
                 return render(request, 'thanos/edit_view.html',
-                              {"model_name": self.model_name, "add_edit_form": add_edit_form})
+                              {"self": self, "add_edit_form": add_edit_form})
             else:
                 add_edit_form.save()
 

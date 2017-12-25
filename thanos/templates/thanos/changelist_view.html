@@ -78,7 +78,26 @@
             <p></p>
         {% endif %}
 
-        {% show_table cl.head_list cl.data_list %}
+        <!-- 表格主体 -->
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                {% for td in cl.head_list %}
+                    <th>{{ td }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in cl.data_list %}
+                <tr>
+                    {% for td in row %}
+                        <td>{{ td }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
     </form>
 
 
