@@ -94,7 +94,11 @@ class CustomerConfig(crm.CrmConfig):
             return redirect('%s' % self.get_changelist_url())
 
     def extra_urls(self):
-        return [url(r'^(\d+)/(\d+)/sub_del/$', self.wrap(self.sub_del_view))]
+        info = (self.app_label, self.model_name)
+        urlpatterns = [
+            url(r'^(\d+)/(\d+)/sub_del/$', self.wrap(self.sub_del_view), name='%s_%s_sub_del' % info),
+        ]
+        return urlpatterns
 
     ### 页面展示相关 ###
     def display_gender(self, obj=None, is_header=False):
@@ -137,8 +141,10 @@ class CustomerConfig(crm.CrmConfig):
             return '咨询课程'
 
         tmp = []
+        info = (self.app_label, self.model_name)
         for i in obj.course.all():
-            del_href = '/crm/app03/customer/{}/{}/sub_del/'.format(obj.pk, i.pk)
+            # del_href = '/crm/app03/customer/{}/{}/sub_del/'.format(obj.pk, i.pk)
+            del_href = reverse('%s_%s_sub_del' % info, args=(obj.pk, i.pk))
             ele_html = '<a class="courses" href="{}">{}&nbsp;' \
                        '<span class="glyphicon glyphicon-remove"></span>' \
                        '</a>'.format(del_href, i.name)
@@ -148,7 +154,6 @@ class CustomerConfig(crm.CrmConfig):
     def display_status(self, obj=None, is_header=False):
         if is_header:
             return '报名状态'
-        print(obj.get_status_display())
         return obj.get_status_display()
 
     def display_consultant(self, obj=None, is_header=False):
@@ -211,11 +216,6 @@ class ConsultRecordConfig(crm.CrmConfig):
     list_editable = ['date']
 
 
-class PaymentRecordConfig(crm.CrmConfig):
-    show_add_btn = True
-    list_editable = []
-
-
 class StudentConfig(crm.CrmConfig):
     show_add_btn = True
 
@@ -233,87 +233,147 @@ class StudentConfig(crm.CrmConfig):
             tmp.append('{}({}期)'.format(i.course.name, i.semester))
         return ' | '.join(tmp)
 
-    def add_view(self, request, *args, **kwargs):
-        """
-        添加记录
-        """
-        model_form = self.get_model_form_class()
-        if request.method == 'GET':
-            add_edit_form = model_form()
-            return render(request, 'thanos/add_view.html',
-                          {"self": self, "add_edit_form": add_edit_form})
-        else:
-            _popback_id = request.GET.get('popback_id')
-            add_edit_form = model_form(data=request.POST)
-
-            if not add_edit_form.is_valid():
-                return render(request, 'thanos/add_view.html',
-                              {"self": self, "add_edit_form": add_edit_form})
-            else:
-                new_obj = add_edit_form.save()
-                print(new_obj.customer.get_status_display())
-                new_obj.customer.status = 1  # 自动更新报名状态
-                print(new_obj.customer.get_status_display())
-
-                if _popback_id:
-                    from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
-
-                    popback_info = {"status": None, "text": None, "value": None, "popback_id": _popback_id}
-
-                    back_related_name = request.GET.get('related_name')
-                    back_model_name = request.GET.get('model_name')
-
-                    for rel_field_obj in new_obj._meta.related_objects:
-                        # 遍历所有关联当前记录所在表的字段对象，例如：teachers、headmaster
-                        _related_name = str(rel_field_obj.related_name)
-                        _model_name = rel_field_obj.field.model._meta.model_name
-
-                        if _related_name == back_related_name and _model_name == back_model_name:
-                            # 定位到打开popup的标签对应的字段
-                            _limit_choices_to = rel_field_obj.limit_choices_to
-
-                            if (type(rel_field_obj) == ManyToOneRel):
-                                _field_name = rel_field_obj.field_name
-                            else:
-                                # ManyToManyRel没有field_name方法，反应到models里面是因为没有to_field方法
-                                _field_name = 'pk'
-
-                            is_exists = self.model_class.objects.filter(pk=new_obj.pk, **_limit_choices_to).exists()
-                            if is_exists:
-                                # 如果新记录对象符合原limit_choices_to的条件
-                                popback_info["status"] = True
-                                popback_info["text"] = str(new_obj)
-                                popback_info["value"] = getattr(new_obj, _field_name)
-
-                                return render(request, 'thanos/popUp_response.html',
-                                              {"popback_info": json.dumps(popback_info)})
-
-                    return render(request, 'thanos/popUp_response.html', {"popback_info": json.dumps(popback_info)})
-
-                else:
-                    next_to = request.GET.get(self.query_dict_key)
-                    if next_to:
-                        return redirect('%s?%s' % (self.get_changelist_url(), next_to))
-                    else:
-                        return redirect('%s' % self.get_changelist_url())
-
     list_display = [display_name, display_class_list, 'emergency_contract', ]
-    list_editable = []
+    list_editable = [display_name]
 
 
 class CourseRecordConfig(crm.CrmConfig):
     show_add_btn = True
 
-    def display_class_list(self, obj=None, is_header=False):
+    def resultinput_view(self, request, course_record_id):
+        """成绩录入"""
+        if request.method == 'GET':
+
+
+            return render(request, 'thanos/resultinput_view.html')
+        else:
+
+            return HttpResponse('成绩录入成功')
+
+    def extra_urls(self):
+        """添加成绩录入的URL"""
+        info = (self.app_label, self.model_name)
+        urlpatterns = [
+            url(r'^(\d+)/resultinput/$', self.wrap(self.resultinput_view), name='%s_%s_resultinput' % info),
+        ]
+        return urlpatterns
+
+    ## list_display里的方法 ##
+    def display_class_info(self, obj=None, is_header=False):
         if is_header:
             return '班级'
-        return '{}{}'.format(obj.class_obj.course.name, obj.class_obj.semester)
+        return '{}({}期)'.format(obj.class_obj.course.name, obj.class_obj.semester)
 
-    list_display = [display_class_list, ]
-    list_editable = [display_class_list, ]
+    def display_teacher(self, obj=None, is_header=False):
+        if is_header:
+            return '讲师'
+        return obj.teacher.name
+
+    def display_date(self, obj=None, is_header=False):
+        if is_header:
+            return '上课日期'
+        return obj.date.strftime('%Y-%m-%d')
+
+    def display_check_on(self, obj=None, is_header=False):
+        if is_header:
+            return '考勤'
+        return mark_safe(
+            '<a href="/crm/{}/studyrecord/?course_record={}">查看考勤详情</a>'.format(self.app_label, obj.pk))
+
+    def display_resultinput(self, obj=None, is_header=False):
+        if is_header:
+            return '录入成绩'
+        info = (self.app_label, self.model_name)
+        base_url = reverse('%s_%s_resultinput' % info, args=(obj.pk,))
+        return mark_safe('<a href="%s">录入成绩</a>' % base_url)
+
+    ## actions里的方法 ##
+    def multi_init(self, request):
+        pk_list = request.POST.getlist('pk')
+        course_record_obj_list = models.CourseRecord.objects.filter(pk__in=pk_list)
+        for record_obj in course_record_obj_list:
+            is_exists = models.StudyRecord.objects.filter(course_record=record_obj).exists()
+            if not is_exists:
+                student_obj_list = models.Student.objects.filter(class_list=record_obj.class_obj)
+                tmp = [models.StudyRecord(course_record=record_obj, student=stu_obj) for stu_obj in student_obj_list]
+                models.StudyRecord.objects.bulk_create(tmp)
+
+    multi_init.short_desc = '初始化学生课堂记录'
+
+    ######
+    list_display = [display_class_info, 'day_num', display_teacher, display_date, 'course_title', display_check_on,
+                    display_resultinput]
+    list_editable = [display_class_info]
+    show_actions = True
+    actions_funcs = [multi_init, ]
 
 
 class StudyRecordConfig(crm.CrmConfig):
+
+    # list_display中的方法
+    def display_date(self, obj=None, is_header=False):
+        if is_header:
+            return '上课日期'
+        return obj.date.strftime('%Y-%m-%d')
+
+    def display_course(self, obj=None, is_header=False):
+        if is_header:
+            return '课程'
+        return '{}({}期) - Day{}'.format(obj.course_record.class_obj.course.name, obj.course_record.class_obj.semester,
+                                        obj.course_record.day_num)
+
+    def display_teacher(self, obj=None, is_header=False):
+        if is_header:
+            return '讲师'
+        return obj.course_record.teacher.name
+
+    def display_student(self, obj=None, is_header=False):
+        if is_header:
+            return '学生姓名'
+        return obj.student.customer.name
+
+    def display_record(self, obj=None, is_header=False):
+        if is_header:
+            return '出勤情况'
+        return obj.get_record_display()
+
+    # actions中的方法
+    def multi_checked(self, request):
+        pk_list = request.POST.getlist('pk')
+        models.StudyRecord.objects.filter(pk__in=pk_list).update(record='checked')
+
+    multi_checked.short_desc = '签到'
+
+    def multi_vacate(self, request):
+        pk_list = request.POST.getlist('pk')
+        models.StudyRecord.objects.filter(pk__in=pk_list).update(record='vacate')
+
+    multi_vacate.short_desc = '请假'
+
+    def multi_late(self, request):
+        pk_list = request.POST.getlist('pk')
+        models.StudyRecord.objects.filter(pk__in=pk_list).update(record='late')
+
+    multi_late.short_desc = '迟到'
+
+    def multi_absence(self, request):
+        pk_list = request.POST.getlist('pk')
+        models.StudyRecord.objects.filter(pk__in=pk_list).update(record='absence')
+
+    multi_absence.short_desc = '缺勤'
+
+    def multi_leave_early(self, request):
+        pk_list = request.POST.getlist('pk')
+        models.StudyRecord.objects.filter(pk__in=pk_list).update(record='leave_early')
+
+    multi_leave_early.short_desc = '早退'
+    ######
+    list_display = [display_date, display_course, display_student, display_record, ]
+
+    show_actions = True
+    actions_funcs = [multi_checked, multi_vacate, multi_late, multi_absence, multi_leave_early]
+
+
+class PaymentRecordConfig(crm.CrmConfig):
     show_add_btn = True
-    list_display = ['record', 'homework_note', 'note']
     list_editable = []

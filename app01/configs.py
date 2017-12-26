@@ -58,14 +58,14 @@ class UserInfoConfig(crm.CrmConfig):
 
     def multi_init(self, request):
         """批量初始化"""
-        pk_list = request.POST.getlist('obj_id')
+        pk_list = request.POST.getlist('pk')
         print('模拟执行初始化函数')
 
     multi_init.short_desc = '批量初始化'
 
     def multi_del(self, request):
         """批量删除"""
-        pk_list = request.POST.getlist('obj_id')
+        pk_list = request.POST.getlist('pk')
         self.model_class.objects.filter(pk__in=pk_list).delete()
 
     multi_del.short_desc = '批量删除'

@@ -107,7 +107,7 @@ class ChangeList:
         self.show_search_form = config_obj.get_show_search_form()
         self.search_input_name = config_obj.search_input_name
         self.list_per_page = config_obj.list_per_page
-        self.actions = config_obj.get_actions()
+        self.actions_funcs = config_obj.get_actions_funcs()
         self.show_actions = config_obj.get_show_actions()
         self.comb_filter_rows = config_obj.get_comb_filter_rows()
         self.show_comb_filter = config_obj.get_show_comb_filter()
@@ -135,7 +135,7 @@ class ChangeList:
     def modify_actions(self):
         """ 加工actions里的函数，用于在前端显示 """
         result = []
-        for func in self.actions:
+        for func in self.actions_funcs:
             tmp = {"func_name": func.__name__, "text": func.short_desc}
             result.append(tmp)
 
@@ -235,7 +235,7 @@ class CrmConfig:
     search_fields = []  # 供搜索的字段
     model_form_class = None  # 在派生类里指定自定义的ModelForm
     list_per_page = 10
-    actions = []  # 批量操作的函数
+    actions_funcs = []  # 批量操作的函数
     show_actions = False
     comb_filter_rows = []  # 供组合搜索的字段
     show_comb_filter = False
@@ -258,11 +258,11 @@ class CrmConfig:
         """ 要搜索的字段 """
         return self.search_fields
 
-    def get_actions(self):
+    def get_actions_funcs(self):
         """ 获取actions里的函数名 """
         result = []
-        if self.actions:
-            result.extend(self.actions)
+        if self.actions_funcs:
+            result.extend(self.actions_funcs)
         return result
 
     def get_show_actions(self):
@@ -301,7 +301,7 @@ class CrmConfig:
     def checkbox(self, obj=None, is_header=False):
         if is_header:
             return mark_safe('<input type="checkbox" id="checkbox">')
-        return mark_safe('<input type="checkbox" name="obj_id" value="%s">' % obj.id)
+        return mark_safe('<input type="checkbox" name="pk" value="%s">' % obj.pk)
 
     def ele_add_href(self):
         if self.request.GET:
@@ -426,7 +426,7 @@ class CrmConfig:
             return render(request, 'thanos/changelist_view.html', {"cl": cl})
         else:
             # actions
-            action_func = getattr(self, request.POST.get('action'))
+            action_func = getattr(self, request.POST.get('actions'))
             ret = action_func(request)
             if ret:
                 return ret
@@ -545,12 +545,12 @@ class CrmConfig:
 
         if request.method == 'GET':
             add_edit_form = model_form(instance=current_obj)
-            return render(request, 'thanos/edit_view.html',
+            return render(request, 'thanos/change_view.html',
                           {"self": self, "add_edit_form": add_edit_form})
         else:
             add_edit_form = model_form(instance=current_obj, data=request.POST)
             if not add_edit_form.is_valid():
-                return render(request, 'thanos/edit_view.html',
+                return render(request, 'thanos/change_view.html',
                               {"self": self, "add_edit_form": add_edit_form})
             else:
                 add_edit_form.save()
