@@ -88,7 +88,7 @@ class Customer(models.Model):
     客户表
     """
 
-    name = models.CharField(verbose_name='学生姓名', max_length=16)
+    name = models.CharField(verbose_name='客户姓名', max_length=16)
     gender_choices = [(1, '男'), (2, '女')]
     gender = models.SmallIntegerField(verbose_name='性别', choices=gender_choices)
     qq = models.CharField(verbose_name='qq', max_length=64, unique=True, help_text='QQ号必须唯一')
@@ -177,9 +177,21 @@ class CustomerDistribution(models.Model):
     """
     客户-顾问关系表
     """
-    consultant = models.ForeignKey(verbose_name='顾问', to='UserInfo', limit_choices_to={"department_id": 1000})
+    dist_date = models.DateField(verbose_name='分配日期')
     customer = models.ForeignKey(verbose_name='客户', to='Customer')
-    dis_date = models.DateField()
+    consultant = models.ForeignKey(verbose_name='顾问', to='UserInfo', limit_choices_to={"department_id": 1000})
+
+    status_choices = [
+        (1, '正在跟进'),
+        (2, '已成单'),
+        (3, '15天未成单'),
+        (4, '3天未跟进')
+    ]
+    status = models.IntegerField(verbose_name='状态', choices=status_choices, default=1)
+    memo = models.CharField(verbose_name='更多信息', max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = '客户分配表'
 
 
 class ConsultRecord(models.Model):
@@ -193,6 +205,13 @@ class ConsultRecord(models.Model):
 
     def __str__(self):
         return self.date.strftime('%Y-%m-%d')
+
+
+class ConsultantWeight(models.Model):
+    """课程顾问权重表"""
+    consultant = models.ForeignKey(verbose_name='课程顾问', to='UserInfo', limit_choices_to={"department_id": 1000})
+    cus_limit = models.IntegerField(verbose_name='最大分配客户数量')
+    weight = models.IntegerField(verbose_name='权重')
 
 
 class Student(models.Model):

@@ -99,24 +99,52 @@ class CustomerConfig(crm.CrmConfig):
     def public_source_view(self, request):
         if request.method == 'GET':
             date_now = datetime.date.today()
-            delta_day0 = datetime.timedelta(days=15)
-            delta_day1 = datetime.timedelta(days=3)
 
-            compare_recv = date_now - delta_day0
-            compare_follow = date_now - delta_day1
+            compare_recv = date_now - datetime.timedelta(days=15)  # 15天未成单
+            compare_follow = date_now - datetime.timedelta(days=3)  # 3天未跟进
 
-            recv_ot = Q(recv_date__lt=compare_recv)  # 15天未成单
-            follow_ot = Q(last_consult_date__lt=compare_follow)  # 3天未跟进
+            customer_obj_list = models.Customer.objects.filter(
+                Q(recv_date__lt=compare_recv) | Q(last_consult_date__lt=compare_follow),
+                status=2).exclude(consultant_id=2)
 
-            customer_obj_list = models.Customer.objects.filter(recv_ot | follow_ot, status=2).exclude(consultant_id=2)
+            # 方式二
+            # q1 = Q()
+            # q1.connector = 'OR'
+            #
+            # q1.children.append(("recv_date__lt", compare_recv))
+            # q1.children.append(("last_consult_date__lt", compare_follow))
+            #
+            # customer_obj_list = models.Customer.objects.filter(q1, status=2).exclude(consultant_id=2)
 
             return render(request, 'public_source_customer.html', {"obj_list": customer_obj_list})
+
+    # def competition(self, request, stu_id):
+    #     current_user_id = 14
+    #
+    #     date_now = datetime.date.today()
+    #
+    #     compare_recv = date_now - datetime.timedelta(days=15)  # 15天未成单
+    #     compare_follow = date_now - datetime.timedelta(days=3)  # 3天未跟进
+    #
+    #     rows = models.Customer.objects.filter(
+    #         Q(recv_date__lt=compare_recv) | Q(last_consult_date__lt=compare_follow),
+    #         status=2, pk=stu_id).exclude(consultant_id=2).update(recv_date=date_now, last_consult_date=date_now,
+    #                                                              consultant_id=current_user_id)
+    #     if not rows:
+    #         return HttpResponse('手速太慢了')
+    #
+    #     models.CustomerDistribution.objects.filter(customer_id=stu_id).update(status=3)  # 模拟3天未跟进
+    #     models.CustomerDistribution.objects.create(dist_date=date_now, customer_id=stu_id,
+    #                                                consultant_id=current_user_id)
+    #
+    #     return redirect('%s_%s_public' % (self.app_label, self.model_name))
 
     def extra_urls(self):
         info = (self.app_label, self.model_name)
         urlpatterns = [
             url(r'^(\d+)/(\d+)/sub_del/$', self.wrap(self.sub_del_view), name='%s_%s_sub_del' % info),  # 删除咨询课程
             url(r'^public/$', self.wrap(self.public_source_view), name='%s_%s_public' % info),  # 公共资源
+            # url(r'^(\d+)/competition/$', self.wrap(self.competition)),
         ]
         return urlpatterns
 
@@ -188,7 +216,7 @@ class CustomerConfig(crm.CrmConfig):
 
     def display_recv_date(self, obj=None, is_header=False):
         if is_header:
-            return '顾问接单日期'
+            return '课程顾问接单日期'
         recv_date = obj.recv_date
         if not recv_date:
             return '-'
@@ -217,6 +245,31 @@ class CustomerConfig(crm.CrmConfig):
     list_display = ['name', display_gender, display_course, display_status, display_consultant, display_recv_date,
                     display_consult_record]
     list_editable = ['name']
+
+
+class CustomerDistributionConfig(crm.CrmConfig):
+
+    def display_dist_date(self, obj=None, is_header=False):
+        if is_header:
+            return '分配日期'
+        return obj.dist_date.strftime('%Y-%m-%d')
+
+    def display_customer(self, obj=None, is_header=False):
+        if is_header:
+            return '客户'
+        return obj.customer.name
+
+    def display_consultant(self, obj=None, is_header=False):
+        if is_header:
+            return '课程顾问'
+        return obj.consultant.name
+
+    def display_status(self, obj=None, is_header=False):
+        if is_header:
+            return '状态'
+        return obj.get_status_display()
+
+    list_display = [display_dist_date, display_customer, display_consultant, display_status]
 
 
 class ConsultRecordConfig(crm.CrmConfig):
@@ -483,7 +536,7 @@ class StudyRecordConfig(crm.CrmConfig):
     multi_leave_early.short_desc = '早退'
 
     ######
-    list_display = [display_date, display_course, display_student, display_record, ]
+    list_display = [display_date, display_course, display_student, display_record]
 
     show_actions = True
     actions_funcs = [multi_checked, multi_vacate, multi_late, multi_absence, multi_leave_early]
