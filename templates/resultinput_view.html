@@ -16,8 +16,10 @@
         <h2>成绩录入</h2>
     </div>
 
-    <form method="post">
+    <form method="post" novalidate>
         {% csrf_token %}
+
+        <button class="btn btn-primary pull-right" style="margin-bottom: 10px">保存</button>
 
         <table class="table table-bordered">
             <thead>
@@ -29,12 +31,16 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-            </tr>
+            {% for row_dict in data_list %}
+                <tr>
+                    <td>{{ row_dict.stu_record_obj.course_record }}</td>
+                    <td>{{ row_dict.stu_record_obj.student.customer.name }}</td>
+                    {% for field in row_dict.form %}
+                        <td>{{ field }}</td>
+                    {% endfor %}
+
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
     </form>

@@ -1,11 +1,14 @@
 """
 在crm中注册表时的自定义配置项
 """
+import datetime
 
 from django.conf.urls import url, include
-from django.utils.safestring import mark_safe
-from django.forms import ModelForm, Form
 from django.shortcuts import render, redirect, reverse, HttpResponse
+from django.http import JsonResponse
+from django.utils.safestring import mark_safe
+from django.forms import ModelForm, Form, fields, widgets
+from django.db.models import Q
 
 from thanos.service import crm
 from . import models
@@ -64,8 +67,8 @@ class ClassListConfig(crm.CrmConfig):
         """显示所有任课教师"""
         if is_header:
             return '任课教师'
-        tmp = [i.name for i in obj.teachers.all()]
-        return ','.join(tmp)
+        tmp_list = [i.name for i in obj.teachers.all()]
+        return ','.join(tmp_list)
 
     def display_start_date(self, obj=None, is_header=False):
         """格式化输出开班日期"""
@@ -93,14 +96,31 @@ class CustomerConfig(crm.CrmConfig):
         else:
             return redirect('%s' % self.get_changelist_url())
 
+    def public_source_view(self, request):
+        if request.method == 'GET':
+            date_now = datetime.date.today()
+            delta_day0 = datetime.timedelta(days=15)
+            delta_day1 = datetime.timedelta(days=3)
+
+            compare_recv = date_now - delta_day0
+            compare_follow = date_now - delta_day1
+
+            recv_ot = Q(recv_date__lt=compare_recv)  # 15天未成单
+            follow_ot = Q(last_consult_date__lt=compare_follow)  # 3天未跟进
+
+            customer_obj_list = models.Customer.objects.filter(recv_ot | follow_ot, status=2).exclude(consultant_id=2)
+
+            return render(request, 'public_source_customer.html', {"obj_list": customer_obj_list})
+
     def extra_urls(self):
         info = (self.app_label, self.model_name)
         urlpatterns = [
-            url(r'^(\d+)/(\d+)/sub_del/$', self.wrap(self.sub_del_view), name='%s_%s_sub_del' % info),
+            url(r'^(\d+)/(\d+)/sub_del/$', self.wrap(self.sub_del_view), name='%s_%s_sub_del' % info),  # 删除咨询课程
+            url(r'^public/$', self.wrap(self.public_source_view), name='%s_%s_public' % info),  # 公共资源
         ]
         return urlpatterns
 
-    ### 页面展示相关 ###
+    ## list_display中的方法 ##
     def display_gender(self, obj=None, is_header=False):
         if is_header:
             return '性别'
@@ -140,7 +160,7 @@ class CustomerConfig(crm.CrmConfig):
         if is_header:
             return '咨询课程'
 
-        tmp = []
+        tmp_list = []
         info = (self.app_label, self.model_name)
         for i in obj.course.all():
             # del_href = '/crm/app03/customer/{}/{}/sub_del/'.format(obj.pk, i.pk)
@@ -148,8 +168,8 @@ class CustomerConfig(crm.CrmConfig):
             ele_html = '<a class="courses" href="{}">{}&nbsp;' \
                        '<span class="glyphicon glyphicon-remove"></span>' \
                        '</a>'.format(del_href, i.name)
-            tmp.append(ele_html)
-        return mark_safe('\n'.join(tmp))
+            tmp_list.append(ele_html)
+        return mark_safe('\n'.join(tmp_list))
 
     def display_status(self, obj=None, is_header=False):
         if is_header:
@@ -165,6 +185,15 @@ class CustomerConfig(crm.CrmConfig):
         if is_header:
             return '咨询日期'
         return obj.date.strftime('%Y-%m-%d')
+
+    def display_recv_date(self, obj=None, is_header=False):
+        if is_header:
+            return '顾问接单日期'
+        recv_date = obj.recv_date
+        if not recv_date:
+            return '-'
+        else:
+            return obj.recv_date.strftime('%Y-%m-%d')
 
     def display_last_consult_date(self, obj=None, is_header=False):
         if is_header:
@@ -185,7 +214,7 @@ class CustomerConfig(crm.CrmConfig):
         base_url = reverse('app03_consultrecord_changelist')
         return mark_safe('<a href="{}?customer_id={}" target="_blank">记录详情</a>'.format(base_url, obj.id))
 
-    list_display = ['name', display_gender, display_course, display_status, display_consultant,
+    list_display = ['name', display_gender, display_course, display_status, display_consultant, display_recv_date,
                     display_consult_record]
     list_editable = ['name']
 
@@ -219,6 +248,30 @@ class ConsultRecordConfig(crm.CrmConfig):
 class StudentConfig(crm.CrmConfig):
     show_add_btn = True
 
+    def check_score_view(self, request, nid):
+        """查看个人成绩"""
+        if request.method == 'GET':
+            print(request.GET)
+            return render(request, 'check_score_view.html')
+        else:
+            print(request.POST)
+            return HttpResponse('post个人成绩')
+
+    def chart_view(self, request):
+        """个人成绩图表,ajax请求"""
+        if request.is_ajax():
+            res_dict = {"status": None, "error_msg": None}
+            return JsonResponse(res_dict)
+
+    def extra_urls(self):
+        info = (self.app_label, self.model_name)
+        urlpatterns = [
+            url(r'^(\d+)/check_score/$', self.wrap(self.check_score_view), name='%s_%s_check_score' % info),
+            url(r'^chart/$', self.wrap(self.chart_view), name='%s_%s_chart' % info),
+        ]
+        return urlpatterns
+
+    ## list_display中的方法 ##
     def display_name(self, obj=None, is_header=False):
         if is_header:
             return '学生姓名'
@@ -228,12 +281,19 @@ class StudentConfig(crm.CrmConfig):
         if is_header:
             return '所在班级'
 
-        tmp = []
+        tmp_list = []
         for i in obj.class_list.all():
-            tmp.append('{}({}期)'.format(i.course.name, i.semester))
-        return ' | '.join(tmp)
+            tmp_list.append('{}({}期)'.format(i.course.name, i.semester))
+        return ' | '.join(tmp_list)
 
-    list_display = [display_name, display_class_list, 'emergency_contract', ]
+    def display_check_score(self, obj=None, is_header=False):
+        if is_header:
+            return '查看个人成绩'
+
+        base_url = reverse('%s_%s_check_score' % (self.app_label, self.model_name), args=(obj.pk,))
+        return mark_safe('<a href="{}">查看个人成绩</a>'.format(base_url))
+
+    list_display = [display_name, display_class_list, display_check_score, 'emergency_contract', ]
     list_editable = [display_name]
 
 
@@ -241,14 +301,43 @@ class CourseRecordConfig(crm.CrmConfig):
     show_add_btn = True
 
     def resultinput_view(self, request, course_record_id):
-        """成绩录入"""
+        """成绩录入视图"""
         if request.method == 'GET':
+            study_record_obj_list = models.StudyRecord.objects.filter(course_record_id=course_record_id)
+            data_list = []
+            for stu_record_obj in study_record_obj_list:
+                tmp_dict = {"stu_record_obj": stu_record_obj, "form": None}
 
+                TempForm = type('TempForm', (Form,), {
+                    "score_{}".format(stu_record_obj.pk): fields.ChoiceField(
+                        choices=stu_record_obj.score_choices,
+                        widget=widgets.Select(attrs={"class": 'form-control'})),
+                    "homework_note_{}".format(stu_record_obj.pk): fields.CharField(
+                        widget=widgets.TextInput(attrs={"class": 'form-control'}))
+                })
 
-            return render(request, 'thanos/resultinput_view.html')
+                tmp_dict["form"] = TempForm(initial={
+                    "score_{}".format(stu_record_obj.pk): stu_record_obj.score,
+                    "homework_note_{}".format(stu_record_obj.pk): stu_record_obj.homework_note,
+                })
+                data_list.append(tmp_dict)
+
+            return render(request, 'resultinput_view.html', {"data_list": data_list})
         else:
+            tmp_dict = {}
+            for field_and_pk, value in request.POST.items():
+                if field_and_pk == 'csrfmiddlewaretoken':
+                    continue
+                field, pk = field_and_pk.rsplit('_', 1)
+                if pk not in tmp_dict:
+                    tmp_dict[pk] = {field: value}
+                else:
+                    tmp_dict[pk][field] = value
 
-            return HttpResponse('成绩录入成功')
+            for pk, dict_item in tmp_dict.items():
+                models.StudyRecord.objects.filter(pk=pk).update(**dict_item)
+
+            return redirect(reverse('%s_%s_changelist' % (self.app_label, self.model_name)))
 
     def extra_urls(self):
         """添加成绩录入的URL"""
@@ -258,7 +347,7 @@ class CourseRecordConfig(crm.CrmConfig):
         ]
         return urlpatterns
 
-    ## list_display里的方法 ##
+    ## list_display中的方法 ##
     def display_class_info(self, obj=None, is_header=False):
         if is_header:
             return '班级'
@@ -295,8 +384,9 @@ class CourseRecordConfig(crm.CrmConfig):
             is_exists = models.StudyRecord.objects.filter(course_record=record_obj).exists()
             if not is_exists:
                 student_obj_list = models.Student.objects.filter(class_list=record_obj.class_obj)
-                tmp = [models.StudyRecord(course_record=record_obj, student=stu_obj) for stu_obj in student_obj_list]
-                models.StudyRecord.objects.bulk_create(tmp)
+                tmp_list = [models.StudyRecord(course_record=record_obj, student=stu_obj) for stu_obj in
+                            student_obj_list]
+                models.StudyRecord.objects.bulk_create(tmp_list)
 
     multi_init.short_desc = '初始化学生课堂记录'
 
@@ -310,7 +400,7 @@ class CourseRecordConfig(crm.CrmConfig):
 
 class StudyRecordConfig(crm.CrmConfig):
 
-    # list_display中的方法
+    ## list_display中的方法 ##
     def display_date(self, obj=None, is_header=False):
         if is_header:
             return '上课日期'
@@ -337,7 +427,7 @@ class StudyRecordConfig(crm.CrmConfig):
             return '出勤情况'
         return obj.get_record_display()
 
-    # actions中的方法
+    ## actions的方法 ##
     def multi_checked(self, request):
         pk_list = request.POST.getlist('pk')
         models.StudyRecord.objects.filter(pk__in=pk_list).update(record='checked')
@@ -367,6 +457,7 @@ class StudyRecordConfig(crm.CrmConfig):
         models.StudyRecord.objects.filter(pk__in=pk_list).update(record='leave_early')
 
     multi_leave_early.short_desc = '早退'
+
     ######
     list_display = [display_date, display_course, display_student, display_record, ]
 

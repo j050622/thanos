@@ -80,7 +80,7 @@ class ClassList(models.Model):
                                    limit_choices_to={"department_id": 1002})
 
     def __str__(self):
-        return "{0}({1}期)".format(self.course.name, self.semester)
+        return "{}({}期)".format(self.course.name, self.semester)
 
 
 class Customer(models.Model):
@@ -165,11 +165,21 @@ class Customer(models.Model):
     )
     consultant = models.ForeignKey(verbose_name="课程顾问", to='UserInfo', limit_choices_to={'department_id': 1000})
     date = models.DateField(verbose_name="咨询日期", auto_now_add=True)
+    recv_date = models.DateField(verbose_name='顾问接单日期', null=True, blank=True)
     last_consult_date = models.DateField(verbose_name="最后跟进日期", auto_now_add=True)
 
     def __str__(self):
         # return "姓名:{0},QQ:{1}".format(self.name, self.qq)
         return self.name
+
+
+class CustomerDistribution(models.Model):
+    """
+    客户-顾问关系表
+    """
+    consultant = models.ForeignKey(verbose_name='顾问', to='UserInfo', limit_choices_to={"department_id": 1000})
+    customer = models.ForeignKey(verbose_name='客户', to='Customer')
+    dis_date = models.DateField()
 
 
 class ConsultRecord(models.Model):
@@ -226,7 +236,7 @@ class CourseRecord(models.Model):
     exam = models.TextField(verbose_name='踩分点', max_length=300, blank=True, null=True)
 
     def __str__(self):
-        return "{0} day{1}".format(self.class_obj, self.day_num)
+        return '{} - Day{}'.format(str(self.class_obj), self.day_num)
 
 
 class StudyRecord(models.Model):
@@ -259,7 +269,7 @@ class StudyRecord(models.Model):
     date = models.DateTimeField(verbose_name='提交作业日期', auto_now_add=True)
 
     def __str__(self):
-        return "{0}-{1}".format(self.course_record, self.student)
+        return "{} - {}".format(str(self.course_record), self.student)
 
 
 class PaymentRecord(models.Model):
