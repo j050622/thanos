@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,10 +6,42 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>查看个人寿命</title>
+    <link rel="stylesheet" href="{% static 'thanos/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}">
+    <title>查看个人成绩</title>
+    <style>
+        /* 调节按钮样式 */
+        ul {
+            list-style: none;
+        }
+
+        ul a {
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
+<div class="container">
+    <div class="page-header">
+        <h2>所在班级</h2>
+    </div>
+    <ul id="classList" sid="{{ stu_id }}">
+        {% for cls_obj in class_list %}
+            <li cid="{{ cls_obj.pk }}"><a class="btn btn-primary">{{ cls_obj }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <div class="page-header">
+        <h2>成绩图表</h2>
+    </div>
+    <div>
+        
+    </div>
 
 
+</div>
+
+<script src="{% static 'thanos/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'thanos/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/check_score_view.js' %}"></script>
 </body>
 </html>

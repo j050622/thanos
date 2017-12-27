@@ -248,11 +248,16 @@ class ConsultRecordConfig(crm.CrmConfig):
 class StudentConfig(crm.CrmConfig):
     show_add_btn = True
 
-    def check_score_view(self, request, nid):
-        """查看个人成绩"""
+    def check_score_view(self, request, pk):
+        """查看个人成绩视图"""
         if request.method == 'GET':
-            print(request.GET)
-            return render(request, 'check_score_view.html')
+            student_obj = models.Student.objects.filter(pk=pk).first()
+            if not student_obj:
+                return HttpResponse('查无此人')
+
+            class_list = student_obj.class_list.all()
+            return render(request, 'check_score_view.html', {"class_list": class_list, "stu_id": pk})
+
         else:
             print(request.POST)
             return HttpResponse('post个人成绩')
@@ -260,10 +265,16 @@ class StudentConfig(crm.CrmConfig):
     def chart_view(self, request):
         """个人成绩图表,ajax请求"""
         if request.is_ajax():
+            stu_id = request.GET.get('sid')
+            cls_id = request.GET.get('cid')
             res_dict = {"status": None, "error_msg": None}
+
+            print('展示图表的视图函数，未完成')
+
             return JsonResponse(res_dict)
 
     def extra_urls(self):
+        """添加查看个人成绩及相关的URL"""
         info = (self.app_label, self.model_name)
         urlpatterns = [
             url(r'^(\d+)/check_score/$', self.wrap(self.check_score_view), name='%s_%s_check_score' % info),

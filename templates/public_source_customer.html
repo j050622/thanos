@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'thanos/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}">
     <title>公共资源</title>
 </head>
 <body>
@@ -17,5 +19,7 @@
 </div>
 
 
+<script src="{% static 'thanos/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'thanos/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
 </body>
 </html>
