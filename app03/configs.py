@@ -267,9 +267,22 @@ class StudentConfig(crm.CrmConfig):
         if request.is_ajax():
             stu_id = request.GET.get('sid')
             cls_id = request.GET.get('cid')
-            res_dict = {"status": None, "error_msg": None}
+            res_dict = {"status": None, "error_msg": None, "data_list": [], "class_name": None}
 
-            print('展示图表的视图函数，未完成')
+            try:
+                study_record_list = models.StudyRecord.objects.filter(student_id=stu_id,
+                                                                      course_record__class_obj_id=cls_id)
+                for study_record_obj in study_record_list:
+                    day_n = 'day{}'.format(study_record_obj.course_record.day_num)
+                    score = study_record_obj.score
+
+                    res_dict["data_list"].append([day_n, score])
+                res_dict["status"] = True
+                res_dict["class_name"] = str(models.ClassList.objects.filter(pk=cls_id).first())
+
+            except Exception as e:
+                res_dict["status"] = False
+                res_dict["error_msg"] = str(e)
 
             return JsonResponse(res_dict)
 

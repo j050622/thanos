@@ -17,6 +17,11 @@
         ul a {
             margin: 5px 0;
         }
+
+        #chart{
+            width: 800px;
+            height: 400px;
+        }
     </style>
 </head>
 <body>
@@ -25,16 +30,16 @@
         <h2>所在班级</h2>
     </div>
     <ul id="classList" sid="{{ stu_id }}">
-        {% for cls_obj in class_list %}
-            <li cid="{{ cls_obj.pk }}"><a class="btn btn-primary">{{ cls_obj }}</a></li>
+        {% for class_obj in class_list %}
+            <li cid="{{ class_obj.pk }}"><a class="btn btn-primary">{{ class_obj }}</a></li>
         {% endfor %}
     </ul>
 
     <div class="page-header">
         <h2>成绩图表</h2>
     </div>
-    <div>
-        
+    <div id="chart">
+        <!-- 图表 -->
     </div>
 
 
@@ -42,6 +47,7 @@
 
 <script src="{% static 'thanos/jquery-3.2.1.min.js' %}"></script>
 <script src="{% static 'thanos/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'highcharts.js' %}"></script>
 <script src="{% static 'js/check_score_view.js' %}"></script>
 </body>
 </html>
