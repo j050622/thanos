@@ -178,7 +178,7 @@ class CustomerDistribution(models.Model):
     """
     客户-顾问关系表
     """
-    dist_date = models.DateField(verbose_name='分配日期')
+    dist_date = models.DateField(verbose_name='分配日期', auto_now_add=True)
     customer = models.ForeignKey(verbose_name='客户', to='Customer')
     consultant = models.ForeignKey(verbose_name='顾问', to='UserInfo', limit_choices_to={"department_id": 1000})
 

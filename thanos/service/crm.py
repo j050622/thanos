@@ -230,6 +230,7 @@ class CrmConfig:
     ###### 基本配置 ######
     list_display = []  # 要在列表页面显示的列
     list_editable = []  # 供点击进入编辑页面的字段
+    order_by_condition = []  # 排序条件
     show_add_btn = False  # 默认不显示添加按钮
     show_search_form = False
     search_fields = []  # 供搜索的字段
@@ -244,6 +245,12 @@ class CrmConfig:
         result = []
         if self.list_editable:
             result.extend(self.list_editable)
+        return result
+
+    def get_order_by_condition(self):
+        result = []
+        if self.order_by_condition:
+            result.extend(self.order_by_condition)
         return result
 
     def get_show_add_btn(self):
@@ -418,7 +425,8 @@ class CrmConfig:
         """
         if request.method == 'GET':
             pager_params, condition = self.get_search_condition()
-            obj_list = self.model_class.objects.filter(condition).distinct()  # 根据条件查询数据库
+            obj_list = self.model_class.objects.filter(condition).order_by(
+                *self.get_order_by_condition()).distinct()  # 根据条件查询数据库
 
             ### 实例化ChangeList对象 ###
             cl = ChangeList(self, obj_list, pager_params)  # 传入当前对象

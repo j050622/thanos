@@ -85,6 +85,7 @@ class ClassListConfig(crm.CrmConfig):
 
 class CustomerConfig(crm.CrmConfig):
     show_add_btn = True
+    order_by_condition = ['-status', ]
 
     def sub_del_view(self, request, customer_id, course_id):
         """删除用户不感兴趣的课程"""
@@ -99,61 +100,130 @@ class CustomerConfig(crm.CrmConfig):
     def public_source_view(self, request):
         if request.method == 'GET':
             date_now = datetime.date.today()
+            current_consultant_id = 2  ########## 模拟session中获取
 
             compare_recv = date_now - datetime.timedelta(days=15)  # 15天未成单
+            obj_list1 = models.Customer.objects.filter(
+                Q(recv_date__lt=compare_recv), status=2).exclude(
+                consultant_id=current_consultant_id)
+            for obj in obj_list1:
+                models.CustomerDistribution.objects.filter(customer=obj).update(status=3)
+
             compare_follow = date_now - datetime.timedelta(days=3)  # 3天未跟进
+            obj_list2 = models.Customer.objects.filter(
+                Q(last_consult_date__lt=compare_follow), status=2).exclude(
+                consultant_id=current_consultant_id)
+            for obj in obj_list2:
+                models.CustomerDistribution.objects.filter(customer=obj).update(status=4)
 
-            customer_obj_list = models.Customer.objects.filter(
-                Q(recv_date__lt=compare_recv) | Q(last_consult_date__lt=compare_follow),
-                status=2).exclude(consultant_id=2)
-
-            # 方式二
-            # q1 = Q()
-            # q1.connector = 'OR'
-            #
-            # q1.children.append(("recv_date__lt", compare_recv))
-            # q1.children.append(("last_consult_date__lt", compare_follow))
-            #
-            # customer_obj_list = models.Customer.objects.filter(q1, status=2).exclude(consultant_id=2)
+            customer_obj_list = obj_list1 | obj_list2
 
             return render(request, 'public_source_customer.html', {"obj_list": customer_obj_list})
 
-    # def competition(self, request, stu_id):
-    #     current_user_id = 14
-    #
-    #     date_now = datetime.date.today()
-    #
-    #     compare_recv = date_now - datetime.timedelta(days=15)  # 15天未成单
-    #     compare_follow = date_now - datetime.timedelta(days=3)  # 3天未跟进
-    #
-    #     rows = models.Customer.objects.filter(
-    #         Q(recv_date__lt=compare_recv) | Q(last_consult_date__lt=compare_follow),
-    #         status=2, pk=stu_id).exclude(consultant_id=2).update(recv_date=date_now, last_consult_date=date_now,
-    #                                                              consultant_id=current_user_id)
-    #     if not rows:
-    #         return HttpResponse('手速太慢了')
-    #
-    #     models.CustomerDistribution.objects.filter(customer_id=stu_id).update(status=3)  # 模拟3天未跟进
-    #     models.CustomerDistribution.objects.create(dist_date=date_now, customer_id=stu_id,
-    #                                                consultant_id=current_user_id)
-    #
-    #     return redirect('%s_%s_public' % (self.app_label, self.model_name))
+    def competition(self, request, stu_id):
+        """对于公共资源，课程顾问进行手动抢单"""
+        current_user_id = 14
 
-    # def contribute(self, request):
-    #     if request.method == 'GET':
-    #         contribute_form = ContributeForm()
-    #         return render(request, 'customer_contribute.html', {"contribute_form": contribute_form})
-    #     else:
-    #         pass
-    #         return HttpResponse('客户分配')
+        date_now = datetime.date.today()
+
+        compare_recv = date_now - datetime.timedelta(days=15)  # 15天未成单
+        compare_follow = date_now - datetime.timedelta(days=3)  # 3天未跟进
+
+        rows = models.Customer.objects.filter(
+            Q(recv_date__lt=compare_recv) | Q(last_consult_date__lt=compare_follow),
+            status=2, pk=stu_id).exclude(consultant_id=2).update(recv_date=date_now, last_consult_date=date_now,
+                                                                 consultant_id=current_user_id)
+        if not rows:
+            return HttpResponse('手速太慢了')
+
+        models.CustomerDistribution.objects.filter(customer_id=stu_id).update(status=3)  # 模拟3天未跟进
+        models.CustomerDistribution.objects.create(dist_date=date_now, customer_id=stu_id,
+                                                   consultant_id=current_user_id)
+
+        return redirect('%s_%s_public' % (self.app_label, self.model_name))
+
+    def add_view(self, request, *args, **kwargs):
+        """
+        重写添加记录方法，添加自动分配客户的功能
+        """
+        model_form = self.get_model_form_class()
+        if request.method == 'GET':
+            add_edit_form = model_form()
+            return render(request, 'thanos/add_view.html',
+                          {"self": self, "add_edit_form": add_edit_form})
+        else:
+            _popback_id = request.GET.get('popback_id')
+            add_edit_form = model_form(data=request.POST)
+
+            if not add_edit_form.is_valid():
+                return render(request, 'thanos/add_view.html',
+                              {"self": self, "add_edit_form": add_edit_form})
+            else:
+
+                # 对新录入的客户进行自动分配
+                from .customer_contribute import Contribute
+                consultant_id = Contribute.get_consultant_id()
+                date_now = datetime.date.today()
+
+                # 暂不提供销售主管指定课程顾问的功能，新录入的客户只能由系统自动分配
+                add_edit_form.instance.consultant_id = consultant_id
+                add_edit_form.instance.recv_date = date_now
+                add_edit_form.instance.last_consult_date = date_now
+                new_obj = add_edit_form.save()
+                print(new_obj.recv_date)
+                print(new_obj.last_consult_date)
+
+                # 创建客户分配记录
+                models.CustomerDistribution.objects.create(customer_id=new_obj.pk, consultant_id=consultant_id)
+
+                # 跳转
+                if _popback_id:
+                    from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
+
+                    popback_info = {"status": None, "text": None, "value": None, "popback_id": _popback_id}
+
+                    back_related_name = request.GET.get('related_name')
+                    back_model_name = request.GET.get('model_name')
+
+                    for rel_field_obj in new_obj._meta.related_objects:
+                        # 遍历所有关联当前记录所在表的字段对象，例如：teachers、headmaster
+                        _related_name = str(rel_field_obj.related_name)
+                        _model_name = rel_field_obj.field.model._meta.model_name
+
+                        if _related_name == back_related_name and _model_name == back_model_name:
+                            # 定位到打开popup的标签对应的字段
+                            _limit_choices_to = rel_field_obj.limit_choices_to
+
+                            if (type(rel_field_obj) == ManyToOneRel):
+                                _field_name = rel_field_obj.field_name
+                            else:
+                                # ManyToManyRel没有field_name方法，反应到models里面是因为没有to_field方法
+                                _field_name = 'pk'
+
+                            is_exists = self.model_class.objects.filter(pk=new_obj.pk, **_limit_choices_to).exists()
+                            if is_exists:
+                                # 如果新记录对象符合原limit_choices_to的条件
+                                popback_info["status"] = True
+                                popback_info["text"] = str(new_obj)
+                                popback_info["value"] = getattr(new_obj, _field_name)
+
+                                return render(request, 'thanos/popUp_response.html',
+                                              {"popback_info": json.dumps(popback_info)})
+
+                    return render(request, 'thanos/popUp_response.html', {"popback_info": json.dumps(popback_info)})
+                else:
+                    next_to = request.GET.get(self.query_dict_key)
+                    if next_to:
+                        return redirect('%s?%s' % (self.get_changelist_url(), next_to))
+                    else:
+                        return redirect('%s' % self.get_changelist_url())
 
     def extra_urls(self):
         info = (self.app_label, self.model_name)
         urlpatterns = [
             url(r'^(\d+)/(\d+)/sub_del/$', self.wrap(self.sub_del_view), name='%s_%s_sub_del' % info),  # 删除咨询课程
             url(r'^public/$', self.wrap(self.public_source_view), name='%s_%s_public' % info),  # 公共资源
-            # url(r'^(\d+)/competition/$', self.wrap(self.competition)),
-            # url(r'^contribute/$', self.wrap(self.contribute)),
+            url(r'^(\d+)/competition/$', self.wrap(self.competition)),
         ]
         return urlpatterns
 
@@ -255,69 +325,6 @@ class CustomerConfig(crm.CrmConfig):
                     display_consult_record]
     list_editable = ['name']
 
-    def add_view(self, request, *args, **kwargs):
-        """
-        添加记录
-        """
-        model_form = self.get_model_form_class()
-        if request.method == 'GET':
-            add_edit_form = model_form()
-            return render(request, 'thanos/add_view.html',
-                          {"self": self, "add_edit_form": add_edit_form})
-        else:
-            _popback_id = request.GET.get('popback_id')
-            add_edit_form = model_form(data=request.POST)
-
-            if not add_edit_form.is_valid():
-                return render(request, 'thanos/add_view.html',
-                              {"self": self, "add_edit_form": add_edit_form})
-            else:
-                # new_obj = add_edit_form.save()
-                from .customer_contribute import Contribute
-                Contribute.contribute()
-
-                # 跳转
-                if _popback_id:
-                    from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
-
-                    popback_info = {"status": None, "text": None, "value": None, "popback_id": _popback_id}
-
-                    back_related_name = request.GET.get('related_name')
-                    back_model_name = request.GET.get('model_name')
-
-                    for rel_field_obj in new_obj._meta.related_objects:
-                        # 遍历所有关联当前记录所在表的字段对象，例如：teachers、headmaster
-                        _related_name = str(rel_field_obj.related_name)
-                        _model_name = rel_field_obj.field.model._meta.model_name
-
-                        if _related_name == back_related_name and _model_name == back_model_name:
-                            # 定位到打开popup的标签对应的字段
-                            _limit_choices_to = rel_field_obj.limit_choices_to
-
-                            if (type(rel_field_obj) == ManyToOneRel):
-                                _field_name = rel_field_obj.field_name
-                            else:
-                                # ManyToManyRel没有field_name方法，反应到models里面是因为没有to_field方法
-                                _field_name = 'pk'
-
-                            is_exists = self.model_class.objects.filter(pk=new_obj.pk, **_limit_choices_to).exists()
-                            if is_exists:
-                                # 如果新记录对象符合原limit_choices_to的条件
-                                popback_info["status"] = True
-                                popback_info["text"] = str(new_obj)
-                                popback_info["value"] = getattr(new_obj, _field_name)
-
-                                return render(request, 'thanos/popUp_response.html',
-                                              {"popback_info": json.dumps(popback_info)})
-
-                    return render(request, 'thanos/popUp_response.html', {"popback_info": json.dumps(popback_info)})
-                else:
-                    next_to = request.GET.get(self.query_dict_key)
-                    if next_to:
-                        return redirect('%s?%s' % (self.get_changelist_url(), next_to))
-                    else:
-                        return redirect('%s' % self.get_changelist_url())
-
 
 class CustomerDistributionConfig(crm.CrmConfig):
 
@@ -382,10 +389,6 @@ class StudentConfig(crm.CrmConfig):
 
             class_list = student_obj.class_list.all()
             return render(request, 'check_score_view.html', {"class_list": class_list, "stu_id": pk})
-
-        else:
-            print(request.POST)
-            return HttpResponse('post个人成绩')
 
     def chart_view(self, request):
         """个人成绩图表,ajax请求"""
