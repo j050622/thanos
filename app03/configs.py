@@ -12,6 +12,7 @@ from django.db.models import Q
 
 from thanos.service import crm
 from . import models
+from .customer_distribute import Distribute
 
 
 class DepartmentConfig(crm.CrmConfig):
@@ -161,20 +162,21 @@ class CustomerConfig(crm.CrmConfig):
             else:
 
                 # 对新录入的客户进行自动分配
-                from .customer_contribute import Contribute
-                consultant_id = Contribute.get_consultant_id()
+                consultant_id = Distribute.get_consultant_id()
                 date_now = datetime.date.today()
 
                 # 暂不提供销售主管指定课程顾问的功能，新录入的客户只能由系统自动分配
-                add_edit_form.instance.consultant_id = consultant_id
-                add_edit_form.instance.recv_date = date_now
-                add_edit_form.instance.last_consult_date = date_now
-                new_obj = add_edit_form.save()
-                print(new_obj.recv_date)
-                print(new_obj.last_consult_date)
+                try:
+                    add_edit_form.instance.consultant_id = consultant_id
+                    add_edit_form.instance.recv_date = date_now
+                    add_edit_form.instance.last_consult_date = date_now
+                    new_obj = add_edit_form.save()
 
-                # 创建客户分配记录
-                models.CustomerDistribution.objects.create(customer_id=new_obj.pk, consultant_id=consultant_id)
+                    # 创建客户分配记录
+                    models.CustomerDistribution.objects.create(customer_id=new_obj.pk, consultant_id=consultant_id)
+                except Exception as e:
+                    print('错误:', e)
+                    Distribute.rollback(consultant_id)
 
                 # 跳转
                 if _popback_id:
@@ -322,8 +324,9 @@ class CustomerConfig(crm.CrmConfig):
         return mark_safe('<a href="{}?customer_id={}" target="_blank">记录详情</a>'.format(base_url, obj.id))
 
     list_display = ['name', display_gender, display_course, display_status, display_consultant, display_recv_date,
-                    display_consult_record]
+                    display_last_consult_date, display_consult_record]
     list_editable = ['name']
+    list_per_page = 20
 
 
 class CustomerDistributionConfig(crm.CrmConfig):
@@ -349,6 +352,7 @@ class CustomerDistributionConfig(crm.CrmConfig):
         return obj.get_status_display()
 
     list_display = [display_dist_date, display_customer, display_consultant, display_status]
+    list_per_page = 20
 
 
 class ConsultRecordConfig(crm.CrmConfig):
