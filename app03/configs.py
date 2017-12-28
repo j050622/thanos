@@ -139,12 +139,21 @@ class CustomerConfig(crm.CrmConfig):
     #
     #     return redirect('%s_%s_public' % (self.app_label, self.model_name))
 
+    # def contribute(self, request):
+    #     if request.method == 'GET':
+    #         contribute_form = ContributeForm()
+    #         return render(request, 'customer_contribute.html', {"contribute_form": contribute_form})
+    #     else:
+    #         pass
+    #         return HttpResponse('客户分配')
+
     def extra_urls(self):
         info = (self.app_label, self.model_name)
         urlpatterns = [
             url(r'^(\d+)/(\d+)/sub_del/$', self.wrap(self.sub_del_view), name='%s_%s_sub_del' % info),  # 删除咨询课程
             url(r'^public/$', self.wrap(self.public_source_view), name='%s_%s_public' % info),  # 公共资源
             # url(r'^(\d+)/competition/$', self.wrap(self.competition)),
+            # url(r'^contribute/$', self.wrap(self.contribute)),
         ]
         return urlpatterns
 
@@ -245,6 +254,69 @@ class CustomerConfig(crm.CrmConfig):
     list_display = ['name', display_gender, display_course, display_status, display_consultant, display_recv_date,
                     display_consult_record]
     list_editable = ['name']
+
+    def add_view(self, request, *args, **kwargs):
+        """
+        添加记录
+        """
+        model_form = self.get_model_form_class()
+        if request.method == 'GET':
+            add_edit_form = model_form()
+            return render(request, 'thanos/add_view.html',
+                          {"self": self, "add_edit_form": add_edit_form})
+        else:
+            _popback_id = request.GET.get('popback_id')
+            add_edit_form = model_form(data=request.POST)
+
+            if not add_edit_form.is_valid():
+                return render(request, 'thanos/add_view.html',
+                              {"self": self, "add_edit_form": add_edit_form})
+            else:
+                # new_obj = add_edit_form.save()
+                from .customer_contribute import Contribute
+                Contribute.contribute()
+
+                # 跳转
+                if _popback_id:
+                    from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
+
+                    popback_info = {"status": None, "text": None, "value": None, "popback_id": _popback_id}
+
+                    back_related_name = request.GET.get('related_name')
+                    back_model_name = request.GET.get('model_name')
+
+                    for rel_field_obj in new_obj._meta.related_objects:
+                        # 遍历所有关联当前记录所在表的字段对象，例如：teachers、headmaster
+                        _related_name = str(rel_field_obj.related_name)
+                        _model_name = rel_field_obj.field.model._meta.model_name
+
+                        if _related_name == back_related_name and _model_name == back_model_name:
+                            # 定位到打开popup的标签对应的字段
+                            _limit_choices_to = rel_field_obj.limit_choices_to
+
+                            if (type(rel_field_obj) == ManyToOneRel):
+                                _field_name = rel_field_obj.field_name
+                            else:
+                                # ManyToManyRel没有field_name方法，反应到models里面是因为没有to_field方法
+                                _field_name = 'pk'
+
+                            is_exists = self.model_class.objects.filter(pk=new_obj.pk, **_limit_choices_to).exists()
+                            if is_exists:
+                                # 如果新记录对象符合原limit_choices_to的条件
+                                popback_info["status"] = True
+                                popback_info["text"] = str(new_obj)
+                                popback_info["value"] = getattr(new_obj, _field_name)
+
+                                return render(request, 'thanos/popUp_response.html',
+                                              {"popback_info": json.dumps(popback_info)})
+
+                    return render(request, 'thanos/popUp_response.html', {"popback_info": json.dumps(popback_info)})
+                else:
+                    next_to = request.GET.get(self.query_dict_key)
+                    if next_to:
+                        return redirect('%s?%s' % (self.get_changelist_url(), next_to))
+                    else:
+                        return redirect('%s' % self.get_changelist_url())
 
 
 class CustomerDistributionConfig(crm.CrmConfig):
@@ -473,6 +545,18 @@ class CourseRecordConfig(crm.CrmConfig):
     list_editable = [display_class_info]
     show_actions = True
     actions_funcs = [multi_init, ]
+
+
+class ConsultantWeightConfig(crm.CrmConfig):
+    show_add_btn = True
+
+    def display_consultant(self, obj=None, is_header=False):
+        if is_header:
+            return '课程顾问'
+        return obj.consultant.name
+
+    list_display = [display_consultant, 'cus_limit', 'weight']
+    list_editable = [display_consultant]
 
 
 class StudyRecordConfig(crm.CrmConfig):

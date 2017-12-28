@@ -7,7 +7,7 @@ from thanos.service.crm import site
 register = Library()
 
 
-@register.inclusion_tag('thanos/add_edit_form.html')
+@register.inclusion_tag('thanos/add_change_form.html')
 def show_form(config_obj, modelform):
     from django.forms.boundfield import BoundField
     from django.db.models.query import QuerySet

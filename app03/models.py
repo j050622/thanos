@@ -163,10 +163,11 @@ class Customer(models.Model):
         default=2,
         help_text=u"选择客户此时的状态"
     )
-    consultant = models.ForeignKey(verbose_name="课程顾问", to='UserInfo', limit_choices_to={'department_id': 1000})
     date = models.DateField(verbose_name="咨询日期", auto_now_add=True)
+    consultant = models.ForeignKey(verbose_name="课程顾问", to='UserInfo', limit_choices_to={'department_id': 1000},
+                                   null=True, blank=True)
     recv_date = models.DateField(verbose_name='顾问接单日期', null=True, blank=True)
-    last_consult_date = models.DateField(verbose_name="最后跟进日期", auto_now_add=True)
+    last_consult_date = models.DateField(verbose_name="最后跟进日期", null=True, blank=True)
 
     def __str__(self):
         # return "姓名:{0},QQ:{1}".format(self.name, self.qq)
