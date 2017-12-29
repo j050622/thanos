@@ -20,35 +20,30 @@
         <h2>公共资源</h2>
     </div>
 
-    <form method="post" class="">
-        {% csrf_token %}
-
-        <table class="table table-bordered">
-            <thead>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>客户姓名</th>
+            <th>性别</th>
+            <th>咨询课程</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for obj in obj_list %}
             <tr>
-                <th>客户姓名</th>
-                <th>性别</th>
-                <th>所在班级</th>
-                <th>操作</th>
+                <td>{{ obj.name }}</td>
+                <td>{{ obj.get_gender_display }}</td>
+                <td>
+                    {% for i in obj.course.all %}
+                        <span>{{ i }}</span> |
+                    {% endfor %}
+                </td>
+                <td><a href="/crm/app03/customer/{{ obj.pk }}/competition/">接单</a></td>
             </tr>
-            </thead>
-            <tbody>
-            {% for obj in obj_list %}
-                <tr>
-                    <td>{{ obj.name }}</td>
-                    <td>{{ obj.get_gender_display }}</td>
-                    <td>
-                        {% for i in obj.course.all %}
-                            <span>{{ i }}</span> |
-                        {% endfor %}
-                    </td>
-                    <td><a href="/crm/app03/customer/{{ obj.pk }}/competition/">接单</a></td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-    </form>
+        {% endfor %}
+        </tbody>
+    </table>
 
 
 </div>

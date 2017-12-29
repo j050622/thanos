@@ -1,0 +1,40 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <title>登录</title>
+</head>
+<body>
+
+<div class="container" style="padding-left: 300px">
+    <form method="post" class="form-horizontal" novalidate>
+        {% csrf_token %}
+        <div class="page-header">
+            <h2>请登录</h2>
+        </div>
+        {% for field in login_form %}
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{ field.label }}</label>
+                <div class="col-sm-5">
+                    {{ field }}
+                </div>
+                <span class="help-block">{{ field.errors.0 }}</span>
+            </div>
+        {% endfor %}
+        <div class="text-center">
+            <button class="btn btn-primary">登录</button>
+        </div>
+    </form>
+</div>
+
+
+<script src="{% static 'jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+</body>
+</html>

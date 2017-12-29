@@ -11,7 +11,7 @@ from django.http import JsonResponse
 
 from thanos.service import crm
 from . import models
-from .forms import UserInfoForm
+from .my_forms import UserInfoForm
 
 
 class RoleConfig(crm.CrmConfig):

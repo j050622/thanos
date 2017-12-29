@@ -7,21 +7,53 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{% static 'thanos/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}">
-    {% block my_css %}{% endblock %}
-    <title>{% block window_title %}{% endblock %}</title>
+    {% block my_css %}{# 自定义CSS #}{% endblock %}
+    <title>{% block window_title %}{# 窗口标题 #}{% endblock %}</title>
 </head>
 <body>
+<!-- 导航条 -->
+<nav class="navbar navbar-inverse">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">CRM</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">###<span class="sr-only">(current)</span></a></li>
+                <li><a href="#">###</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'logout' %}">注销</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">个人信息<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li><a href="#">Something else here</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">Separated link</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
 <div class="container">
     <div class="page-header">
-        <h2>{% block page_title %}{% endblock %}</h2>
+        <h2>{% block page_title %}{# 页面标题 #}{% endblock %}</h2>
     </div>
 
-    {% block content %}{% endblock %}
+    {% block content %}{# 主体内容 #}{% endblock %}
 </div>
 
 
 <script src="{% static  'thanos/jquery-3.2.1.min.js' %}"></script>
 <script src="{% static 'thanos/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
-{% block my_js %}{% endblock %}
+{% block my_js %}{# 自定义JS #}{% endblock %}
 </body>
 </html>

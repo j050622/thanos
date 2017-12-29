@@ -461,18 +461,18 @@ class CrmConfig:
         """
         model_form = self.get_model_form_class()
         if request.method == 'GET':
-            add_edit_form = model_form()
+            add_form = model_form()
             return render(request, 'thanos/add_view.html',
-                          {"self": self, "add_edit_form": add_edit_form})
+                          {"self": self, "add_form": add_form})
         else:
             _popback_id = request.GET.get('popback_id')
-            add_edit_form = model_form(data=request.POST)
+            add_form = model_form(data=request.POST)
 
-            if not add_edit_form.is_valid():
+            if not add_form.is_valid():
                 return render(request, 'thanos/add_view.html',
-                              {"self": self, "add_edit_form": add_edit_form})
+                              {"self": self, "add_form": add_form})
             else:
-                new_obj = add_edit_form.save()
+                new_obj = add_form.save()
 
                 if _popback_id:
                     from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
@@ -552,16 +552,16 @@ class CrmConfig:
             return redirect(self.get_changelist_url())
 
         if request.method == 'GET':
-            add_edit_form = model_form(instance=current_obj)
+            change_form = model_form(instance=current_obj)
             return render(request, 'thanos/change_view.html',
-                          {"self": self, "add_edit_form": add_edit_form})
+                          {"self": self, "change_form": change_form})
         else:
-            add_edit_form = model_form(instance=current_obj, data=request.POST)
-            if not add_edit_form.is_valid():
+            change_form = model_form(instance=current_obj, data=request.POST)
+            if not change_form.is_valid():
                 return render(request, 'thanos/change_view.html',
-                              {"self": self, "add_edit_form": add_edit_form})
+                              {"self": self, "change_form": change_form})
             else:
-                add_edit_form.save()
+                change_form.save()
 
                 next_to = request.GET.get(self.query_dict_key)
                 if next_to:

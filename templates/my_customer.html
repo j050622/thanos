@@ -1,0 +1,42 @@
+{% extends 'thanos/base_template.html' %}
+
+{% block my_css %}
+
+{% endblock my_css %}
+
+
+{% block window_title %}客户列表{% endblock %}
+
+
+{% block page_title %}我的客户{% endblock %}
+
+
+{% block content %}
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>客户姓名</th>
+            <th>性别</th>
+            <th>咨询课程</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for obj in obj_list %}
+            <tr>
+                <td>{{ obj.name }}</td>
+                <td>{{ obj.get_gender_display }}</td>
+                <td>
+                    {% for i in obj.course.all %}
+                        <span>{{ i }}</span> |
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}
+
+
+{% block my_js %}
+
+{% endblock %}

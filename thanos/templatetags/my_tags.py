@@ -38,4 +38,4 @@ def show_form(config_obj, modelform):
 
         new_form.append(info_dict)
 
-    return {"add_edit_form": new_form}
+    return {"add_change_form": new_form}

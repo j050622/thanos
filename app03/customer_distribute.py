@@ -32,6 +32,9 @@ class Distribute:
         """从迭代器中获取当前要被分配客户的课程顾问的id"""
         if not cls.consultants:
             cls.get_distribution()
+        if not cls.consultants:
+            # 没有课程顾问
+            return None
         if not cls.iter_consultants:
             cls.iter_consultants = iter(cls.consultants)
 

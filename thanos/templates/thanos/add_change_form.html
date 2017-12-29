@@ -1,8 +1,8 @@
 <form class="form-horizontal" method="post" novalidate>
     {% csrf_token %}
-    {% for field_dict in add_edit_form %}
+    {% for field_dict in add_change_form %}
         <div class="form-group">
-            <label for="" class="col-sm-2 control-label">{{ field_dict.bound_field.label }}</label>
+            <label class="col-sm-2 control-label">{{ field_dict.bound_field.label }}</label>
             <div class="col-sm-5">
                 {{ field_dict.bound_field }}
             </div>

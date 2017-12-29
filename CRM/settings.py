@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'thanos.middleware.auth.RbacMiddleware',
 ]
 
 ROOT_URLCONF = 'CRM.urls'
@@ -117,9 +118,16 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+VALID_URLS = [
+    '/login.*',
+    '/admin.*',
+]
+
 # LOGGING = {
 #     'version': 1,
 #     'disable_existing_loggers': False,

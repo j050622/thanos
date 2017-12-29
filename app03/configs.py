@@ -94,28 +94,30 @@ class CustomerConfig(crm.CrmConfig):
         """
         model_form = self.get_model_form_class()
         if request.method == 'GET':
-            add_edit_form = model_form()
+            add_form = model_form()
             return render(request, 'thanos/add_view.html',
-                          {"self": self, "add_edit_form": add_edit_form})
+                          {"self": self, "add_form": add_form})
         else:
             _popback_id = request.GET.get('popback_id')
-            add_edit_form = model_form(data=request.POST)
+            add_form = model_form(data=request.POST)
 
-            if not add_edit_form.is_valid():
+            if not add_form.is_valid():
                 return render(request, 'thanos/add_view.html',
-                              {"self": self, "add_edit_form": add_edit_form})
+                              {"self": self, "add_form": add_form})
             else:
 
                 # 对新录入的客户进行自动分配
                 consultant_id = Distribute.get_consultant_id()
+                if not consultant_id:
+                    return HttpResponse('课程顾问记录不详，不能进行自动分配')
                 date_now = datetime.date.today()
 
                 # 暂不提供销售主管指定课程顾问的功能，新录入的客户只能由系统自动分配
                 try:
-                    add_edit_form.instance.consultant_id = consultant_id
-                    add_edit_form.instance.recv_date = date_now
-                    add_edit_form.instance.last_consult_date = date_now
-                    new_obj = add_edit_form.save()
+                    add_form.instance.consultant_id = consultant_id
+                    add_form.instance.recv_date = date_now
+                    add_form.instance.last_consult_date = date_now
+                    new_obj = add_form.save()
 
                     # 创建客户分配记录
                     models.CustomerDistribution.objects.create(customer_id=new_obj.pk, consultant_id=consultant_id)
@@ -177,31 +179,36 @@ class CustomerConfig(crm.CrmConfig):
 
     def public_source_view(self, request):
         """从数据库中筛选出“超时”的客户，在页面显示，当前登录的课程顾问无法查看自己超时的客户"""
-        if request.method == 'GET':
-            date_now = datetime.date.today()
-            current_consultant_id = 2  ########## 模拟session中获取
 
-            compare_recv = date_now - datetime.timedelta(days=15)  # 15天未成单
-            obj_list1 = models.Customer.objects.filter(
-                Q(recv_date__lt=compare_recv), status=2).exclude(
-                consultant_id=current_consultant_id)
-            for obj in obj_list1:
-                models.CustomerDistribution.objects.filter(customer=obj).update(status=3)
+        date_now = datetime.date.today()
+        current_user_id = request.session.get('userinfo').get('id')
 
-            compare_follow = date_now - datetime.timedelta(days=3)  # 3天未跟进
-            obj_list2 = models.Customer.objects.filter(
-                Q(last_consult_date__lt=compare_follow), status=2).exclude(
-                consultant_id=current_consultant_id)
-            for obj in obj_list2:
-                models.CustomerDistribution.objects.filter(customer=obj).update(status=4)
+        compare_recv = date_now - datetime.timedelta(days=15)  # 15天未成单
+        obj_list1 = models.Customer.objects.filter(
+            Q(recv_date__lt=compare_recv), status=2).exclude(
+            consultant_id=current_user_id)
+        for obj in obj_list1:
+            models.CustomerDistribution.objects.filter(customer=obj).update(status=3)
 
-            customer_obj_list = obj_list1 | obj_list2
+        compare_follow = date_now - datetime.timedelta(days=3)  # 3天未跟进
+        obj_list2 = models.Customer.objects.filter(
+            Q(last_consult_date__lt=compare_follow), status=2).exclude(
+            consultant_id=current_user_id)
+        for obj in obj_list2:
+            models.CustomerDistribution.objects.filter(customer=obj).update(status=4)
 
-            return render(request, 'public_source_customer.html', {"obj_list": customer_obj_list})
+        customer_obj_list = obj_list1 | obj_list2
+
+        return render(request, 'public_source_customer.html', {"obj_list": customer_obj_list})
+
+    def mine_view(self, request):
+        """显示当前登录的课程顾问的客户列表"""
+        obj_list = models.Customer.objects.filter(consultant_id=request.session.get('userinfo').get('id'))
+        return render(request, 'my_customer.html', {"obj_list": obj_list})
 
     def competition(self, request, stu_id):
         """对于公共资源，课程顾问进行手动抢单"""
-        current_user_id = 14
+        current_user_id = request.session.get('userinfo').get('id')
 
         date_now = datetime.date.today()
 
@@ -226,6 +233,7 @@ class CustomerConfig(crm.CrmConfig):
         urlpatterns = [
             url(r'^(\d+)/(\d+)/sub_del/$', self.wrap(self.sub_del_view), name='%s_%s_sub_del' % info),  # 删除咨询课程
             url(r'^public/$', self.wrap(self.public_source_view), name='%s_%s_public' % info),  # 展示公共资源
+            url(r'^mine/$', self.wrap(self.mine_view), name='%s_%s_mine' % info),  # 当前登录的课程顾问的客户列表
             url(r'^(\d+)/competition/$', self.wrap(self.competition)),  # 手动抢单
         ]
         return urlpatterns
@@ -314,9 +322,8 @@ class CustomerConfig(crm.CrmConfig):
         """生成记录详情按钮，点击跳转到该条记录对应的用户的跟进记录"""
         if is_header:
             return '跟进记录'
-        ###这里可以从session中获取当前登录用户的id，如果当前用户记录的跟进人id不是登录用户id，下面可以返回“无权查看”
-        ### 模拟用户星星已经登录
-        current_user_id = 2  # 模拟从session中获取当前用户id
+
+        current_user_id = self.request.session.get('userinfo').get('id')
         res = models.Customer.objects.filter(pk=obj.id, consultant_id=current_user_id).exists()
         if not res:
             return '--'
@@ -359,8 +366,8 @@ class CustomerDistributionConfig(crm.CrmConfig):
 class ConsultRecordConfig(crm.CrmConfig):
 
     def changelist_view(self, request, *args, **kwargs):
-        ### 模拟用户星星已经登录
-        current_user_id = 2  # 模拟从session中获取当前用户id
+        # 重写changelist_view，在其中模拟用户星星已经登录
+        current_user_id = request.session.get('userinfo').get('id')
         customer_id = request.GET.get('customer_id')
         if not customer_id:
             return HttpResponse('参数错误，请关闭页面后重试')
