@@ -11,4 +11,5 @@ django.setup()
 from app03 import models
 
 customer_obj_list = models.Customer.objects.all()
-print('未完成')
+for obj in customer_obj_list:
+    print(obj)

@@ -1,12 +1,13 @@
-from . import models
+"""原始版本，通过类方法调用实现自动获取课程顾问id"""
+from app03 import models
 
 
 class Distribute:
-    """用户自动分配"""
+    """用户自动分配，从数据库中获取数据"""
     consultants = None
     iter_consultants = None
     reset_status = False
-    rollback_id_list = None
+    rollback_id_list = []
 
     @classmethod
     def get_distribution(cls):

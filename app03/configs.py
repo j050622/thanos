@@ -3,16 +3,16 @@
 """
 import datetime
 
-from django.conf.urls import url, include
+from django.conf.urls import url
 from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.http import JsonResponse
 from django.utils.safestring import mark_safe
-from django.forms import ModelForm, Form, fields, widgets
+from django.forms import Form, fields, widgets
 from django.db.models import Q
 
 from thanos.service import crm
 from . import models
-from .customer_distribute import Distribute
+from utils.customer_distribute import Distribute
 
 
 class DepartmentConfig(crm.CrmConfig):
@@ -85,8 +85,6 @@ class ClassListConfig(crm.CrmConfig):
 
 
 class CustomerConfig(crm.CrmConfig):
-    show_add_btn = True
-    order_by_condition = ['-status', ]
 
     def add_view(self, request, *args, **kwargs):
         """
@@ -121,13 +119,22 @@ class CustomerConfig(crm.CrmConfig):
 
                     # 创建客户分配记录
                     models.CustomerDistribution.objects.create(customer_id=new_obj.pk, consultant_id=consultant_id)
+                    Distribute.reset()
+                    # # 通过邮件、短信等方式向课程顾问发送通知
+                    # from utils.notice import main
+                    # main.send_notification('Maksim', 'guixu2010@yeah.net', '客户分配通知', '最新录入的客户已经自动分配')
+                    # from utils.notice import wechat
+                    # wechat_id = 'oAKVr1secTVhwGZj8z5cIF3h91JI'  # 微信ID应该从数据库获取
+                    # wechat.send_custom_msg(wechat_id, '发送内容测试...')
+                    # wechat.send_template_msg(wechat_id, 'Jessica', 'Python全栈开发')# 这里从数据库获取客户和课程等信息
+
                 except Exception as e:
                     print('错误:', e)
                     Distribute.rollback(consultant_id)
 
                 # 跳转
                 if _popback_id:
-                    from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
+                    from django.db.models.fields.reverse_related import ManyToOneRel
 
                     popback_info = {"status": None, "text": None, "value": None, "popback_id": _popback_id}
 
@@ -331,10 +338,23 @@ class CustomerConfig(crm.CrmConfig):
         base_url = reverse('app03_consultrecord_changelist')
         return mark_safe('<a href="{}?customer_id={}" target="_blank">记录详情</a>'.format(base_url, obj.id))
 
+    ##actions中的方法
+    def multi_del(self, request):
+        """批量删除"""
+        pk_list = request.POST.getlist('pk')
+        self.model_class.objects.filter(pk__in=pk_list).delete()
+
+    multi_del.short_desc = '批量删除'
+
+    ###
+    show_add_btn = True
+    order_by_condition = ['-status', ]
     list_display = ['name', display_gender, display_course, display_status, display_consultant, display_recv_date,
                     display_last_consult_date, display_consult_record]
     list_editable = ['name']
     list_per_page = 20
+    show_actions = True
+    actions_funcs = [multi_del]
 
 
 class CustomerDistributionConfig(crm.CrmConfig):

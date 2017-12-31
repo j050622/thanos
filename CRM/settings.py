@@ -145,3 +145,9 @@ VALID_URLS = [
 #         },
 #     }
 # }
+
+MESSAGE_CLASSES = [
+    # 'utils.notice.modes.SendEmail',
+    # 'utils.notice.modes.SendMessage',
+    # 'utils.notice.modes.SendWeChat',
+]

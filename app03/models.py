@@ -23,6 +23,7 @@ class UserInfo(models.Model):
     username = models.CharField(verbose_name='用户名', max_length=32)
     password = models.CharField(verbose_name='密码', max_length=64)
     email = models.EmailField(verbose_name='邮箱', max_length=64)
+    wechat_id = models.CharField(verbose_name='微信ID', max_length=32, null=True, blank=True)
 
     department = models.ForeignKey(verbose_name='部门', to="Department", to_field="code")
 
