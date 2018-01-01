@@ -1,0 +1,28 @@
+{% extends 'thanos/base_template.html' %}
+{% load staticfiles %}
+
+{% block my_css %}{% endblock %}
+
+{% block window_title %}批量导入{% endblock %}
+
+{% block page_title %}批量导入客户信息{% endblock %}
+
+{% block content %}
+    <form method="post" enctype="multipart/form-data" class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group">
+            <a href="{% url 'download_tem' %}">点击下载模板</a>
+        </div>
+
+        <div class="form-group">
+            <input type="file" name="customers">
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary">提交</button>
+        </div>
+    </form>
+
+{% endblock content %}
+
+{% block my_js %}{% endblock %}

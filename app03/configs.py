@@ -2,17 +2,18 @@
 在crm中注册表时的自定义配置项
 """
 import datetime
+from io import BytesIO
 
 from django.conf.urls import url
 from django.shortcuts import render, redirect, reverse, HttpResponse
-from django.http import JsonResponse
+from django.http import JsonResponse, StreamingHttpResponse
 from django.utils.safestring import mark_safe
 from django.forms import Form, fields, widgets
 from django.db.models import Q
 
 from thanos.service import crm
 from . import models
-from utils.customer_distribute import Distribute
+from utils.distribute.customer_distribute import Distribute
 
 
 class DepartmentConfig(crm.CrmConfig):
@@ -119,7 +120,6 @@ class CustomerConfig(crm.CrmConfig):
 
                     # 创建客户分配记录
                     models.CustomerDistribution.objects.create(customer_id=new_obj.pk, consultant_id=consultant_id)
-                    Distribute.reset()
                     # # 通过邮件、短信等方式向课程顾问发送通知
                     # from utils.notice import main
                     # main.send_notification('Maksim', 'guixu2010@yeah.net', '客户分配通知', '最新录入的客户已经自动分配')
@@ -174,6 +174,43 @@ class CustomerConfig(crm.CrmConfig):
                     else:
                         return redirect('%s' % self.get_changelist_url())
 
+    def multi_add_view(self, request, *args, **kwargs):
+        """批量导入客户信息，添加到数据库"""
+        if request.method == 'GET':
+            return render(request, 'multi_add_view.html')
+        else:
+            file_obj = request.FILES.get('customers')
+            file_name = file_obj.name
+            file_size = file_obj.size
+
+            extension = file_name.rsplit('.', 1)[1]
+            if extension not in ['xls', 'xlsx']:
+                return HttpResponse('文件类型不合法')
+
+            io_file = BytesIO()
+            for chunk in file_obj:
+                io_file.write(chunk)
+
+            from utils.excel_handler.handler import handle
+            handle(io_file.getvalue())  # 处理excel文件
+
+            return HttpResponse('post提交')
+
+    def download_tem(self, request, *args, **kwargs):
+        """下载“批量导入客户信息”模板"""
+
+        def file_iterator(file_path):
+            with open(file_path, 'rb') as f:
+                for chunk in f:
+                    yield chunk
+
+        file_path = 'static/files/批量导入客户.xlsx'
+        res = StreamingHttpResponse(file_iterator(file_path))
+        res['Content-Type'] = 'application/octet-stream'
+        res['Content-Disposition'] = 'attachment;filename="{0}"'.format(file_path)
+
+        return res
+
     def sub_del_view(self, request, customer_id, course_id):
         """删除用户不感兴趣的课程"""
         models.Customer.objects.filter(pk=customer_id).first().course.remove(course_id)
@@ -205,6 +242,7 @@ class CustomerConfig(crm.CrmConfig):
             models.CustomerDistribution.objects.filter(customer=obj).update(status=4)
 
         customer_obj_list = obj_list1 | obj_list2
+        customer_obj_list = customer_obj_list.distinct()
 
         return render(request, 'public_source_customer.html', {"obj_list": customer_obj_list})
 
@@ -238,7 +276,9 @@ class CustomerConfig(crm.CrmConfig):
     def extra_urls(self):
         info = (self.app_label, self.model_name)
         urlpatterns = [
-            url(r'^(\d+)/(\d+)/sub_del/$', self.wrap(self.sub_del_view), name='%s_%s_sub_del' % info),  # 删除咨询课程
+            url(r'^multi_add$', self.wrap(self.multi_add_view), name='%s_%s_multi_add' % info),  # 批量导入客户信息
+            url(r'^multi_add/download_tem/$', self.wrap(self.download_tem), name='download_tem'),
+            url(r'^(\d+)/(\d+)/sub_del/$', self.wrap(self.sub_del_view), name='%s_%s_sub_del' % info),  # 删除咨询的课程
             url(r'^public/$', self.wrap(self.public_source_view), name='%s_%s_public' % info),  # 展示公共资源
             url(r'^mine/$', self.wrap(self.mine_view), name='%s_%s_mine' % info),  # 当前登录的课程顾问的客户列表
             url(r'^(\d+)/competition/$', self.wrap(self.competition)),  # 手动抢单

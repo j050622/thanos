@@ -1,4 +1,6 @@
-from django.shortcuts import render, redirect, reverse, HttpResponse
+from django.shortcuts import render, redirect, reverse
+from django.http import StreamingHttpResponse
+
 from . import my_forms
 from . import models
 

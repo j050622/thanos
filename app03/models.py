@@ -74,7 +74,7 @@ class ClassList(models.Model):
     price = models.IntegerField(verbose_name="学费")
     start_date = models.DateField(verbose_name="开班日期")
     graduate_date = models.DateField(verbose_name="结业日期", null=True, blank=True)
-    instruction = models.CharField(verbose_name='说明', max_length=256, blank=True, null=True, )
+    instruction = models.CharField(verbose_name='说明', max_length=256, null=True, blank=True)
     teachers = models.ManyToManyField(verbose_name='任课老师', to='UserInfo', related_name='teach_classes',
                                       limit_choices_to={"department_id__in": [1003, 1004, 1005]})
     headmaster = models.ForeignKey(verbose_name='班主任', to='UserInfo', related_name='manage_classes',
@@ -91,7 +91,7 @@ class Customer(models.Model):
 
     name = models.CharField(verbose_name='客户姓名', max_length=16)
     gender_choices = [(1, '男'), (2, '女')]
-    gender = models.SmallIntegerField(verbose_name='性别', choices=gender_choices)
+    gender = models.SmallIntegerField(verbose_name='性别', choices=gender_choices, default=1)
     qq = models.CharField(verbose_name='qq', max_length=64, unique=True, help_text='QQ号必须唯一')
 
     education_choices = [(1, '重点大学'),
@@ -103,9 +103,9 @@ class Customer(models.Model):
                          (7, '高中'),
                          (8, '其他')]
 
-    education = models.IntegerField(verbose_name='学历', choices=education_choices, blank=True, null=True, )
-    graduation_school = models.CharField(verbose_name='毕业学校', max_length=64, blank=True, null=True)
-    major = models.CharField(verbose_name='所学专业', max_length=64, blank=True, null=True)
+    education = models.IntegerField(verbose_name='学历', choices=education_choices, null=True, blank=True)
+    graduation_school = models.CharField(verbose_name='毕业学校', max_length=64, null=True, blank=True)
+    major = models.CharField(verbose_name='所学专业', max_length=64, null=True, blank=True)
 
     experience_choices = [
         (1, '在校生'),
@@ -116,15 +116,14 @@ class Customer(models.Model):
         (6, '三年至五年'),
         (7, '五年以上'),
     ]
-    experience = models.IntegerField(verbose_name='工作经验', blank=True, null=True, choices=experience_choices)
+    experience = models.IntegerField(verbose_name='工作经验', choices=experience_choices, null=True, blank=True)
     work_status_choices = [
         (1, '在职'),
         (2, '无业')
     ]
-    work_status = models.IntegerField(verbose_name="职业状态", choices=work_status_choices, default=1, blank=True,
-                                      null=True)
-    company = models.CharField(verbose_name="目前就职公司", max_length=64, blank=True, null=True)
-    salary = models.CharField(verbose_name="当前薪资", max_length=64, blank=True, null=True)
+    work_status = models.IntegerField(verbose_name="职业状态", choices=work_status_choices, null=True, blank=True)
+    company = models.CharField(verbose_name="目前就职公司", max_length=64, null=True, blank=True)
+    salary = models.CharField(verbose_name="当前薪资", max_length=64, null=True, blank=True)
 
     source_choices = [
         (1, "qq群"),
@@ -145,25 +144,14 @@ class Customer(models.Model):
         (16, "其它"),
     ]
     source = models.SmallIntegerField('客户来源', choices=source_choices, default=1)
-    referral_from = models.ForeignKey(
-        'self',
-        blank=True,
-        null=True,
-        verbose_name="转介绍自学员",
-        help_text="若此客户是转介绍自内部学员,请在此处选择内部学员姓名",
-    )
+    referral_from = models.ForeignKey(verbose_name="转介绍自学员", to='self', null=True, blank=True,
+                                      help_text=u"若此客户是转介绍自内部学员,请在此处选择内部学员姓名")
     course = models.ManyToManyField(verbose_name="咨询课程", to="Course")
-
     status_choices = [
         (1, "已报名"),
         (2, "未报名")
     ]
-    status = models.IntegerField(
-        verbose_name="报名状态",
-        choices=status_choices,
-        default=2,
-        help_text=u"选择客户此时的状态"
-    )
+    status = models.IntegerField(verbose_name="报名状态", choices=status_choices, default=2, help_text=u"选择客户此时的状态")
     date = models.DateField(verbose_name="咨询日期", auto_now_add=True)
     consultant = models.ForeignKey(verbose_name="课程顾问", to='UserInfo', limit_choices_to={'department_id': 1000},
                                    null=True, blank=True)
@@ -224,16 +212,16 @@ class Student(models.Model):
 
     username = models.CharField(verbose_name='用户名', max_length=32)
     password = models.CharField(verbose_name='密码', max_length=64)
-    emergency_contract = models.CharField(max_length=32, blank=True, null=True, verbose_name='紧急联系人')
+    emergency_contract = models.CharField(max_length=32, null=True, blank=True, verbose_name='紧急联系人')
     class_list = models.ManyToManyField(verbose_name="已报班级", to='ClassList', blank=True)
 
-    company = models.CharField(verbose_name='公司', max_length=128, blank=True, null=True)
-    location = models.CharField(verbose_name='所在区域', max_length=64, blank=True, null=True)
-    position = models.CharField(verbose_name='岗位', max_length=64, blank=True, null=True)
-    salary = models.IntegerField(verbose_name='薪资', blank=True, null=True)
-    welfare = models.CharField(verbose_name='福利', max_length=256, blank=True, null=True)
-    date = models.DateField(verbose_name='入职时间', help_text='格式yyyy-mm-dd', blank=True, null=True)
-    instruction = models.CharField(verbose_name='备注', max_length=256, blank=True, null=True)
+    company = models.CharField(verbose_name='公司', max_length=128, null=True, blank=True)
+    location = models.CharField(verbose_name='所在区域', max_length=64, null=True, blank=True)
+    position = models.CharField(verbose_name='岗位', max_length=64, null=True, blank=True)
+    salary = models.IntegerField(verbose_name='薪资', null=True, blank=True)
+    welfare = models.CharField(verbose_name='福利', max_length=256, null=True, blank=True)
+    date = models.DateField(verbose_name='入职时间', help_text='格式yyyy-mm-dd', null=True, blank=True)
+    instruction = models.CharField(verbose_name='备注', max_length=256, null=True, blank=True)
 
     def __str__(self):
         return self.username
@@ -249,12 +237,12 @@ class CourseRecord(models.Model):
                                 limit_choices_to={"department_id__in": [1003, 1004, 1005]})
     date = models.DateField(verbose_name="上课日期", auto_now_add=True)
 
-    course_title = models.CharField(verbose_name='本节课程标题', max_length=64, blank=True, null=True)
-    course_instruction = models.TextField(verbose_name='本节课程内容概要', blank=True, null=True)
+    course_title = models.CharField(verbose_name='本节课程标题', max_length=64, null=True, blank=True)
+    course_instruction = models.TextField(verbose_name='本节课程内容概要', null=True, blank=True)
     has_homework = models.BooleanField(default=True, verbose_name="本节有作业")
-    homework_title = models.CharField(verbose_name='本节作业标题', max_length=64, blank=True, null=True)
-    homework_instruction = models.TextField(verbose_name='作业描述', max_length=500, blank=True, null=True)
-    exam = models.TextField(verbose_name='踩分点', max_length=300, blank=True, null=True)
+    homework_title = models.CharField(verbose_name='本节作业标题', max_length=64, null=True, blank=True)
+    homework_instruction = models.TextField(verbose_name='作业描述', max_length=500, null=True, blank=True)
+    exam = models.TextField(verbose_name='踩分点', max_length=300, null=True, blank=True)
 
     def __str__(self):
         return '{} - Day{}'.format(str(self.class_obj), self.day_num)
@@ -282,11 +270,11 @@ class StudyRecord(models.Model):
                      (-100, 'COPY'),
                      (-1000, 'FAIL'), ]
     score = models.IntegerField("本节成绩", choices=score_choices, default=-1)
-    homework_note = models.CharField(verbose_name='作业评语', max_length=255, blank=True, null=True)
-    note = models.CharField(verbose_name="备注", max_length=255, blank=True, null=True)
+    homework_note = models.CharField(verbose_name='作业评语', max_length=255, null=True, blank=True)
+    note = models.CharField(verbose_name="备注", max_length=255, null=True, blank=True)
 
-    homework = models.FileField(verbose_name='作业文件', blank=True, null=True, default=None)
-    stu_instruction = models.TextField(verbose_name='学员备注', blank=True, null=True)
+    homework = models.FileField(verbose_name='作业文件', null=True, blank=True, default=None)
+    stu_instruction = models.TextField(verbose_name='学员备注', null=True, blank=True)
     date = models.DateTimeField(verbose_name='提交作业日期', auto_now_add=True)
 
     def __str__(self):
@@ -299,7 +287,7 @@ class PaymentRecord(models.Model):
     """
     customer = models.ForeignKey(Customer, verbose_name="客户")
 
-    class_list = models.ForeignKey(verbose_name="班级", to="ClassList", blank=True, null=True)
+    class_list = models.ForeignKey(verbose_name="班级", to="ClassList", null=True, blank=True)
 
     pay_type_choices = [
         (1, "订金/报名费"),
@@ -310,8 +298,8 @@ class PaymentRecord(models.Model):
     ]
     pay_type = models.IntegerField(verbose_name="费用类型", choices=pay_type_choices, default=1)
     paid_fee = models.IntegerField(verbose_name="费用数额", default=0)
-    turnover = models.IntegerField(verbose_name="成交金额", blank=True, null=True)
-    quote = models.IntegerField(verbose_name="报价金额", blank=True, null=True)
-    note = models.TextField(verbose_name="备注", blank=True, null=True)
+    turnover = models.IntegerField(verbose_name="成交金额", null=True, blank=True)
+    quote = models.IntegerField(verbose_name="报价金额", null=True, blank=True)
+    note = models.TextField(verbose_name="备注", null=True, blank=True)
     date = models.DateTimeField(verbose_name="交款日期", auto_now_add=True)
-    consultant = models.ForeignKey(verbose_name="负责老师", to='UserInfo', help_text="谁签的单就选谁")
+    consultant = models.ForeignKey(verbose_name="负责老师", to='UserInfo', help_text=u"谁签的单就选谁")

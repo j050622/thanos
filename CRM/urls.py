@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^crm/', crm.site.urls),
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
+
 ]
