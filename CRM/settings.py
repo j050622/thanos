@@ -36,9 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'thanos.apps.ThanosConfig',
-    'app01.apps.App01Config',
-    'app02.apps.App02Config',
     'app03.apps.App03Config',
+    'rbac.apps.RbacConfig',
 ]
 
 MIDDLEWARE = [
@@ -49,7 +48,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'thanos.middleware.auth.RbacMiddleware',
+    # 'thanos.middleware.auth.RbacMiddleware',
+    'rbac.middleware.auth.RbacMiddleware',
 ]
 
 ROOT_URLCONF = 'CRM.urls'

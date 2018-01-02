@@ -2,18 +2,19 @@
 在crm中注册表时的自定义配置项
 """
 import datetime
-from io import BytesIO
+from urllib.request import quote
 
 from django.conf.urls import url
 from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.http import JsonResponse, StreamingHttpResponse
 from django.utils.safestring import mark_safe
+from django.db.transaction import atomic
 from django.forms import Form, fields, widgets
 from django.db.models import Q
 
 from thanos.service import crm
 from . import models
-from utils.distribute.customer_distribute import Distribute
+from utils.customer_distribute.distribute import Distribute
 
 
 class DepartmentConfig(crm.CrmConfig):
@@ -97,14 +98,11 @@ class CustomerConfig(crm.CrmConfig):
             return render(request, 'thanos/add_view.html',
                           {"self": self, "add_form": add_form})
         else:
-            _popback_id = request.GET.get('popback_id')
             add_form = model_form(data=request.POST)
-
             if not add_form.is_valid():
                 return render(request, 'thanos/add_view.html',
                               {"self": self, "add_form": add_form})
             else:
-
                 # 对新录入的客户进行自动分配
                 consultant_id = Distribute.get_consultant_id()
                 if not consultant_id:
@@ -113,26 +111,34 @@ class CustomerConfig(crm.CrmConfig):
 
                 # 暂不提供销售主管指定课程顾问的功能，新录入的客户只能由系统自动分配
                 try:
-                    add_form.instance.consultant_id = consultant_id
-                    add_form.instance.recv_date = date_now
-                    add_form.instance.last_consult_date = date_now
-                    new_obj = add_form.save()
+                    with atomic():
+                        add_form.instance.consultant_id = consultant_id
+                        add_form.instance.recv_date = date_now
+                        add_form.instance.last_consult_date = date_now
+                        new_obj = add_form.save()
 
-                    # 创建客户分配记录
-                    models.CustomerDistribution.objects.create(customer_id=new_obj.pk, consultant_id=consultant_id)
+                        # 创建客户分配记录
+                        models.CustomerDistribution.objects.create(customer=new_obj, consultant_id=consultant_id)
+
                     # # 通过邮件、短信等方式向课程顾问发送通知
-                    # from utils.notice import main
-                    # main.send_notification('Maksim', 'guixu2010@yeah.net', '客户分配通知', '最新录入的客户已经自动分配')
+                    # from utils.notice import notice
+                    # consultant_obj = models.UserInfo.objects.filter(pk=consultant_id).first()
+                    # # to_name = consultant_obj.name
+                    # # to_addr = consultant_obj.email
+                    # # notice.send_notification(to_name, to_addr, '客户分配通知', '最新录入的客户已经自动分配')
+                    # notice.send_notification('Mark', 'guixu2010@yeah.net', '客户分配通知', '最新录入的客户已经自动分配')###########
+                    #
                     # from utils.notice import wechat
-                    # wechat_id = 'oAKVr1secTVhwGZj8z5cIF3h91JI'  # 微信ID应该从数据库获取
+                    # wechat_id = 'oAKVr1secTVhwGZj8z5cIF3h91JI'  # 微信ID应该从数据库获取###########
                     # wechat.send_custom_msg(wechat_id, '发送内容测试...')
-                    # wechat.send_template_msg(wechat_id, 'Jessica', 'Python全栈开发')# 这里从数据库获取客户和课程等信息
+                    # wechat.send_template_msg(wechat_id, 'Jessica', 'Python全栈开发')  # 这里从数据库获取客户和课程等信息######
 
                 except Exception as e:
                     print('错误:', e)
                     Distribute.rollback(consultant_id)
 
                 # 跳转
+                _popback_id = request.GET.get('popback_id')
                 if _popback_id:
                     from django.db.models.fields.reverse_related import ManyToOneRel
 
@@ -181,20 +187,21 @@ class CustomerConfig(crm.CrmConfig):
         else:
             file_obj = request.FILES.get('customers')
             file_name = file_obj.name
-            file_size = file_obj.size
+            file_bytes = file_obj.file
+            # file_size = file_obj.size
 
             extension = file_name.rsplit('.', 1)[1]
             if extension not in ['xls', 'xlsx']:
                 return HttpResponse('文件类型不合法')
 
-            io_file = BytesIO()
-            for chunk in file_obj:
-                io_file.write(chunk)
-
             from utils.excel_handler.handler import handle
-            handle(io_file.getvalue())  # 处理excel文件
+            handle(file_bytes.getvalue())  # 处理excel文件
 
-            return HttpResponse('post提交')
+            next_to = request.GET.get(self.query_dict_key)
+            if next_to:
+                return redirect('%s?%s' % (self.get_changelist_url(), next_to))
+            else:
+                return redirect('%s' % self.get_changelist_url())
 
     def download_tem(self, request, *args, **kwargs):
         """下载“批量导入客户信息”模板"""
@@ -205,10 +212,8 @@ class CustomerConfig(crm.CrmConfig):
                     yield chunk
 
         file_path = 'static/files/批量导入客户.xlsx'
-        res = StreamingHttpResponse(file_iterator(file_path))
-        res['Content-Type'] = 'application/octet-stream'
-        res['Content-Disposition'] = 'attachment;filename="{0}"'.format(file_path)
-
+        res = StreamingHttpResponse(file_iterator(file_path), content_type='application/octet-stream')
+        res['Content-Disposition'] = 'attachment;filename={0}'.format(quote(file_path.rsplit('/', 1)[1]))
         return res
 
     def sub_del_view(self, request, customer_id, course_id):

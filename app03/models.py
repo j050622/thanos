@@ -1,4 +1,5 @@
 from django.db import models
+from rbac import models as rbac_models
 
 
 class Department(models.Model):
@@ -18,10 +19,10 @@ class UserInfo(models.Model):
     """
     员工表
     """
-    # auth = models.OneToOneField(verbose_name='用户权限', to=rbac_model.User)
+    auth_user = models.OneToOneField(verbose_name='关联账户', to=rbac_models.User)
     name = models.CharField(verbose_name='员工姓名', max_length=16)
-    username = models.CharField(verbose_name='用户名', max_length=32)
-    password = models.CharField(verbose_name='密码', max_length=64)
+    gender_choices = [(1, '男'), (2, '女')]
+    gender = models.IntegerField(verbose_name='性别', choices=gender_choices)
     email = models.EmailField(verbose_name='邮箱', max_length=64)
     wechat_id = models.CharField(verbose_name='微信ID', max_length=32, null=True, blank=True)
 

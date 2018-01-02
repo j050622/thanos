@@ -1,11 +1,10 @@
-from django.forms import ModelForm, Form, fields
-from django.forms import widgets as wgs
-from . import models
+from django.forms import ModelForm
+from rbac import models
 
 
 class LoginForm(ModelForm):
     class Meta:
-        model = models.UserInfo
+        model = models.User
         fields = ['username', 'password']
 
         error_messages = {

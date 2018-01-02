@@ -231,7 +231,7 @@ class CrmConfig:
     list_display = []  # 要在列表页面显示的列
     list_editable = []  # 供点击进入编辑页面的字段
     order_by_condition = []  # 排序条件
-    show_add_btn = False  # 默认不显示添加按钮
+    show_add_btn = True  # 默认不显示添加按钮
     show_search_form = False
     search_fields = []  # 供搜索的字段
     model_form_class = None  # 在派生类里指定自定义的ModelForm
@@ -465,15 +465,15 @@ class CrmConfig:
             return render(request, 'thanos/add_view.html',
                           {"self": self, "add_form": add_form})
         else:
-            _popback_id = request.GET.get('popback_id')
             add_form = model_form(data=request.POST)
-
             if not add_form.is_valid():
                 return render(request, 'thanos/add_view.html',
                               {"self": self, "add_form": add_form})
             else:
                 new_obj = add_form.save()
 
+                # 跳转
+                _popback_id = request.GET.get('popback_id')
                 if _popback_id:
                     from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
 
