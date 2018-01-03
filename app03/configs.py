@@ -11,12 +11,54 @@ from django.utils.safestring import mark_safe
 from django.db.transaction import atomic
 from django.forms import Form, fields, widgets
 from django.db.models import Q
+from CRM import settings
 
 from thanos.service import crm
 from . import models
+from rbac import models as rbac_models
 from utils.customer_distribute.distribute import Distribute
 
 
+class BasePermission(crm.CrmConfig):
+    """
+    判断是否显示添加、编辑、删除等按钮，下面的Config类可以优先继承该类
+    """
+
+    def get_show_add_btn(self):
+        """判断是否显示添加按钮"""
+
+        codes_list = self.request.session.get(settings.PERM_CODES_LIST)
+        if 'add' not in codes_list:
+            return False
+        return self.show_add_btn
+
+    def get_list_editable(self):
+        """判断是否可以进行编辑"""
+
+        codes_list = self.request.session.get(settings.PERM_CODES_LIST)
+        if 'change' not in codes_list:
+            return []
+        result = []
+        if self.list_editable:
+            result.extend(self.list_editable)
+        return result
+
+    def get_list_display(self):
+        """判断是否显示删除按钮"""
+
+        codes_list = self.request.session.get(settings.PERM_CODES_LIST)
+        result = []
+        if self.list_display:
+            result.extend(self.list_display)
+
+            result.insert(0, crm.CrmConfig.checkbox)
+            if 'delete' in codes_list:
+                result.append(crm.CrmConfig.ele_delete)
+
+        return result
+
+
+###
 class DepartmentConfig(crm.CrmConfig):
     show_add_btn = True
     list_display = ['title', 'code']
@@ -92,7 +134,7 @@ class ClassListConfig(crm.CrmConfig):
     show_comb_filter = True
 
 
-class CustomerConfig(crm.CrmConfig):
+class CustomerConfig(BasePermission, crm.CrmConfig):
 
     def add_view(self, request, *args, **kwargs):
         """
@@ -236,19 +278,19 @@ class CustomerConfig(crm.CrmConfig):
         """从数据库中筛选出“超时”的客户，在页面显示，当前登录的课程顾问无法查看自己超时的客户"""
 
         date_now = datetime.date.today()
-        current_user_id = request.session.get('userinfo').get('id')
+        current_userinfo_id = request.session.get('userinfo').get('id')
 
         compare_recv = date_now - datetime.timedelta(days=15)  # 15天未成单
         obj_list1 = models.Customer.objects.filter(
             Q(recv_date__lt=compare_recv), status=2).exclude(
-            consultant_id=current_user_id)
+            consultant_id=current_userinfo_id)
         for obj in obj_list1:
             models.CustomerDistribution.objects.filter(customer=obj).update(status=3)
 
         compare_follow = date_now - datetime.timedelta(days=3)  # 3天未跟进
         obj_list2 = models.Customer.objects.filter(
             Q(last_consult_date__lt=compare_follow), status=2).exclude(
-            consultant_id=current_user_id)
+            consultant_id=current_userinfo_id)
         for obj in obj_list2:
             models.CustomerDistribution.objects.filter(customer=obj).update(status=4)
 
@@ -262,9 +304,9 @@ class CustomerConfig(crm.CrmConfig):
         obj_list = models.Customer.objects.filter(consultant_id=request.session.get('userinfo').get('id'))
         return render(request, 'my_customer.html', {"obj_list": obj_list})
 
-    def competition(self, request, stu_id):
+    def competition(self, request, customer_id):
         """对于公共资源，课程顾问进行手动抢单"""
-        current_user_id = request.session.get('userinfo').get('id')
+        current_userinfo_id = request.session.get('userinfo').get('id')
 
         date_now = datetime.date.today()
 
@@ -273,14 +315,16 @@ class CustomerConfig(crm.CrmConfig):
 
         rows = models.Customer.objects.filter(
             Q(recv_date__lt=compare_recv) | Q(last_consult_date__lt=compare_follow),
-            status=2, pk=stu_id).exclude(consultant_id=2).update(recv_date=date_now, last_consult_date=date_now,
-                                                                 consultant_id=current_user_id)
+            status=2, pk=customer_id).exclude(consultant_id=2).update(recv_date=date_now, last_consult_date=date_now,
+                                                                      consultant_id=current_userinfo_id)
+
+        # 这里应该判断当前被更新状态的客户记录，状态是3天未跟进还是15天未成单，下面分配记录更新时作参考
         if not rows:
             return HttpResponse('手速太慢了')
 
-        models.CustomerDistribution.objects.filter(customer_id=stu_id).update(status=3)  # 模拟3天未跟进
-        models.CustomerDistribution.objects.create(dist_date=date_now, customer_id=stu_id,
-                                                   consultant_id=current_user_id)
+        models.CustomerDistribution.objects.filter(customer_id=customer_id).update(status=3)  # 模拟3天未跟进
+        models.CustomerDistribution.objects.create(dist_date=date_now, customer_id=customer_id,
+                                                   consultant_id=current_userinfo_id)
 
         return redirect('%s_%s_public' % (self.app_label, self.model_name))
 
@@ -381,11 +425,6 @@ class CustomerConfig(crm.CrmConfig):
         if is_header:
             return '跟进记录'
 
-        current_user_id = self.request.session.get('userinfo').get('id')
-        res = models.Customer.objects.filter(pk=obj.id, consultant_id=current_user_id).exists()
-        if not res:
-            return '--'
-
         base_url = reverse('app03_consultrecord_changelist')
         return mark_safe('<a href="{}?customer_id={}" target="_blank">记录详情</a>'.format(base_url, obj.id))
 
@@ -398,7 +437,6 @@ class CustomerConfig(crm.CrmConfig):
     multi_del.short_desc = '批量删除'
 
     ###
-    show_add_btn = True
     order_by_condition = ['-status', ]
     list_display = ['name', display_gender, display_course, display_status, display_consultant, display_recv_date,
                     display_last_consult_date, display_consult_record]
@@ -437,13 +475,18 @@ class CustomerDistributionConfig(crm.CrmConfig):
 class ConsultRecordConfig(crm.CrmConfig):
 
     def changelist_view(self, request, *args, **kwargs):
-        # 重写changelist_view，在其中模拟用户星星已经登录
-        current_user_id = request.session.get('userinfo').get('id')
+        current_userinfo_id = request.session.get('userinfo').get('id')
         customer_id = request.GET.get('customer_id')
         if not customer_id:
             return HttpResponse('参数错误，请关闭页面后重试')
         else:
-            res = models.Customer.objects.filter(pk=customer_id, consultant_id=current_user_id).exists()
+            # 如果当前登录的是销售经理，拥有查看所有跟进记录的权限
+            current_user_obj = rbac_models.User.objects.filter(userinfo=current_userinfo_id).first()
+            for i in current_user_obj.roles.all():
+                if i.pk == 2:
+                    return super().changelist_view(request, *args, **kwargs)
+
+            res = models.Customer.objects.filter(pk=customer_id, consultant_id=current_userinfo_id).exists()
             if not res:
                 return HttpResponse('无权查看')
 

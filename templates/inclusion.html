@@ -1,33 +1,29 @@
 {% for dict_item in side_dict.values %}
-    <div class="item">
+    <ul class="item">
+        <btn class="title btn btn-info">{{ dict_item.menu_title }}</btn>
 
-        <div class="title">{{ dict_item.menu_title }}</div>
-
+        {#下面的代码有部分重复，但是考虑到文档的排版，不对其做删改#}
         {% if dict_item.menu_active %}
             <div class="list">
-                <ul>
-                    {% for url_dict in dict_item.urls_info %}
-                        {% if  url_dict.active %}
-                            <li><a href="{{ url_dict.url }}" class="active">{{ url_dict.url_title }}</a></li>
-                        {% else %}
-                            <li><a href="{{ url_dict.url }}">{{ url_dict.url_title }}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
+                {% for url_dict in dict_item.urls_info %}
+                    {% if  url_dict.active %}
+                        <li><a href="{{ url_dict.url }}" class="active">{{ url_dict.url_title }}</a></li>
+                    {% else %}
+                        <li><a href="{{ url_dict.url }}">{{ url_dict.url_title }}</a></li>
+                    {% endif %}
+                {% endfor %}
             </div>
         {% else %}
             <div class="list hidden">
-                <ul>
-                    {% for url_dict in dict_item.urls_info %}
-                        {% if  url_dict.active %}
-                            <li><a href="{{ url_dict.url }}" class="active">{{ url_dict.url_title }}</a></li>
-                        {% else %}
-                            <li><a href="{{ url_dict.url }}">{{ url_dict.url_title }}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
+                {% for url_dict in dict_item.urls_info %}
+                    {% if  url_dict.active %}
+                        <li><a href="{{ url_dict.url }}" class="active">{{ url_dict.url_title }}</a></li>
+                    {% else %}
+                        <li><a href="{{ url_dict.url }}">{{ url_dict.url_title }}</a></li>
+                    {% endif %}
+                {% endfor %}
             </div>
         {% endif %}
 
-    </div>
+    </ul>
 {% endfor %}

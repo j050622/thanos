@@ -48,7 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'rbac.middleware.auth.RbacMiddleware',
+    'rbac.middleware.auth.RbacMiddleware',
 ]
 
 ROOT_URLCONF = 'CRM.urls'
@@ -122,12 +122,27 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
+# session中几个数据的名称
+PERM_INFO_DICT = 'perm_info_dict'  # 权限匹配相关信息
+PERM_CODES_LIST = 'codes_list'  # 用于判断是否显示添加、编辑、删除等按钮
+PERM_SIDE_LIST = 'perm_side_list'  # 侧边栏显示相关信息
+
+# 登录验证白名单
 VALID_URLS = [
+    '/',
     '/login.*',
     '/admin.*',
     '/logout/',
 ]
 
+# 发送通知的方式
+MESSAGE_CLASSES = [
+    # 'utils.notice.modes.SendEmail',
+    # 'utils.notice.modes.SendMessage',
+    # 'utils.notice.modes.SendWeChat',
+]
+
+# 显示SQL查询语句
 # LOGGING = {
 #     'version': 1,
 #     'disable_existing_loggers': False,
@@ -145,9 +160,3 @@ VALID_URLS = [
 #         },
 #     }
 # }
-
-MESSAGE_CLASSES = [
-    # 'utils.notice.modes.SendEmail',
-    # 'utils.notice.modes.SendMessage',
-    # 'utils.notice.modes.SendWeChat',
-]

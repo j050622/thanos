@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, reverse, HttpResponse
 
+from CRM import settings
 from . import my_forms
 from . import models
 from rbac import models as rbac_models
@@ -42,4 +43,5 @@ def logout(request):
 
 
 def index(request):
-    return HttpResponse('主页')
+    """主页"""
+    return render(request, 'index.html')
