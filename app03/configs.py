@@ -26,15 +26,21 @@ class DepartmentConfig(crm.CrmConfig):
 class UserInfoConfig(crm.CrmConfig):
     show_add_btn = True
 
+    def display_gender(self, obj=None, is_header=False):
+        if is_header:
+            return '性别'
+        return obj.get_gender_display()
+
     def display_department(self, obj=None, is_header=False):
         """显示员工所在部门的名称"""
         if is_header:
             return '部门'
         return obj.department.title
 
-    list_display = ['name', 'email', display_department]
+    list_display = ['name', display_gender, 'email', display_department]
     list_editable = ['name']
     comb_filter_rows = [
+        crm.FilterRowOption('gender', is_choice=True),
         crm.FilterRowOption('department', func_get_val=lambda obj: str(obj.code))]  # 关联字段不是pk而是code
     show_comb_filter = True
 
@@ -249,7 +255,7 @@ class CustomerConfig(crm.CrmConfig):
         customer_obj_list = obj_list1 | obj_list2
         customer_obj_list = customer_obj_list.distinct()
 
-        return render(request, 'public_source_customer.html', {"obj_list": customer_obj_list})
+        return render(request, 'public_source.html', {"obj_list": customer_obj_list})
 
     def mine_view(self, request):
         """显示当前登录的课程顾问的客户列表"""
@@ -281,7 +287,7 @@ class CustomerConfig(crm.CrmConfig):
     def extra_urls(self):
         info = (self.app_label, self.model_name)
         urlpatterns = [
-            url(r'^multi_add$', self.wrap(self.multi_add_view), name='%s_%s_multi_add' % info),  # 批量导入客户信息
+            url(r'^multi_add/$', self.wrap(self.multi_add_view), name='%s_%s_multi_add' % info),  # 批量导入客户信息
             url(r'^multi_add/download_tem/$', self.wrap(self.download_tem), name='download_tem'),
             url(r'^(\d+)/(\d+)/sub_del/$', self.wrap(self.sub_del_view), name='%s_%s_sub_del' % info),  # 删除咨询的课程
             url(r'^public/$', self.wrap(self.public_source_view), name='%s_%s_public' % info),  # 展示公共资源

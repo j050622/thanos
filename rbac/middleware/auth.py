@@ -36,19 +36,19 @@ class RbacMiddleware(MiddlewareMixin):
         if not userinfo_dict:
             return redirect(reverse('login'))
 
-        # perm_info_dict = request.session.get('perm_info_dict')
-        #
-        # flag = False
-        # for dict_item in perm_info_dict.values():
-        #     for url_dict in dict_item['urls_info']:
-        #         url = url_dict.get('url')
-        #         re_url = "^{}$".format(url)
-        #         if re.match(re_url, current_url):
-        #             request.session['codes_list'] = dict_item['codes']
-        #             flag = True
-        #             break
-        #     if flag:
-        #         break
-        #
-        # if not flag:
-        #     return HttpResponse('无权访问')
+        perm_info_dict = request.session.get('perm_info_dict')
+
+        flag = False
+        for dict_item in perm_info_dict.values():
+            for url_dict in dict_item['urls_info']:
+                url = url_dict.get('url')
+                re_url = "^{}$".format(url)
+                if re.match(re_url, current_url):
+                    request.session['codes_list'] = dict_item['codes']
+                    flag = True
+                    break
+            if flag:
+                break
+
+        if not flag:
+            return HttpResponse('无权访问')

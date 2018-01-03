@@ -1,0 +1,33 @@
+{% for dict_item in side_dict.values %}
+    <div class="item">
+
+        <div class="title">{{ dict_item.menu_title }}</div>
+
+        {% if dict_item.menu_active %}
+            <div class="list">
+                <ul>
+                    {% for url_dict in dict_item.urls_info %}
+                        {% if  url_dict.active %}
+                            <li><a href="{{ url_dict.url }}" class="active">{{ url_dict.url_title }}</a></li>
+                        {% else %}
+                            <li><a href="{{ url_dict.url }}">{{ url_dict.url_title }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <div class="list hidden">
+                <ul>
+                    {% for url_dict in dict_item.urls_info %}
+                        {% if  url_dict.active %}
+                            <li><a href="{{ url_dict.url }}" class="active">{{ url_dict.url_title }}</a></li>
+                        {% else %}
+                            <li><a href="{{ url_dict.url }}">{{ url_dict.url_title }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+    </div>
+{% endfor %}

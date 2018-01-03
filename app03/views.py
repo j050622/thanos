@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, HttpResponse
 
 from . import my_forms
 from . import models
@@ -39,3 +39,7 @@ def logout(request):
 
     request.session.flush()
     return redirect(reverse('login'))
+
+
+def index(request):
+    return HttpResponse('主页')

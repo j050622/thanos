@@ -2,6 +2,21 @@ from django.db import models
 from rbac import models as rbac_models
 
 
+class School(models.Model):
+    """
+    校区表
+    如：
+        北京海淀校区
+        北京昌平校区
+        上海虹口校区
+        广州白云山校区
+    """
+    title = models.CharField(verbose_name='校区名称', max_length=32)
+
+    def __str__(self):
+        return self.title
+
+
 class Department(models.Model):
     """
     部门表
@@ -30,21 +45,6 @@ class UserInfo(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class School(models.Model):
-    """
-    校区表
-    如：
-        北京海淀校区
-        北京昌平校区
-        上海虹口校区
-        广州白云山校区
-    """
-    title = models.CharField(verbose_name='校区名称', max_length=32)
-
-    def __str__(self):
-        return self.title
 
 
 class Course(models.Model):
@@ -205,6 +205,30 @@ class ConsultantWeight(models.Model):
     weight = models.IntegerField(verbose_name='权重')
 
 
+class PaymentRecord(models.Model):
+    """
+    缴费记录
+    """
+    customer = models.ForeignKey(Customer, verbose_name="客户")
+
+    class_list = models.ForeignKey(verbose_name="班级", to="ClassList", null=True, blank=True)
+
+    pay_type_choices = [
+        (1, "订金/报名费"),
+        (2, "学费"),
+        (3, "转班"),
+        (4, "退学"),
+        (5, "退款"),
+    ]
+    pay_type = models.IntegerField(verbose_name="费用类型", choices=pay_type_choices, default=1)
+    paid_fee = models.IntegerField(verbose_name="费用数额", default=0)
+    turnover = models.IntegerField(verbose_name="成交金额", null=True, blank=True)
+    quote = models.IntegerField(verbose_name="报价金额", null=True, blank=True)
+    note = models.TextField(verbose_name="备注", null=True, blank=True)
+    date = models.DateTimeField(verbose_name="交款日期", auto_now_add=True)
+    consultant = models.ForeignKey(verbose_name="负责老师", to='UserInfo', help_text=u"谁签的单就选谁")
+
+
 class Student(models.Model):
     """
     学生表（已报名）
@@ -280,27 +304,3 @@ class StudyRecord(models.Model):
 
     def __str__(self):
         return "{} - {}".format(str(self.course_record), self.student)
-
-
-class PaymentRecord(models.Model):
-    """
-    缴费记录
-    """
-    customer = models.ForeignKey(Customer, verbose_name="客户")
-
-    class_list = models.ForeignKey(verbose_name="班级", to="ClassList", null=True, blank=True)
-
-    pay_type_choices = [
-        (1, "订金/报名费"),
-        (2, "学费"),
-        (3, "转班"),
-        (4, "退学"),
-        (5, "退款"),
-    ]
-    pay_type = models.IntegerField(verbose_name="费用类型", choices=pay_type_choices, default=1)
-    paid_fee = models.IntegerField(verbose_name="费用数额", default=0)
-    turnover = models.IntegerField(verbose_name="成交金额", null=True, blank=True)
-    quote = models.IntegerField(verbose_name="报价金额", null=True, blank=True)
-    note = models.TextField(verbose_name="备注", null=True, blank=True)
-    date = models.DateTimeField(verbose_name="交款日期", auto_now_add=True)
-    consultant = models.ForeignKey(verbose_name="负责老师", to='UserInfo', help_text=u"谁签的单就选谁")

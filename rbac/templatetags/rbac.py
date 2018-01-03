@@ -6,7 +6,7 @@ from django.template import Library
 register = Library()
 
 
-@register.inclusion_tag('xxx.html')
+@register.inclusion_tag('inclusion.html')
 def show_menu(request):
     current_url = request.path_info
     perm_side_list = request.session.get('perm_side_list')

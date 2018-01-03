@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="db" uuid="2c53ce9b-6909-4ad1-9734-b011b24baf98">
+    <data-source source="LOCAL" name="db" uuid="6a7de88a-137e-4e7f-adb2-f41f544bc3d8">
       <driver-ref>b4184c09-29da-4164-be53-de1c9a160b75</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>

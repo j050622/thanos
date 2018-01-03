@@ -23,8 +23,8 @@ class FilterRowOption:
         """获取FK和M2M字段所关联的表的所有记录"""
         if self.condition:
             return _field.rel.to.objects.filter(**self.condition)
-
-        return _field.rel.to.objects.all()
+        else:
+            return _field.rel.to.objects.all()
 
     def get_choices(self, _field):
         """获取字段的所有choices选项"""
@@ -46,10 +46,10 @@ class FilterRow:
         current_val = self.request.GET.get(field_name)
 
         ## 生成“全部”按钮
-        # 选中的“全部”按钮添加.active，并且点击无效
+        # 选中的“全部”按钮添加，并且点击无效
         if not current_val:
-            yield mark_safe('<button class="btn btn-primary">全部</button>')
             origin_val_list = []
+            yield mark_safe('<button class="btn btn-primary">全部</button>')
         else:
             origin_val_list = self.params.pop(field_name)
             url = '%s?%s' % (self.request.path, self.params.urlencode())
