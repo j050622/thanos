@@ -136,8 +136,8 @@ class ChangeList:
         """ 加工actions里的函数，用于在前端显示 """
         result = []
         for func in self.actions_funcs:
-            tmp = {"func_name": func.__name__, "text": func.short_desc}
-            result.append(tmp)
+            tmp_dict = {"func_name": func.__name__, "text": func.short_desc}
+            result.append(tmp_dict)
 
         return result
 

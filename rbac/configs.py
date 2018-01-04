@@ -45,7 +45,7 @@ class PermissionConfig(crm.CrmConfig):
 
     list_display = ['title', 'url', 'code', display_menu_ref, display_group]
     list_editable = ['title']
-    list_per_page = 100
+    list_per_page = 20
 
 
 class RoleConfig(crm.CrmConfig):
