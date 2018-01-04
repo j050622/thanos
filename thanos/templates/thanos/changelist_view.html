@@ -93,11 +93,7 @@
 
 
     <!-- 分页 -->
-    <nav aria-label="Page navigation" class="text-center">
-        <ul class="pagination">
-            {{ cl.pager_html|safe }}
-        </ul>
-    </nav>
+    {{ cl.pager_html|safe }}
 
 {% endblock content %}
 

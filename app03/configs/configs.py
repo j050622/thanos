@@ -37,7 +37,7 @@ class UserInfoConfig(crm.CrmConfig):
     list_editable = ['name']
     comb_filter_rows = [
         crm.FilterRowOption('gender', is_choice=True),
-        crm.FilterRowOption('department', func_get_val=lambda obj: str(obj.code))]  # 关联字段不是pk而是code
+        crm.FilterRowOption('department', is_multiple=True, func_get_val=lambda obj: str(obj.code))]  # 关联字段不是pk而是code
     show_comb_filter = True
 
 

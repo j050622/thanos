@@ -2,6 +2,8 @@
 configs中的Config类在继承CrmConfig之前，可以从本模块继承一些类，用于自定义权限，将粒度
 控制到按钮
 """
+from thanos.service import crm
+from CRM import settings
 
 
 class BasePermission(crm.CrmConfig):

@@ -77,7 +77,7 @@ class FilterRow:
                     ele_html = mark_safe('<a class="btn" href="{}">{}</a>'.format(url, text))
             else:
                 # 多选
-                url_val_list = copy.deepcopy(origin_val_list)
+                url_val_list = copy.deepcopy(origin_val_list)  # [1002,1003,1004,1000]
 
                 if val in url_val_list:
                     url_val_list.remove(val)  # 点击取消
