@@ -2,6 +2,7 @@ import re
 import copy
 
 from django.template import Library
+
 from CRM import settings
 
 register = Library()
@@ -44,4 +45,5 @@ def show_menu(request):
                 side_dict[menu_id]['menu_active'] = True
             side_dict[menu_id]['urls_info'].append(
                 {'url_title': dict_item.get('url_title'), 'url': dict_item.get('url'), 'active': active})
+
     return {"side_dict": side_dict}

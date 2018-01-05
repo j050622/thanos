@@ -77,7 +77,7 @@ class FilterRow:
                     ele_html = mark_safe('<a class="btn" href="{}">{}</a>'.format(url, text))
             else:
                 # 多选
-                url_val_list = copy.deepcopy(origin_val_list)
+                url_val_list = copy.deepcopy(origin_val_list)  # [1002,1003,1004,1000]
 
                 if val in url_val_list:
                     url_val_list.remove(val)  # 点击取消
@@ -136,8 +136,8 @@ class ChangeList:
         """ 加工actions里的函数，用于在前端显示 """
         result = []
         for func in self.actions_funcs:
-            tmp = {"func_name": func.__name__, "text": func.short_desc}
-            result.append(tmp)
+            tmp_dict = {"func_name": func.__name__, "text": func.short_desc}
+            result.append(tmp_dict)
 
         return result
 

@@ -77,4 +77,5 @@ class Paginator:
             last_page = '<li><a href="{}?page={}{}">尾页</a></li>'.format(self.base_url, max_page_num, params)
             ele_list.append(last_page)
 
-        return '\n'.join(ele_list)
+        s = '<nav aria-label="Page navigation" class="text-center"><ul class="pagination">{0}</ul></nav > '
+        return s.format('\n'.join(ele_list))
