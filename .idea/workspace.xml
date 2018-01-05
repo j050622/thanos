@@ -2,11 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3e73052b-b5a7-4ebf-9cc9-744b07cf369f" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/rbac/templatetags/rbac.py" afterPath="$PROJECT_DIR$/rbac/templatetags/rbac.py" />
-      <change beforePath="$PROJECT_DIR$/utils/notice/modes.py" afterPath="$PROJECT_DIR$/utils/notice/modes.py" />
-      <change beforePath="$PROJECT_DIR$/utils/notice/notice.py" afterPath="$PROJECT_DIR$/utils/notice/notice.py" />
-      <change beforePath="$PROJECT_DIR$/utils/notice/wechat.py" afterPath="$PROJECT_DIR$/utils/notice/wechat.py" />
-      <change beforePath="$PROJECT_DIR$/定时任务代码.py" afterPath="$PROJECT_DIR$/定时任务代码.py" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
+      <change beforePath="$PROJECT_DIR$/thanos/service/crm.py" afterPath="$PROJECT_DIR$/thanos/service/crm.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -32,39 +33,122 @@
     <option name="SHOW_TABLE_DETAILS" value="true" />
     <option name="SHOW_EMPTY_GROUPS" value="false" />
     <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
-    <expand>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="db" type="feb32156:DbDataSourceImpl" />
-      </path>
-    </expand>
+    <expand />
     <select />
   </component>
   <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="notice.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/utils/notice/notice.py">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
+      <file leaf-file-name="crm.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/thanos/service/crm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+            <state relative-caret-position="292">
+              <caret line="493" column="26" lean-forward="true" selection-start-line="493" selection-start-column="26" selection-end-line="493" selection-end-column="26" />
               <folding>
-                <element signature="e#0#16#0" expanded="true" />
+                <element signature="e#0#11#0" expanded="true" />
+                <element signature="e#402#1012#0" expanded="false" />
+                <element signature="e#511#689#0" expanded="false" />
+                <element signature="e#735#915#0" expanded="false" />
+                <element signature="e#960#1012#0" expanded="false" />
+                <element signature="e#1036#3574#0" expanded="false" />
+                <element signature="e#1140#1339#0" expanded="false" />
+                <element signature="e#1373#3574#0" expanded="false" />
+                <element signature="e#1477#1488#0" expanded="false" />
+                <element signature="e#1558#1653#0" expanded="false" />
+                <element signature="e#1680#1873#0" expanded="false" />
+                <element signature="e#1959#3574#0" expanded="false" />
+                <element signature="e#2005#2080#0" expanded="false" />
+                <element signature="e#2115#2286#0" expanded="false" />
+                <element signature="e#2373#2764#0" expanded="false" />
+                <element signature="e#2560#2764#0" expanded="false" />
+                <element signature="e#2799#3546#0" expanded="false" />
+                <element signature="e#2952#3237#0" expanded="false" />
+                <element signature="e#3280#3546#0" expanded="false" />
+                <element signature="e#3599#8079#0" expanded="false" />
+                <element signature="e#3599#3628#1" expanded="false" />
+                <element signature="e#3698#5128#0" expanded="false" />
+                <element signature="e#5168#5393#0" expanded="false" />
+                <element signature="e#5428#5969#0" expanded="false" />
+                <element signature="e#7955#8056#0" expanded="false" />
+                <element signature="e#8103#8172#1" expanded="false" />
+                <element signature="e#8251#8527#0" expanded="false" />
+                <element signature="e#9005#9115#0" expanded="false" />
+                <element signature="e#9163#9283#0" expanded="false" />
+                <element signature="e#9325#9383#0" expanded="false" />
+                <element signature="e#9429#9484#0" expanded="false" />
+                <element signature="e#9527#9575#0" expanded="false" />
+                <element signature="e#9618#9759#0" expanded="false" />
+                <element signature="e#9801#9860#0" expanded="false" />
+                <element signature="e#9906#10051#0" expanded="false" />
+                <element signature="e#10097#10151#0" expanded="false" />
+                <element signature="e#10211#10325#0" expanded="false" />
+                <element signature="e#10362#10469#0" expanded="false" />
+                <element signature="e#10514#10637#0" expanded="false" />
+                <element signature="e#10682#10805#0" expanded="false" />
+                <element signature="e#10911#11076#0" expanded="false" />
+                <element signature="e#11114#11394#0" expanded="false" />
+                <element signature="e#11147#11335#0" expanded="false" />
+                <element signature="e#11457#11858#0" expanded="false" />
+                <element signature="e#11537#11762#0" expanded="false" />
+                <element signature="e#11921#12322#0" expanded="false" />
+                <element signature="e#12001#12226#0" expanded="false" />
+                <element signature="e#12416#12707#0" expanded="false" />
+                <element signature="e#12504#12684#0" expanded="false" />
+                <element signature="e#12771#12914#0" expanded="false" />
+                <element signature="e#12820#12892#0" expanded="false" />
+                <element signature="e#12948#13450#0" expanded="false" />
+                <element signature="e#13009#13376#0" expanded="false" />
+                <element signature="e#13486#13543#0" expanded="false" />
+                <element signature="e#13587#13609#0" expanded="false" />
+                <element signature="e#13694#15035#0" expanded="false" />
+                <element signature="e#13694#13760#1" expanded="false" />
+                <element signature="e#14053#14570#0" expanded="false" />
+                <element signature="e#14108#14570#0" expanded="false" />
+                <element signature="e#14324#14482#0" expanded="false" />
+                <element signature="e#14650#14949#0" expanded="false" />
+                <element signature="e#14743#14949#0" expanded="false" />
+                <element signature="e#14855#14949#0" expanded="false" />
+                <element signature="e#15102#15809#0" expanded="false" />
+                <element signature="e#15102#15130#1" expanded="false" />
+                <element signature="e#15179#15564#0" expanded="false" />
+                <element signature="e#15591#15809#0" expanded="false" />
+                <element signature="e#15855#16166#0" expanded="false" />
+                <element signature="e#15855#15910#1" expanded="false" />
+                <element signature="e#16044#16131#0" expanded="false" />
+                <element signature="e#16072#16131#0" expanded="false" />
+                <element signature="e#16226#16254#1" expanded="false" />
+                <element signature="e#16352#16498#0" expanded="false" />
+                <element signature="e#16622#16736#0" expanded="false" />
+                <element signature="e#18932#19198#0" expanded="false" />
+                <element signature="e#19266#20087#0" expanded="false" />
+                <element signature="e#19266#19294#1" expanded="false" />
+                <element signature="e#19417#20087#0" expanded="false" />
+                <element signature="e#19556#19918#0" expanded="false" />
+                <element signature="e#19971#20044#0" expanded="false" />
+                <element signature="e#20155#21209#0" expanded="false" />
+                <element signature="e#20155#20183#1" expanded="false" />
+                <element signature="e#20435#20613#0" expanded="false" />
+                <element signature="e#20640#21209#0" expanded="false" />
+                <element signature="e#20765#20888#0" expanded="false" />
+                <element signature="e#20923#21209#0" expanded="false" />
+                <element signature="e#21312#21331#0" expanded="false" />
+                <element signature="e#21558#22042#0" expanded="false" />
+                <element signature="e#21673#22014#0" expanded="false" />
+                <element signature="e#21877#21892#0" expanded="false" />
+                <element signature="e#22086#22120#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="modes.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/utils/notice/modes.py">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app03/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="16" column="28" lean-forward="true" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
-              <folding>
-                <element signature="e#0#14#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="230">
+              <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -83,10 +167,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>gen_comb_filter</find>
-      <find>fix</find>
-      <find>super</find>
-      <find>func_get_val</find>
       <find>POST</find>
       <find>prope</find>
       <find>'perm_info_dict'</find>
@@ -113,6 +193,10 @@
       <find>filter</find>
       <find>pagina</find>
       <find>sql</find>
+      <find>Many</find>
+      <find>Manytoone</find>
+      <find>department</find>
+      <find>department =</find>
     </findStrings>
     <replaceStrings>
       <replace>distribution</replace>
@@ -179,7 +263,6 @@
         <option value="$PROJECT_DIR$/templates/base side.html" />
         <option value="$PROJECT_DIR$/rbac/static/rbac/rbac.css" />
         <option value="$PROJECT_DIR$/rbac/static/rbac/rbac.js" />
-        <option value="$PROJECT_DIR$/app03/models.py" />
         <option value="$PROJECT_DIR$/templates/public_source.html" />
         <option value="$PROJECT_DIR$/templates/index.html" />
         <option value="$PROJECT_DIR$/thanos/templates/thanos/base_template.html" />
@@ -196,7 +279,6 @@
         <option value="$PROJECT_DIR$/thanos/service/paginator.py" />
         <option value="$PROJECT_DIR$/thanos/templates/thanos/changelist_view.html" />
         <option value="$PROJECT_DIR$/rbac/configs.py" />
-        <option value="$PROJECT_DIR$/thanos/service/crm.py" />
         <option value="$PROJECT_DIR$/app03/configs/configs.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/定时任务代码.py" />
@@ -204,6 +286,8 @@
         <option value="$PROJECT_DIR$/utils/notice/wechat.py" />
         <option value="$PROJECT_DIR$/rbac/templatetags/rbac.py" />
         <option value="$PROJECT_DIR$/utils/notice/modes.py" />
+        <option value="$PROJECT_DIR$/app03/models.py" />
+        <option value="$PROJECT_DIR$/thanos/service/crm.py" />
       </list>
     </option>
   </component>
@@ -244,44 +328,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-              <item name="Extensions" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
-            </path>
-            <path>
-              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-              <item name="Extensions" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
-              <item name="com.intellij.database" type="61db50fb:ScratchProjectViewPane$MyPsiNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="CRM" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CRM" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CRM" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CRM" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CRM" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CRM" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-              <item name="notice" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="Scope">
         <subPane subId="Project Files">
           <expand>
@@ -298,6 +344,38 @@
               <item name="Root" type="cbb8eebc:String" user="Root" />
               <item name="CRM" type="cbb8eebc:String" user="CRM" />
               <item name="utils" type="cbb8eebc:String" user="utils" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="CRM" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CRM" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CRM" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CRM" type="462c0819:PsiDirectoryNode" />
+              <item name="app03" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scratches">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
+              <item name="Extensions" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
+            </path>
+            <path>
+              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
+              <item name="Extensions" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
+              <item name="com.intellij.database" type="61db50fb:ScratchProjectViewPane$MyPsiNode" />
             </path>
           </expand>
           <select />
@@ -513,7 +591,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900944" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900944" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900944" sideWeight="0.47854078" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2274678" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23390558" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21459228" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3299356" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -553,7 +631,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/rbac/static/rbac/rbac.js" />
     <entry file="file://$USER_HOME$/.PyCharm2017.3/system/python_stubs/1328797790/builtins.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="400">
@@ -650,20 +727,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app03/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="522">
-          <caret line="156" column="14" lean-forward="false" selection-start-line="156" selection-start-column="4" selection-end-line="156" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rbac/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="500">
-          <caret line="64" column="0" lean-forward="true" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="das://table:/76fee2ad/6a7de88a-137e-4e7f-adb2-f41f544bc3d8/main.rbac_role" />
     <entry file="das://table:/76fee2ad/6a7de88a-137e-4e7f-adb2-f41f544bc3d8/main.rbac_user" />
     <entry file="das://table:/76fee2ad/6a7de88a-137e-4e7f-adb2-f41f544bc3d8/main.rbac_user_roles" />
@@ -722,7 +785,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
           <caret line="17" column="21" lean-forward="false" selection-start-line="17" selection-start-column="21" selection-end-line="17" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -730,7 +792,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="297">
           <caret line="98" column="18" lean-forward="true" selection-start-line="98" selection-start-column="18" selection-end-line="98" selection-end-column="18" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -738,7 +799,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -746,7 +806,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -754,24 +813,128 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="630">
           <caret line="43" column="0" lean-forward="true" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/thanos/service/paginator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rbac/middleware/auth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="7" column="23" lean-forward="true" selection-start-line="7" selection-start-column="23" selection-end-line="7" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rbac/migrations/0002_auto_20180102_1630.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="17" column="10" lean-forward="true" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rbac/migrations/0001_initial.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rbac/service/init_permission.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="594">
+          <caret line="22" column="23" lean-forward="true" selection-start-line="22" selection-start-column="23" selection-end-line="22" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rbac/templatetags/rbac.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="50" column="0" lean-forward="true" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app03/configs/configs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="675">
+          <caret line="33" column="35" lean-forward="false" selection-start-line="33" selection-start-column="35" selection-end-line="33" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app03/configs/customer_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="58" column="54" lean-forward="true" selection-start-line="58" selection-start-column="54" selection-end-line="58" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/notice/wechat.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="14" column="54" lean-forward="false" selection-start-line="14" selection-start-column="54" selection-end-line="14" selection-end-column="54" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/thanos/templatetags/my_tags.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        <state relative-caret-position="414">
+          <caret line="33" column="67" lean-forward="true" selection-start-line="33" selection-start-column="67" selection-end-line="33" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rbac/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="311">
+          <caret line="57" column="52" lean-forward="true" selection-start-line="57" selection-start-column="52" selection-end-line="57" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app03/apps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/notice/modes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="27">
+          <caret line="16" column="25" lean-forward="true" selection-start-line="16" selection-start-column="25" selection-end-line="16" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/notice/notice.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app03/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/thanos/service/crm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="292">
+          <caret line="493" column="26" lean-forward="true" selection-start-line="493" selection-start-column="26" selection-end-line="493" selection-end-column="26" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
             <element signature="e#402#1012#0" expanded="false" />
@@ -844,132 +1007,26 @@
             <element signature="e#15855#15910#1" expanded="false" />
             <element signature="e#16044#16131#0" expanded="false" />
             <element signature="e#16072#16131#0" expanded="false" />
-            <element signature="e#16226#19141#0" expanded="false" />
             <element signature="e#16226#16254#1" expanded="false" />
             <element signature="e#16352#16498#0" expanded="false" />
-            <element signature="e#16525#19141#0" expanded="false" />
             <element signature="e#16622#16736#0" expanded="false" />
-            <element signature="e#16771#19141#0" expanded="false" />
-            <element signature="e#16931#18831#0" expanded="false" />
-            <element signature="e#17358#18713#0" expanded="false" />
-            <element signature="e#17682#18713#0" expanded="false" />
-            <element signature="e#17990#18097#0" expanded="false" />
-            <element signature="e#18290#18713#0" expanded="false" />
-            <element signature="e#18875#19141#0" expanded="false" />
-            <element signature="e#19209#20030#0" expanded="false" />
-            <element signature="e#19209#19237#1" expanded="false" />
-            <element signature="e#19360#20030#0" expanded="false" />
-            <element signature="e#19499#19861#0" expanded="false" />
-            <element signature="e#19914#19987#0" expanded="false" />
-            <element signature="e#20098#21152#0" expanded="false" />
-            <element signature="e#20098#20126#1" expanded="false" />
-            <element signature="e#20378#20556#0" expanded="false" />
-            <element signature="e#20583#21152#0" expanded="false" />
-            <element signature="e#20708#20831#0" expanded="false" />
-            <element signature="e#20866#21152#0" expanded="false" />
-            <element signature="e#21255#21274#0" expanded="false" />
-            <element signature="e#21501#21985#0" expanded="false" />
-            <element signature="e#21616#21957#0" expanded="false" />
-            <element signature="e#21820#21835#0" expanded="false" />
-            <element signature="e#22029#22063#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/thanos/service/paginator.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rbac/middleware/auth.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="7" column="23" lean-forward="true" selection-start-line="7" selection-start-column="23" selection-end-line="7" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rbac/migrations/0002_auto_20180102_1630.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="17" column="10" lean-forward="true" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rbac/migrations/0001_initial.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rbac/service/init_permission.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="594">
-          <caret line="22" column="23" lean-forward="true" selection-start-line="22" selection-start-column="23" selection-end-line="22" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rbac/templatetags/rbac.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="50" column="0" lean-forward="true" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app03/configs/configs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="675">
-          <caret line="33" column="35" lean-forward="false" selection-start-line="33" selection-start-column="35" selection-end-line="33" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app03/configs/customer_config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="58" column="54" lean-forward="true" selection-start-line="58" selection-start-column="54" selection-end-line="58" selection-end-column="54" />
-          <folding>
-            <element signature="e#40#55#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/notice/wechat.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="14" column="54" lean-forward="false" selection-start-line="14" selection-start-column="54" selection-end-line="14" selection-end-column="54" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/notice/notice.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/notice/modes.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="16" column="28" lean-forward="true" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
+            <element signature="e#18932#19198#0" expanded="false" />
+            <element signature="e#19266#20087#0" expanded="false" />
+            <element signature="e#19266#19294#1" expanded="false" />
+            <element signature="e#19417#20087#0" expanded="false" />
+            <element signature="e#19556#19918#0" expanded="false" />
+            <element signature="e#19971#20044#0" expanded="false" />
+            <element signature="e#20155#21209#0" expanded="false" />
+            <element signature="e#20155#20183#1" expanded="false" />
+            <element signature="e#20435#20613#0" expanded="false" />
+            <element signature="e#20640#21209#0" expanded="false" />
+            <element signature="e#20765#20888#0" expanded="false" />
+            <element signature="e#20923#21209#0" expanded="false" />
+            <element signature="e#21312#21331#0" expanded="false" />
+            <element signature="e#21558#22042#0" expanded="false" />
+            <element signature="e#21673#22014#0" expanded="false" />
+            <element signature="e#21877#21892#0" expanded="false" />
+            <element signature="e#22086#22120#0" expanded="false" />
           </folding>
         </state>
       </provider>

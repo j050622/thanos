@@ -100,5 +100,6 @@ ENV/
 # mypy
 .mypy_cache/
 
-#数据库
-*.sqllite3
+#数据库相关
+#*.sqlite3
+#/migrations

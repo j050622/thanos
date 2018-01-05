@@ -475,7 +475,7 @@ class CrmConfig:
                 # 跳转
                 _popback_id = request.GET.get('popback_id')
                 if _popback_id:
-                    from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
+                    from django.db.models.fields.reverse_related import ManyToOneRel, OneToOneRel, ManyToManyRel
 
                     popback_info = {"status": None, "text": None, "value": None, "popback_id": _popback_id}
 
@@ -483,7 +483,7 @@ class CrmConfig:
                     back_model_name = request.GET.get('model_name')
 
                     for rel_field_obj in new_obj._meta.related_objects:
-                        # 遍历所有关联当前记录所在表的字段对象，例如：teachers、headmaster
+                        # 遍历所有关联当前记录所在表的其他表的字段对象，例如：teachers、headmaster
                         _related_name = str(rel_field_obj.related_name)
                         _model_name = rel_field_obj.field.model._meta.model_name
 
@@ -491,7 +491,7 @@ class CrmConfig:
                             # 定位到打开popup的标签对应的字段
                             _limit_choices_to = rel_field_obj.limit_choices_to
 
-                            if (type(rel_field_obj) == ManyToOneRel):
+                            if (type(rel_field_obj) == ManyToOneRel) or (type(rel_field_obj == OneToOneRel)):
                                 _field_name = rel_field_obj.field_name
                             else:
                                 # ManyToManyRel没有field_name方法，反应到models里面是因为没有to_field方法
