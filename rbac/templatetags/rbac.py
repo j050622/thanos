@@ -29,6 +29,7 @@ def show_menu(request):
                 perm_menu_dict[dict_item.get('url_id')]['active'] = True
             else:
                 perm_menu_dict[menu_ref_id]['active'] = True
+
     # 给当前有'active'属性的“菜单项URL”对应的菜单添加'active'属性，用于在CSS中设置展开动作
     side_dict = {}
     for dict_item in perm_menu_dict.values():

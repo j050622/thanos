@@ -16,7 +16,7 @@ class SendEmail(BaseMode):
     def __init__(self):
         self.username = 'XI'
         self.addressor = '412003074@qq.com'
-        self.password = 'iyjtqfuxhqgqbhba'
+        self.password = 'xxx存在E盘xxx'
 
     def send(self, to_name, to_addr, subject, body):
         msg = MIMEText(body)

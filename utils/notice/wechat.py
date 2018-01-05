@@ -4,8 +4,8 @@ import requests
 
 def get_access_token():
     """
-    获取微信全局接口的凭证(默认有效期俩个小时)
-    如果不每天请求次数过多, 通过设置缓存即可
+    获取微信全局接口的凭证(默认有效期2个小时)
+    如果每天请求次数过多, 通过设置缓存即可
     """
     result = requests.get(
         url="https://api.weixin.qq.com/cgi-bin/token",

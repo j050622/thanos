@@ -10,6 +10,9 @@ django.setup()
 
 from app03 import models
 
-customer_obj_list = models.Customer.objects.all()
-for obj in customer_obj_list:
-    print(obj)
+# customer_obj_list = models.Customer.objects.all()
+# for obj in customer_obj_list:
+#     print(obj)
+
+
+# 筛选超时用户，更改其状态，置为公共资源

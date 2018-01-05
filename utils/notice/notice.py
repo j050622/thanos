@@ -9,7 +9,6 @@ def send_notification(to_name, to_addr, subject, body):
     :param to_addr: 收件人联系方式
     :param subject: 通知主题
     :param body: 通知内容
-    :return:
     """
 
     for class_path in MESSAGE_CLASSES:
