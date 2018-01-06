@@ -1,32 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3e73052b-b5a7-4ebf-9cc9-744b07cf369f" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/EventLog.dll" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/Redis on Windows Release Notes.docx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/Redis on Windows.docx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/Windows Service Documentation.docx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/dump.rdb" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/redis-benchmark.exe" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/redis-benchmark.pdb" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/redis-check-aof.exe" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/redis-check-aof.pdb" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/redis-cli.exe" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/redis-cli.pdb" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/redis-log" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/redis-server.exe" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/redis-server.pdb" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/redis.windows-service.conf" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/redis.windows.conf" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/temp-15248.rdb" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/temp-19280.rdb" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/temp-7052.rdb" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Redis-x64-3.2.100/temp-7568.rdb" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app03/configs/configs.py" afterPath="$PROJECT_DIR$/app03/configs/configs.py" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
-      <change beforePath="$PROJECT_DIR$/thanos/templates/thanos/changelist_view.html" afterPath="$PROJECT_DIR$/thanos/templates/thanos/changelist_view.html" />
-    </list>
+    <list default="true" id="3e73052b-b5a7-4ebf-9cc9-744b07cf369f" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -58,20 +33,7 @@
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="urls.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/CRM/urls.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="711">
-              <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-              <folding>
-                <element signature="e#637#678#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -795,13 +757,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/changelist_view.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="14" column="32" lean-forward="true" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/add_change_form.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="81">
@@ -861,17 +816,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/thanos/templates/thanos/changelist_view.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="446">
+          <caret line="92" column="0" lean-forward="true" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://D:/Program Files (x86)/Python36/Lib/site-packages/django/conf/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2085">
-          <caret line="19" column="6" lean-forward="false" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
+        <state relative-caret-position="345">
+          <caret line="31" column="20" lean-forward="false" selection-start-line="31" selection-start-column="20" selection-end-line="31" selection-end-column="20" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/CRM/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="711">
+        <state relative-caret-position="630">
           <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding>
             <element signature="e#637#678#0" expanded="true" />
