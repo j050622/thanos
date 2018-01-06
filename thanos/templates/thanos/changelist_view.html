@@ -1,6 +1,6 @@
 {% extends 'thanos/base_template.html' %}
 {% load staticfiles %}
-
+{% load my_tags %}
 {% block my_css %}
     <link rel="stylesheet" href="{% static 'thanos/css/changelist_view.css' %}">
 {% endblock %}
@@ -90,7 +90,6 @@
         </table>
 
     </form>
-
 
     <!-- 分页 -->
     {{ cl.pager_html|safe }}

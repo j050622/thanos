@@ -14,13 +14,11 @@ from rbac import models as rbac_models
 
 
 class DepartmentConfig(crm.CrmConfig):
-    show_add_btn = True
     list_display = ['title', 'code']
     list_editable = ['title']
 
 
 class UserInfoConfig(crm.CrmConfig):
-    show_add_btn = True
 
     def display_gender(self, obj=None, is_header=False):
         if is_header:
@@ -380,7 +378,7 @@ class StudyRecordConfig(crm.CrmConfig):
 
     def multi_absence(self, request):
         pk_list = request.POST.getlist('pk')
-        models.StudyRecord.objects.filter(pk__in=pk_list).update(record='absence')
+        models.StudyRecord.objects.filter(pk__in=pk_list).update(record='a   bsence')
 
     multi_absence.short_desc = '缺勤'
 
