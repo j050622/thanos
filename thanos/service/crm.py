@@ -408,12 +408,14 @@ class CrmConfig:
                     condition1.children.append((field, kew_word))
 
         # URL中的搜索条件
+        # 如果不对'page'参数进行过滤，条件中就会添加'page'，查询数据库时会出错，但在其他
+        # 应用场景中，可以不过滤'page'参数，分页器中会进行过滤
         for field in self.request.GET.keys():
             value_list = self.request.GET.getlist(field)
             if field != 'page':
                 pager_params.setlist(field, value_list)
                 if field != self.search_input_name:
-                    # 之前搜索框的关键字要过滤掉
+                    # 搜索框的关键字要过滤掉
                     condition2.children.append(('%s__in' % field, value_list))
 
         final_cond = condition1 & condition2

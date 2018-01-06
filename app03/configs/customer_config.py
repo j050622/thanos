@@ -7,7 +7,7 @@ from urllib.request import quote
 
 from django.conf.urls import url
 from django.shortcuts import render, redirect, reverse, HttpResponse
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, FileResponse
 from django.utils.safestring import mark_safe
 from django.db.transaction import atomic
 from django.db.models import Q
@@ -52,65 +52,68 @@ class CustomerConfig(permissions.BasePermission, crm.CrmConfig):
                         # 创建客户分配记录
                         models.CustomerDistribution.objects.create(customer=new_obj, consultant_id=consultant_id)
 
-                    # # 通过邮件、短信等方式向课程顾问发送通知
-                    # from utils.notice import notice
-                    # consultant_obj = models.UserInfo.objects.filter(pk=consultant_id).first()
-                    # # to_name = consultant_obj.name
-                    # # to_addr = consultant_obj.email
-                    # # notice.send_notification(to_name, to_addr, '客户分配通知', '最新录入的客户已经自动分配')
-                    # notice.send_notification('Mark', 'guixu2010@yeah.net', '客户分配通知', '最新录入的客户已经自动分配')###########
-                    #
-                    # from utils.notice import wechat
-                    # wechat_id = 'oAKVr1secTVhwGZj8z5cIF3h91JI'  # 微信ID应该从数据库获取###########
-                    # wechat.send_custom_msg(wechat_id, '发送内容测试...')
-                    # wechat.send_template_msg(wechat_id, 'Jessica', 'Python全栈开发')  # 这里从数据库获取客户和课程等信息######
+                        # # 通过邮件、短信等方式向课程顾问发送通知
+                        # from utils.notice import notice
+                        # consultant_obj = models.UserInfo.objects.filter(pk=consultant_id).first()
+                        # # to_name = consultant_obj.name
+                        # # to_addr = consultant_obj.email
+                        # # notice.send_notification(to_name, to_addr, '客户分配通知', '最新录入的客户已经自动分配')
+                        # notice.send_notification('Mark', 'guixu2010@yeah.net', '客户分配通知', '最新录入的客户已经自动分配')###########
+                        #
+                        # from utils.notice import wechat
+                        # wechat_id = 'oAKVr1secTVhwGZj8z5cIF3h91JI'  # 微信ID应该从数据库获取###########
+                        # wechat.send_custom_msg(wechat_id, '发送内容测试...')
+                        # wechat.send_template_msg(wechat_id, 'Jessica', 'Python全栈开发')  # 这里从数据库获取客户和课程等信息######
+
+                        # 跳转
+                        _popback_id = request.GET.get('popback_id')
+                        if _popback_id:
+                            from django.db.models.fields.reverse_related import ManyToOneRel
+
+                            popback_info = {"status": None, "text": None, "value": None, "popback_id": _popback_id}
+
+                            back_related_name = request.GET.get('related_name')
+                            back_model_name = request.GET.get('model_name')
+
+                            for rel_field_obj in new_obj._meta.related_objects:
+                                # 遍历所有关联当前记录所在表的字段对象，例如：teachers、headmaster
+                                _related_name = str(rel_field_obj.related_name)
+                                _model_name = rel_field_obj.field.model._meta.model_name
+
+                                if _related_name == back_related_name and _model_name == back_model_name:
+                                    # 定位到打开popup的标签对应的字段
+                                    _limit_choices_to = rel_field_obj.limit_choices_to
+
+                                    if (type(rel_field_obj) == ManyToOneRel):
+                                        _field_name = rel_field_obj.field_name
+                                    else:
+                                        # ManyToManyRel没有field_name方法，反应到models里面是因为没有to_field方法
+                                        _field_name = 'pk'
+
+                                    is_exists = self.model_class.objects.filter(pk=new_obj.pk,
+                                                                                **_limit_choices_to).exists()
+                                    if is_exists:
+                                        # 如果新记录对象符合原limit_choices_to的条件
+                                        popback_info["status"] = True
+                                        popback_info["text"] = str(new_obj)
+                                        popback_info["value"] = getattr(new_obj, _field_name)
+
+                                        return render(request, 'thanos/popUp_response.html',
+                                                      {"popback_info": json.dumps(popback_info)})
+
+                            return render(request, 'thanos/popUp_response.html',
+                                          {"popback_info": json.dumps(popback_info)})
+
+                        else:
+                            next_to = request.GET.get(self.query_dict_key)
+                            if next_to:
+                                return redirect('%s?%s' % (self.get_changelist_url(), next_to))
+                            else:
+                                return redirect('%s' % self.get_changelist_url())
 
                 except Exception as e:
                     print('错误:', e)
                     Distribute.rollback(consultant_id)
-
-                # 跳转
-                _popback_id = request.GET.get('popback_id')
-                if _popback_id:
-                    from django.db.models.fields.reverse_related import ManyToOneRel
-
-                    popback_info = {"status": None, "text": None, "value": None, "popback_id": _popback_id}
-
-                    back_related_name = request.GET.get('related_name')
-                    back_model_name = request.GET.get('model_name')
-
-                    for rel_field_obj in new_obj._meta.related_objects:
-                        # 遍历所有关联当前记录所在表的字段对象，例如：teachers、headmaster
-                        _related_name = str(rel_field_obj.related_name)
-                        _model_name = rel_field_obj.field.model._meta.model_name
-
-                        if _related_name == back_related_name and _model_name == back_model_name:
-                            # 定位到打开popup的标签对应的字段
-                            _limit_choices_to = rel_field_obj.limit_choices_to
-
-                            if (type(rel_field_obj) == ManyToOneRel):
-                                _field_name = rel_field_obj.field_name
-                            else:
-                                # ManyToManyRel没有field_name方法，反应到models里面是因为没有to_field方法
-                                _field_name = 'pk'
-
-                            is_exists = self.model_class.objects.filter(pk=new_obj.pk, **_limit_choices_to).exists()
-                            if is_exists:
-                                # 如果新记录对象符合原limit_choices_to的条件
-                                popback_info["status"] = True
-                                popback_info["text"] = str(new_obj)
-                                popback_info["value"] = getattr(new_obj, _field_name)
-
-                                return render(request, 'thanos/popUp_response.html',
-                                              {"popback_info": json.dumps(popback_info)})
-
-                    return render(request, 'thanos/popUp_response.html', {"popback_info": json.dumps(popback_info)})
-                else:
-                    next_to = request.GET.get(self.query_dict_key)
-                    if next_to:
-                        return redirect('%s?%s' % (self.get_changelist_url(), next_to))
-                    else:
-                        return redirect('%s' % self.get_changelist_url())
 
     def multi_add_view(self, request, *args, **kwargs):
         """批量导入客户信息，添加到数据库"""
@@ -144,7 +147,7 @@ class CustomerConfig(permissions.BasePermission, crm.CrmConfig):
                     yield chunk
 
         file_path = 'static/files/批量导入客户.xlsx'
-        res = StreamingHttpResponse(file_iterator(file_path), content_type='application/octet-stream')
+        res = FileResponse(file_iterator(file_path), content_type='application/octet-stream')
         res['Content-Disposition'] = 'attachment;filename={0}'.format(quote(file_path.rsplit('/', 1)[1]))
         return res
 

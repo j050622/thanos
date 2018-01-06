@@ -1,11 +1,14 @@
 import math
 import copy
+from django.http.request import QueryDict
 
 
 class Paginator:
     def __init__(self, params_dict, obj_list, page_num, base_url, show_obj_cnt, show_btn_cnt=11):
         self.params_dict = copy.deepcopy(params_dict)
         self.params_dict._mutable = True
+        if self.params_dict.get('page'):
+            self.params_dict.pop('page')
 
         self.obj_list = obj_list
         self.page_num = page_num

@@ -1,4 +1,4 @@
-import importlib
+from importlib import import_module
 from CRM.settings import MESSAGE_CLASSES
 
 
@@ -13,6 +13,6 @@ def send_notification(to_name, to_addr, subject, body):
 
     for class_path in MESSAGE_CLASSES:
         module_path, class_name = class_path.rsplit('.', 1)
-        module = importlib.import_module(module_path)
+        module = import_module(module_path)
         obj = getattr(module, class_name)()
         obj.send(to_name, to_addr, subject, body)
