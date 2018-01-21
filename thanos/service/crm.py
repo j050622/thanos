@@ -12,7 +12,19 @@ from .paginator import Paginator
 
 
 class FilterRowOption:
-    def __init__(self, field_name, is_multiple=False, condition={}, is_choice=False, func_get_val=None):
+    """
+    
+    """
+
+    def __init__(self, field_name, is_multiple=False, condition=None, is_choice=False, func_get_val=None):
+        """
+
+        :param field_name:
+        :param is_multiple:
+        :param condition:必须是一个字典，用于存放查询条件
+        :param is_choice:
+        :param func_get_val:
+        """
         self.field_name = field_name
         self.is_multiple = is_multiple
         self.condition = condition
@@ -216,7 +228,6 @@ class CrmConfig:
     可以对相应页面的显示进行配置
     """
 
-    ###### 初始化 ######
     def __init__(self, model_class, site_obj):
         self.model_class = model_class
         self.site_obj = site_obj
@@ -311,6 +322,9 @@ class CrmConfig:
         return mark_safe('<input type="checkbox" name="pk" value="%s">' % obj.pk)
 
     def ele_add_href(self):
+        """
+        由于添加按钮需要在前端指定样式，所以这里值生成href属性，不直接生成<a>标签
+        """
         if self.request.GET:
             params_dict = QueryDict(mutable=True)
             params_dict[self.query_dict_key] = self.request.GET.urlencode()

@@ -123,9 +123,9 @@ STATICFILES_DIRS = [
 ]
 
 # session中几个数据的名称
-PERM_INFO_DICT = 'perm_info_dict'  # 权限匹配相关信息
-PERM_CODES_LIST = 'codes_list'  # 用于判断是否显示添加、编辑、删除等按钮
-PERM_SIDE_LIST = 'perm_side_list'  # 侧边栏显示相关信息
+PERM_INFO_DICT = 'a'  # 权限匹配相关信息
+PERM_CODES_LIST = 'b'  # 用于判断是否显示添加、编辑、删除等按钮
+PERM_SIDE_LIST = 'c'  # 侧边栏显示相关信息
 
 # 登录验证白名单
 VALID_URLS = [
