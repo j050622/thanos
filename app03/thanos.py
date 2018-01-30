@@ -1,6 +1,7 @@
 """
 在crm中注册表
 """
+
 from thanos.service import crm
 from . import models
 from .configs import configs, customer_config

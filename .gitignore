@@ -102,5 +102,4 @@ ENV/
 
 #本地数据相关
 *.sqlite3
-*/migrations
 /.idea
