@@ -609,7 +609,6 @@ class CrmSite:
             # if app_label not in app_labels_list:
             #     app_labels_list.append(app_label)
             ######
-
         return urlpatterns
 
     @property
