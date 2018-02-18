@@ -35,7 +35,7 @@ def init_permission(request, user_obj):
     request.session[settings.PERM_INFO_DICT] = perm_info_dict
 
     # 菜单展示相关信息
-    # data_list中取一部分数据，用于生成侧边栏菜单
+    # 从data_list中取一部分数据，用于生成侧边栏菜单
     perm_side_list = []
     for dict_item in data_list:
         tmp_dict = {

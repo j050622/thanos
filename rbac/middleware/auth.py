@@ -47,8 +47,7 @@ class RbacMiddleware(MiddlewareMixin):
         flag = False
         for dict_item in perm_info_dict.values():
             for url_dict in dict_item['urls_info']:
-                url = url_dict.get('url')
-                re_url = "^{}$".format(url)
+                re_url = "^{}$".format(url_dict.get('url'))
                 if re.match(re_url, current_url):
                     request.session[settings.PERM_CODES_LIST] = dict_item['codes']
                     flag = True
