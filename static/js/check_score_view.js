@@ -1,3 +1,4 @@
+// 以图表展示成绩
 $(function () {
     $("ul li").click(function () {
         var sid = $('#classList').attr('sid');
@@ -60,10 +61,7 @@ $(function () {
                             }]
                         }
                     });
-
                 }
-
-
             }
         })
     })

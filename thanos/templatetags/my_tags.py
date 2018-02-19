@@ -9,8 +9,12 @@ register = Library()
 
 @register.inclusion_tag('thanos/add_change_form.html')
 def show_form(config_obj, modelform):
-    from django.forms.boundfield import BoundField
-    from django.db.models.query import QuerySet
+    """
+    对model_form进行封装，对特定的字段添加popUp功能
+    """
+
+    # from django.forms.boundfield import BoundField
+    # from django.db.models.query import QuerySet
     from django.forms.models import ModelChoiceField, ModelMultipleChoiceField
 
     new_form = []
