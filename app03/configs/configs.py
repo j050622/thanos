@@ -38,6 +38,7 @@ class UserInfoConfig(crm.CrmConfig):
         crm.FilterRowOption('department', is_multiple=True, func_get_val=lambda obj: str(obj.code))]  # 关联字段不是pk而是code
     show_comb_filter = True
 
+
 class SchoolConfig(crm.CrmConfig):
     show_add_btn = True
     list_display = ['title']

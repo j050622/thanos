@@ -18,12 +18,13 @@ class FilterRowOption:
 
     def __init__(self, field_name, is_multiple=False, condition=None, is_choice=False, func_get_val=None):
         """
-
-        :param field_name:
-        :param is_multiple:
+        :param field_name:要生成一行搜索条件的来源字段
+        :param is_multiple:设置是否多选
         :param condition:必须是一个字典，用于存放查询条件
         :param is_choice:
+            如果当前字段的取值范围定义在model表的xx_choices字段中，这里应该设置为True
         :param func_get_val:
+            <a>标签中有的参数需要对应路由规则中的正则表达式，这里的函数用于生成这些参数
         """
         self.field_name = field_name
         self.is_multiple = is_multiple
