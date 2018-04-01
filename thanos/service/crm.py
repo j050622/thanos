@@ -508,7 +508,7 @@ class CrmConfig:
                             # 定位到打开popup的标签对应的字段
                             _limit_choices_to = rel_field_obj.limit_choices_to
 
-                            if (type(rel_field_obj) == ManyToOneRel) or (type(rel_field_obj == OneToOneRel)):
+                            if (type(rel_field_obj) == ManyToOneRel) or (type(rel_field_obj) == OneToOneRel):
                                 _field_name = rel_field_obj.field_name
                             else:
                                 # ManyToManyRel没有field_name方法，反应到models里面是因为没有to_field方法

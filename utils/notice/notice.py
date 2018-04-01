@@ -4,7 +4,7 @@ from CRM.settings import MESSAGE_CLASSES
 
 def send_notification(to_name, to_addr, subject, body):
     """
-    从配置中获取所有通知方式对应的类，逐个执行
+    从配置中获取所有通知方式对应的类，通过反射实例化，并执行send()方法
     :param to_name: 收件人姓名
     :param to_addr: 收件人联系方式
     :param subject: 通知主题

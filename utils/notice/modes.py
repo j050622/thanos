@@ -41,11 +41,15 @@ class SendMessage(BaseMode):
         print('模拟短信发送')
 
 
-class SendWeChat(BaseMode):
+class SendWeChat:
     """微信公众号推送消息"""
 
     def __init__(self):
         self.xxx = '公众号'
 
-    def send(self, to_name, to_addr, subject, body):
+    def send(self, wechat_id, msg):
         print('模拟微信发送')
+
+        # 微信推送跟其他方式不太一样，需要考虑参数问题，这个怎么办？
+        # from .wechat import send_custom_msg, send_template_msg
+        # send_custom_msg(wechat_id, msg)
