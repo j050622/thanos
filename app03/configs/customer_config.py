@@ -315,7 +315,7 @@ class CustomerConfig(permissions.BasePermission, crm.CrmConfig):
         base_url = reverse('app03_consultrecord_changelist')
         return mark_safe('<a href="{}?customer_id={}" target="_blank">记录详情</a>'.format(base_url, obj.id))
 
-    ##actions中的方法
+    # actions中的方法
     def multi_del(self, request):
         """批量删除"""
         pk_list = request.POST.getlist('pk')

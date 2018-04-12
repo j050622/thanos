@@ -450,11 +450,11 @@ class CrmConfig:
 
             return render(request, 'thanos/changelist_view.html', {"cl": cl})
         else:
-            # actions
+            # actions操作使用POST请求
             action_func = getattr(self, request.POST.get('actions'))
-            ret = action_func(request)
+            ret = action_func(request)  # 派生类中需要定义对应的方法
             if ret:
-                return ret
+                return ret  # 如果定义的方法有返回值，则使用该方法的返回值进行return
 
             return redirect(request.get_full_path())
 
