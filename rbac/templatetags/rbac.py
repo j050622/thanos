@@ -3,13 +3,16 @@ import copy
 
 from django.template import Library
 
-from CRM import settings
+from django.conf import settings
 
 register = Library()
 
 
 @register.inclusion_tag('inclusion.html')
 def show_menu(request):
+    """
+    自定义标签，用于生成侧边栏菜单
+    """
     current_url = request.path_info
     perm_side_list = request.session.get(settings.PERM_SIDE_LIST)
 
@@ -19,7 +22,7 @@ def show_menu(request):
         if not dict_item.get('menu_ref'):
             perm_menu_dict[dict_item.get('url_id')] = copy.deepcopy(dict_item)
 
-    # (2) 给当前正在访问的权限URL对应的“菜单项URL”或其自身添加'active'属性，用于在CSS中加红
+    # (2) 给当前正在访问的权限URL对应的“菜单项URL”或其自身添加'active'属性，用于在CSS中加红高亮
     for dict_item in perm_side_list:
         url = dict_item.get('url')
         re_url = "^{}$".format(url)

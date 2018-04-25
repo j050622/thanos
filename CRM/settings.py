@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'thanos.apps.ThanosConfig',
-    'app03.apps.App03Config',
+    'app01.apps.App03Config',
     'rbac.apps.RbacConfig',
 ]
 
@@ -48,7 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'rbac.middleware.auth.RbacMiddleware',
+    'rbac.middleware.auth.RbacMiddleware',  # 权限组件
 ]
 
 ROOT_URLCONF = 'CRM.urls'
@@ -77,8 +77,9 @@ WSGI_APPLICATION = 'CRM.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'crm',
+        'USER': 'root',
     }
 }
 

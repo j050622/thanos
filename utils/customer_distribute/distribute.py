@@ -2,7 +2,7 @@
 使用Redis实现自动获取课程顾问id
 """
 import redis
-from app03 import models
+from app01 import models
 
 # 连接redis
 POOL = redis.ConnectionPool(host='127.0.0.1', port=6379, password='abc123')

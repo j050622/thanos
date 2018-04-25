@@ -5,7 +5,7 @@ $(function () {
         var cid = $(this).attr('cid');
 
         $.get({
-            url: '/crm/app03/student/chart/',
+            url: '/crm/app01/student/chart/',
             data: {"sid": sid, "cid": cid},
             dataType: 'json',
             success: function (res_dict) {

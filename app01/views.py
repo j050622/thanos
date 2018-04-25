@@ -1,8 +1,6 @@
-from django.shortcuts import render, redirect, reverse, HttpResponse
+from django.shortcuts import render, redirect, reverse
 
-from CRM import settings
 from . import my_forms
-from . import models
 from rbac import models as rbac_models
 from rbac.service.init_permission import init_permission
 
@@ -27,12 +25,13 @@ def login(request):
             else:
                 init_permission(request, user_obj)
 
+                # 根据不同的角色跳转到不同页面，这里仅做测试，不应该出现类似app01的硬编码
                 department_id = user_obj.userinfo.department_id
                 if department_id == 1000:
-                    return redirect(reverse('app03_customer_mine'))
+                    return redirect(reverse('app01_customer_mine'))
                 elif department_id == 1001:
                     pass
-                return redirect(reverse('app03_courserecord_changelist'))
+                return redirect(reverse('app01_courserecord_changelist'))
 
 
 def logout(request):

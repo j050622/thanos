@@ -13,8 +13,8 @@ from django.db.transaction import atomic
 from django.db.models import Q
 
 from thanos.service import crm
-from app03 import models
-from app03 import permissions
+from app01 import models
+from app01 import permissions
 from utils.customer_distribute.distribute import Distribute
 
 
@@ -270,7 +270,7 @@ class CustomerConfig(permissions.BasePermission, crm.CrmConfig):
         tmp_list = []
         info = (self.app_label, self.model_name)
         for i in obj.course.all():
-            # del_href = '/crm/app03/customer/{}/{}/sub_del/'.format(obj.pk, i.pk)
+            # del_href = '/crm/app01/customer/{}/{}/sub_del/'.format(obj.pk, i.pk)
             del_href = reverse('%s_%s_sub_del' % info, args=(obj.pk, i.pk))
             ele_html = '<a class="courses" href="{}">{}&nbsp;' \
                        '<span class="glyphicon glyphicon-remove"></span>' \

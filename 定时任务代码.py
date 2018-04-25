@@ -8,7 +8,7 @@ os.chdir(r'D:\Python Code\CRM')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "CRM.settings")
 django.setup()
 
-from app03 import models
+from app01 import models
 
 # customer_obj_list = models.Customer.objects.all()
 # for obj in customer_obj_list:

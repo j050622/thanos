@@ -1,7 +1,7 @@
 """
 登录之后，取出当前用户的权限，做成一定格式的数据结构，写入session
 """
-from CRM import settings
+from django.conf import settings
 
 
 def init_permission(request, user_obj):

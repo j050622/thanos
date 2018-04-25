@@ -4,7 +4,7 @@ import xlrd
 from django.http import HttpResponse
 from django.db.transaction import atomic
 
-from app03 import models
+from app01 import models
 from utils.customer_distribute.distribute import Distribute
 
 

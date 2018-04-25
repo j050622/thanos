@@ -9,7 +9,7 @@ from django.utils.safestring import mark_safe
 from django.forms import Form, fields, widgets
 
 from thanos.service import crm
-from app03 import models
+from app01 import models
 from rbac import models as rbac_models
 
 

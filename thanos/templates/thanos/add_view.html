@@ -8,10 +8,10 @@
 
 {% block window_title %}添加记录{% endblock %}
 
-{% block page_title %}{{ self.model_name }}添加{% endblock %}
+{% block page_title %}{{ config_obj.model_name }}添加{% endblock %}
 
 {% block content %}
-    {% show_form self add_form %}
+    {% show_form config_obj add_form %}
 {% endblock content %}
 
 {% block my_js %}

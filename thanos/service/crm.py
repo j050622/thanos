@@ -480,12 +480,12 @@ class CrmConfig:
         if request.method == 'GET':
             add_form = model_form()
             return render(request, 'thanos/add_view.html',
-                          {"self": self, "add_form": add_form})
+                          {"config_obj": self, "add_form": add_form})
         else:
             add_form = model_form(data=request.POST)
             if not add_form.is_valid():
                 return render(request, 'thanos/add_view.html',
-                              {"self": self, "add_form": add_form})
+                              {"config_obj": self, "add_form": add_form})
             else:
                 new_obj = add_form.save()
 
@@ -600,16 +600,11 @@ class CrmSite:
 
     def get_urls(self):
         urlpatterns = []
-        app_labels_list = []
         for model, config_obj in self._registry.items():
             app_label = model._meta.app_label
             model_name = model._meta.model_name
             urlpatterns += [url(r'^%s/%s/' % (app_label, model_name), include(config_obj.urls, None, None))]
 
-            ######待整理######
-            # if app_label not in app_labels_list:
-            #     app_labels_list.append(app_label)
-            ######
         return urlpatterns
 
     @property

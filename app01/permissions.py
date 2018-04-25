@@ -3,7 +3,7 @@ configs中的Config类在继承CrmConfig之前，可以从本模块继承一些�
 控制到按钮
 """
 from thanos.service import crm
-from CRM import settings
+from django.conf import settings
 
 
 class BasePermission(crm.CrmConfig):
