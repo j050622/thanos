@@ -161,3 +161,6 @@ MESSAGE_CLASSES = [
 #         },
 #     }
 # }
+
+
+import django.conf.global_settings

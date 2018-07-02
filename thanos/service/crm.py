@@ -1,7 +1,7 @@
 import json
 import copy
 
-from django.shortcuts import render, redirect, reverse, HttpResponse
+from django.shortcuts import render, redirect, reverse
 from django.utils.safestring import mark_safe
 from django.conf.urls import url, include
 from django.forms import ModelForm
@@ -12,9 +12,6 @@ from .paginator import Paginator
 
 
 class FilterRowOption:
-    """
-    
-    """
 
     def __init__(self, field_name, is_multiple=False, condition=None, is_choice=False, func_get_val=None):
         """
@@ -177,7 +174,6 @@ class ChangeList:
 
         def data(self):
             ''' 生成器 '''
-
             for obj in self.show_obj_list:
 
                 if not self.list_display:

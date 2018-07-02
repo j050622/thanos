@@ -17,5 +17,6 @@ crm.site.register(models.ConsultantWeight, configs.ConsultantWeightConfig)
 crm.site.register(models.ConsultRecord, configs.ConsultRecordConfig)
 crm.site.register(models.PaymentRecord, configs.PaymentRecordConfig)
 crm.site.register(models.Student, configs.StudentConfig)
+
 crm.site.register(models.CourseRecord, configs.CourseRecordConfig)
 crm.site.register(models.StudyRecord, configs.StudyRecordConfig)
